@@ -1,0 +1,106 @@
+// This script performs a simulation study for the
+// bModelTest model by sampling from the prior, simulate sequences and
+// running ananlyses to recover the model.
+
+// Requirements: the file analysis.xml must be in the directory
+// from where this script is run.
+
+import beast.evolution.substitutionmodel.*;
+import beast.evolution.sitemodel.*;
+import beast.evolution.alignment.*;
+import beast.util.*;
+import beast.core.*;
+import beast.core.parameter.*;
+import com.xeiam.xchart.*;
+import beast.app.shell.*;
+
+Logger.FILE_MODE = beast.core.Logger.LogFileMode.overwrite;
+
+// set up flags for BEAGLE -- YMMV
+beagleFlags = beagle.BeagleFlag.VECTOR_SSE.getMask() | beagle.BeagleFlag.PROCESSOR_CPU.getMask();
+System.setProperty("beagle.preferred.flags", Long.toString(beagleFlags));
+
+N = 100;
+// draw gamma shape from the prior (exp(1.0))
+shapes = rexp(N, 1.0);
+modelIndicator = new IntegerParameter(value="0");
+rates = new RealParameter(value="1.0 1.0 1.0 1.0 1.0 1.0");
+freqs = new Frequencies(frequencies="0.25 0.25 0.25 0.25");
+substModel0 = new NucleotideRevJumpSubstModel(modelSet="transitionTransversionSplit", modelIndicator=modelIndicator, rates=rates, frequencies=freqs);
+// draw models
+modelID = runif(N, 0, 31);
+// draw rates
+r = new Double[N][6];
+for (int i = 0; i < N; i++) {
+	m = (int)modelID.get(i);
+	model = substModel0.getModel((int) m);
+	r[i][model[0]] = rexp(1, 1.0).get(0);
+	r[i][model[1]] = rlnorm(1, 1, 1.25).get(0);
+	r[i][model[2]] = rexp(1, 1.0).get(0);
+	r[i][model[3]] = rexp(1, 1.0).get(0);
+	r[i][model[4]] = rlnorm(1, 1, 1.25).get(0);
+	r[i][model[5]] = rexp(1, 1.0).get(0);
+	sum = 0;
+	for (j = 0; j < 6; j++) { sum += r[i][model[j]];}
+	sum = sum / 6.0;
+	for (j = 0; j < substModel0.getGroupCount(m); j++) { r[i][j] /= sum;}
+}
+
+
+
+for (int i = 0; i < N; i++) {
+	m = (int)modelID.get(i);
+	model = substModel0.getModel((int) m);
+
+	// set up model to draw samples from
+	data = new Alignment(
+			sequence=new Sequence(taxon="human",value="?"),
+			sequence=new Sequence(taxon="bonobo",value="?"),
+			sequence=new Sequence(taxon="chimp",value="?")
+		);
+	tree = new beast.util.TreeParser(newick="(human:0.2,(chimp:0.15,bonobo:0.15):0.05)", taxa=data, IsLabelledNewick=true);
+	rates = new RealParameter(value = r[i][model[0]] + " " + r[i][model[1]] + " " + r[i][model[2]] + " " + r[i][model[3]] + " " + r[i][model[4]] + " " + r[i][model[5]]);
+	
+	gtr = new GTR(frequencies=new Frequencies(data=data), 
+		rateAC = r[i][model[0]] + "",
+		rateAG = r[i][model[1]] + "",
+		rateAT = r[i][model[2]] + "",
+		rateCG = r[i][model[3]] + "",
+		rateCT = r[i][model[4]] + "",
+		rateGT = r[i][model[5]] + ""
+	);
+	clockmodel = new beast.evolution.branchratemodel.StrictClockModel("1.0");
+
+
+	// change gammaCategoryCount=1 for generating without gamma rate categories
+	sitemodel = new SiteModel(gammaCategoryCount=4, substModel=gtr, shape=""+shapes.get(i));
+	mergewith = new beast.app.seqgen.MergeDataWith(template="../bModelTest/test/analysis.xml", output="/tmp/analysis-out" + i + ".xml");
+	sim = new beast.app.seqgen.SequenceSimulator(data=data, tree=tree, sequencelength=10000, outputFileName="gammaShapeSequence.xml", siteModel=sitemodel, branchRateModel=clockmodel, merge=mergewith);
+	// produce gammaShapeSequence.xml and merge with analysis.xml to get analysis-out.xml
+	sim.run();
+}
+	// run the analysis
+	mcmc = (new XMLParser()).parseFile(new File("/tmp/analysis-out" + i + ".xml"));
+	Randomizer.setSeed(100+i);
+
+
+	mcmc.run();
+
+
+	// grab estimate from the analysis
+	log = new LogAnalyser(new String[]{"dna" + (100 + i) +".log"});
+	s = log.getMean("gammaShape");
+	s = log.getMean("ActiveGammaShape") / log.getMean("hasGammaRates");
+	print("iteration: " + i + " shape = " + shapes.get(i) + " estimate = " + s);
+	print("iteration: " + i + " rateAC = " + r[i][model[0]] + " estimate = " + log.getMean("rateAC"));
+	print("iteration: " + i + " rateAC = " + r[i][model[1]] + " estimate = " + log.getMean("rateAG"));
+	print("iteration: " + i + " rateAC = " + r[i][model[2]] + " estimate = " + log.getMean("rateAT"));
+	print("iteration: " + i + " rateAC = " + r[i][model[3]] + " estimate = " + log.getMean("rateCG"));
+	print("iteration: " + i + " rateAC = " + r[i][model[4]] + " estimate = " + log.getMean("rateCT"));
+	print("iteration: " + i + " rateAC = " + r[i][model[5]] + " estimate = " + log.getMean("rateGT"));
+	estimate.add(s);
+}
+
+// create scatter plot and save to /tmp/Sample_Chart.png
+p = new Plot(x=shapes, y=estimate, title="Gamma shape\nsimulation", xAxisTitle="original", yAxisTitle="estimate", chartType="Scatter", isYAxisLogarithmic=true, isXAxisLogarithmic=true, output="png");
+
