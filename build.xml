@@ -184,7 +184,6 @@
 		</copy>
 		<copy todir="${Add_on_dir}/templates">
 			<fileset file="templates/bModelTest.xml" />
-			<fileset file="templates/AutoPartition.xml" />
 		</copy>
 
 		<jar jarfile="${distbModelTest}/bModelTest.addon.v${version}.zip">
