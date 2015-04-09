@@ -21,6 +21,7 @@ public class BMTMergeSplitOperator extends Operator {
 	IntegerParameter modelIndicator;
 	NucleotideRevJumpSubstModel substModel;
 	RealParameter rates;
+	public boolean useAlt = false;
 
 	final static boolean debug = true;
 	
@@ -33,6 +34,9 @@ public class BMTMergeSplitOperator extends Operator {
 
 	//@Override
 	public double proposal() {
+		if (useAlt) {
+			return proposalAlt();
+		}
 		double logHR = 0;
 		int currentModelID = modelIndicator.getValue();
 		final int [] model = substModel.getModel(currentModelID);
@@ -168,7 +172,9 @@ public class BMTMergeSplitOperator extends Operator {
 	}
 
 
-	public double proposal2() {
+	/** alternative move as described in Huelsenbeck 2004 **/
+	// Note: works only for allReverisble models
+	public double proposalAlt() {
 		double logHR = 0;
 		int currentModelID = modelIndicator.getValue();
 		final int [] model = substModel.getModel(currentModelID);
@@ -248,7 +254,8 @@ public class BMTMergeSplitOperator extends Operator {
 					M++;
 				}
 			}
-			logHR -= -Math.log(M) - Math.log(Math.pow(2, n1+n2-1)-1) - Math.log(r * (n1 + n2)) + Math.log(groupCount * (groupCount - 1) / 2);
+			logHR -= -Math.log(M) - Math.log(Math.pow(2, n1+n2-1)-1) 
+					- Math.log(r * (n1 + n2)) + Math.log(groupCount * (groupCount - 1) / 2);
 			logHR -= Math.log(n1 * n2) - Math.log(n1+n2);
 			
 		} else {
@@ -316,7 +323,9 @@ public class BMTMergeSplitOperator extends Operator {
 					M++;
 				}
 			}
-			logHR += -Math.log(M) - Math.log(Math.pow(2, n1+n2-1)-1) - Math.log(r * (n1 + n2)) + Math.log(groupCount * (groupCount - 1) / 2); 
+			logHR += -Math.log(M) - Math.log(Math.pow(2, n1+n2-1)-1) 
+					- Math.log(r * (n1 + n2)) 
+					+ Math.log(groupCount * (groupCount - 1) / 2); 
 			logHR += Math.log(n1 * n2) - Math.log(n1+n2);
 		}
 		return logHR;
