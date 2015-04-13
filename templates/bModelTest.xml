@@ -16,7 +16,7 @@ beast.evolution.sitemodel.BEASTModelTest.hasInvariantSites"
             <![CDATA[
 
         <stateNode id="BMT_ModelIndicator.s:$(n)" spec="parameter.IntegerParameter" lower="0" upper="5">5</stateNode>
-        <parameter id="BMT_Rates.s:$(n)" dimension="5" lower="0.01" name="stateNode" upper="100.0">1.0</parameter>
+        <parameter id="BMT_Rates.s:$(n)" dimension="6" lower="0.01" name="stateNode" upper="100.0">1.0</parameter>
         <parameter id="BMT_gammaShape.s:$(n)" name="stateNode">1.0</parameter>
         <parameter id="BMT_ProportionInvariant.s:$(n)" lower="0.0" name="stateNode" upper="1.0">0.1</parameter>
         <stateNode id="hasInvariantSites.s:$(n)" spec="parameter.IntegerParameter">1</stateNode>        

@@ -29,6 +29,7 @@ public class BEASTModelTestInputEditor extends SiteModelInputEditor {
 		EnumInputEditor typeEditor = new EnumInputEditor(doc);
 		typeEditor.init(substModel.modelChoiseInput, substModel, itemNr, bExpandOption, bAddButtons);
 		((Box) getComponent(0)).add(typeEditor, 2);
+		validate();
 	}
 	
 }
