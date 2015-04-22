@@ -269,7 +269,7 @@ public class NucleotideRevJumpSubstModel extends GeneralSubstitutionModel implem
 	
 	@Override
 	public void initAndValidate() throws Exception {
-		MODELS = generateAllReversibleModels();
+		MODELS = generateAllModels();
 		
 		switch (modelChoiseInput.get()) {
 		case allreversible:
@@ -339,9 +339,12 @@ public class NucleotideRevJumpSubstModel extends GeneralSubstitutionModel implem
 		eigenDecomposition = eigenSystem.decomposeMatrix(rateMatrix);
 	}
 
-	private int[][] generateAllReversibleModels() {
+	protected int[][] generateAllModels() {
+		return generateAllReversibleModels(new int[6]);
+	}
+		
+	int[][] generateAllReversibleModels(int [] model) {
 		List<int []> modelset = new ArrayList<>();
-		int [] model = new int[6];
 		while (model != null) {
 			int [] nextmodel = model.clone();
 			boolean [] done = new boolean[6];
