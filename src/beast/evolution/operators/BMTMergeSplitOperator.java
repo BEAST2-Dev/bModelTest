@@ -255,7 +255,7 @@ public class BMTMergeSplitOperator extends Operator {
 				}
 			}
 			logHR -= -Math.log(M) - Math.log(Math.pow(2, n1+n2-1)-1) 
-					- Math.log(r * (n1 + n2)) + Math.log(groupCount * (groupCount - 1) / 2);
+					- Math.log(r * (n1 + n2)) + Math.log((groupCount + 1) * groupCount / 2);
 			logHR -= Math.log(n1 * n2) - Math.log(n1+n2);
 			
 		} else {
