@@ -1,4 +1,3 @@
-<addon name='bModelTest' version='0.0.2'>
-	<depends on='beast2' atleast='2.2.1'/>
-	<depends on='MSGM' atleast='0.0.1'/> <!-- only for the Gamma Site Model template -->
+<addon name='bModelTest' version='0.1.0'>
+	<depends on='beast2' atleast='2.3.0'/>
 </addon>
