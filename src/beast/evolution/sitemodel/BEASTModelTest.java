@@ -5,6 +5,7 @@ import java.util.Arrays;
 import org.apache.commons.math.distribution.GammaDistribution;
 import org.apache.commons.math.distribution.GammaDistributionImpl;
 
+import beast.core.Citation;
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.Input.Validate;
@@ -13,6 +14,7 @@ import beast.core.parameter.IntegerParameter;
 import beast.evolution.tree.Node;
 
 @Description("Site model that jumps between with and without gamma sites, as well as with and without invariant sites")
+@Citation(value="Remco Bouckaert. bModelTest: Bayesian site model selection for nucleotide data. BioRxiv 2015/06/11/020792", DOI="http://dx.doi.org/10.1101/020792")
 public class BEASTModelTest extends SiteModel {
 
 	public Input<IntegerParameter> hasGammaRatesInput = new Input<IntegerParameter>("hasGammaRates", "flag indicating whether gamma rate heterogeneity should be used", Validate.REQUIRED);
