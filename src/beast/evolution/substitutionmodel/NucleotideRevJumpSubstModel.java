@@ -549,6 +549,7 @@ public class NucleotideRevJumpSubstModel extends GeneralSubstitutionModel implem
 		out.append("rateCG" + partition + "\t");
 		out.append("rateCT" + partition + "\t");
 		out.append("rateGT" + partition + "\t");
+		out.append("substmodel" + partition + "\t");		
 	}
 
 	@Override
@@ -558,6 +559,10 @@ public class NucleotideRevJumpSubstModel extends GeneralSubstitutionModel implem
     	for (int i = 0; i < 6 ;i++) {
     		out.append(rates.getArrayValue(model[i]) + "\t");
     	}
+    	for (int i = 0; i < 6 ;i++) {
+    		out.append((char)(model[i] + '1'));
+    	}
+    	out.append('\t');
 		
 	}
 
