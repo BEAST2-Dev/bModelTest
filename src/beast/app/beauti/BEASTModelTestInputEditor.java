@@ -2,10 +2,12 @@ package beast.app.beauti;
 
 import javax.swing.Box;
 
+import beast.app.draw.BooleanInputEditor;
 import beast.app.draw.EnumInputEditor;
 import beast.core.BEASTInterface;
 import beast.core.Input;
 import beast.evolution.sitemodel.BEASTModelTest;
+import beast.evolution.substitutionmodel.ModelFrequencies;
 import beast.evolution.substitutionmodel.NucleotideRevJumpSubstModel;
 import beast.evolution.substitutionmodel.SubstitutionModel;
 
@@ -29,6 +31,11 @@ public class BEASTModelTestInputEditor extends SiteModelInputEditor {
 		EnumInputEditor typeEditor = new EnumInputEditor(doc);
 		typeEditor.init(substModel.modelChoiseInput, substModel, itemNr, bExpandOption, bAddButtons);
 		((Box) getComponent(0)).add(typeEditor, 2);
+		
+		ModelFrequencies freqs = (ModelFrequencies) substModel.frequenciesInput.get();
+		BooleanInputEditor equalFreqs = new BooleanInputEditor(doc);
+		equalFreqs.init(freqs.empiricalInput, freqs, itemNr, bExpandOption, bAddButtons);
+		((Box) getComponent(0)).add(equalFreqs, 3);
 		validate();
 	}
 	
