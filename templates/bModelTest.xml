@@ -4,14 +4,14 @@
     <mergewith point='substModelTemplates'>
             <!-- site models -->
         <!-- gamma site model -->
-        <subtemplate id='BEAST Model Test' class='beast.evolution.sitemodel.BEASTModelTest' mainid='BEASTModelTest.s:$(n)'
+        <subtemplate id='BEAST Model Test' class='beast.evolution.sitemodel.BEASTModelTestSiteModel' mainid='BEASTModelTest.s:$(n)'
 
-			suppressInputs="beast.evolution.sitemodel.BEASTModelTest.substModel,
-beast.evolution.sitemodel.BEASTModelTest.gammaCategoryCount,
-beast.evolution.sitemodel.BEASTModelTest.shape,
-beast.evolution.sitemodel.BEASTModelTest.proportionInvariant,
-beast.evolution.sitemodel.BEASTModelTest.hasGammaRates,
-beast.evolution.sitemodel.BEASTModelTest.hasInvariantSites"
+			suppressInputs="beast.evolution.sitemodel.BEASTModelTestSiteModel.substModel,
+beast.evolution.sitemodel.BEASTModelTestSiteModel.gammaCategoryCount,
+beast.evolution.sitemodel.BEASTModelTestSiteModel.shape,
+beast.evolution.sitemodel.BEASTModelTestSiteModel.proportionInvariant,
+beast.evolution.sitemodel.BEASTModelTestSiteModel.hasGammaRates,
+beast.evolution.sitemodel.BEASTModelTestSiteModel.hasInvariantSites"
 			>
             <![CDATA[
 
@@ -46,7 +46,7 @@ beast.evolution.sitemodel.BEASTModelTest.hasInvariantSites"
             	<distr spec="beast.math.distributions.Dirichlet" alpha="1.0 1.0 1.0 1.0"/>
             </prior>
             
-	    <siteModel id="BEASTModelTest.s:$(n)" spec="beast.evolution.sitemodel.BEASTModelTest" 
+	    <siteModel id="BEASTModelTest.s:$(n)" spec="beast.evolution.sitemodel.BEASTModelTestSiteModel" 
 		    gammaCategoryCount="4" proportionInvariant="@BMT_ProportionInvariant.s:$(n)" shape="@BMT_gammaShape.s:$(n)"
 		    hasGammaRates="@hasGammaRates.s:$(n)" hasInvariantSites="@hasInvariantSites.s:$(n)">
 	        <parameter id="BMT_mutationRate.s:$(n)" estimate="false" name="mutationRate">1.0</parameter>

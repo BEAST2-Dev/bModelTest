@@ -6,7 +6,7 @@ import beast.app.draw.BooleanInputEditor;
 import beast.app.draw.EnumInputEditor;
 import beast.core.BEASTInterface;
 import beast.core.Input;
-import beast.evolution.sitemodel.BEASTModelTest;
+import beast.evolution.sitemodel.BEASTModelTestSiteModel;
 import beast.evolution.substitutionmodel.ModelFrequencies;
 import beast.evolution.substitutionmodel.NucleotideRevJumpSubstModel;
 import beast.evolution.substitutionmodel.SubstitutionModel;
@@ -16,7 +16,7 @@ public class BEASTModelTestInputEditor extends SiteModelInputEditor {
 
 	@Override
     public Class<?> type() {
-        return BEASTModelTest.class;
+        return BEASTModelTestSiteModel.class;
     }
     
 	public BEASTModelTestInputEditor(BeautiDoc doc) {
@@ -26,7 +26,7 @@ public class BEASTModelTestInputEditor extends SiteModelInputEditor {
 	@Override
 	public void init(Input<?> input, BEASTInterface plugin, int itemNr, ExpandOption bExpandOption, boolean bAddButtons) {
 		super.init(input, plugin, itemNr, bExpandOption, bAddButtons);
-		SubstitutionModel sm = ((BEASTModelTest) input.get()).substModelInput.get();
+		SubstitutionModel sm = ((BEASTModelTestSiteModel) input.get()).substModelInput.get();
 		NucleotideRevJumpSubstModel substModel = (NucleotideRevJumpSubstModel) sm;
 		EnumInputEditor typeEditor = new EnumInputEditor(doc);
 		typeEditor.init(substModel.modelChoiseInput, substModel, itemNr, bExpandOption, bAddButtons);
