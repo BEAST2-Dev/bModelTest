@@ -28,7 +28,7 @@ public class ModelSetPrior extends Prior {
 	
 	
 	@Override
-	public void initAndValidate() throws Exception {
+	public void initAndValidate() {
 		substModel = substModelInput.get();
         dist = distInput.get();
 
@@ -55,7 +55,7 @@ public class ModelSetPrior extends Prior {
 	}
 	
     @Override
-    public double calculateLogP() throws Exception {
+    public double calculateLogP() {
     	logP = 0;
     	switch (priorTypeInput.get()) {
     	case uniformOnModel:

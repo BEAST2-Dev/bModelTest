@@ -29,7 +29,7 @@ public class BMTExchangeOperator extends Operator {
 	boolean autoOptimize;
 	
 	@Override
-	public void initAndValidate() throws Exception {
+	public void initAndValidate() {
 		modelIndicator = modelIndicatorInput.get();
 		substModel = substModelInput.get();
 		rates = ratesInput.get();

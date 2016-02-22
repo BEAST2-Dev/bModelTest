@@ -16,13 +16,13 @@ public class BMTPrior extends Prior {
 	private IntegerParameter counts;
 	
 	@Override
-	public void initAndValidate() throws Exception {
+	public void initAndValidate() {
 		counts = countInput.get();
 		super.initAndValidate();
 	}
 	
 	@Override
-	public double calculateLogP() throws Exception {
+	public double calculateLogP() {
 		Function x = m_x.get();
 		int dim = (int) counts.getArrayValue();
 		double fOffset = dist.offsetInput.get();

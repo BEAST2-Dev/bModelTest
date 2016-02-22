@@ -26,7 +26,7 @@ public class BMTMergeSplitOperator extends Operator {
 	final static boolean debug = true;
 	
 	@Override
-	public void initAndValidate() throws Exception {
+	public void initAndValidate() {
 		modelIndicator = modelIndicatorInput.get();
 		substModel = substModelInput.get();
 		rates = ratesInput.get();

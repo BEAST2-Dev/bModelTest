@@ -17,10 +17,10 @@ public class BMTScaleOperator extends ScaleOperator {
 	IntegerParameter count;
 	
 	@Override
-	public void initAndValidate() throws Exception {
+	public void initAndValidate() {
 		count = countInput.get();
 		if (treeInput.get() != null) {
-			throw new Exception("A parameter (not a tree) should not be specified");
+			throw new IllegalArgumentException("A parameter (not a tree) should not be specified");
 		}
 		super.initAndValidate();
 	}

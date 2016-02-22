@@ -16,11 +16,11 @@ public class ModelFrequencies extends Frequencies {
 	BooleanParameter hasEqualFreqs;
 	
 	@Override
-	public void initAndValidate() throws Exception {
+	public void initAndValidate() {
 		hasEqualFreqs = hasEqualFreqslInput.get();
 		
 		if (empiricalInput.get() && dataInput.get() == null) {
-			throw new Exception("data should be specified if empirical=true. Either specify the data attribute or set empirical to false.");
+			throw new IllegalArgumentException("data should be specified if empirical=true. Either specify the data attribute or set empirical to false.");
 		}
 		if (dataInput.get() != null) {
 			estimateFrequencies();

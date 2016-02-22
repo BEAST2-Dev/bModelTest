@@ -42,7 +42,7 @@ public class NucleotideRevJumpSubstModelRatePrior extends Prior {
 	ParametricDistribution transDist;
 	
 	@Override
-	public void initAndValidate() throws Exception {
+	public void initAndValidate() {
 		priorType = priorTypeInput.get();
 		dist = distInput.get();
 		transDist = transDistInput.get();
@@ -74,7 +74,7 @@ public class NucleotideRevJumpSubstModelRatePrior extends Prior {
 	}
 
 	@Override
-	public double calculateLogP() throws Exception {
+	public double calculateLogP() {
 		logP = 0;
 		if (debug) {
 			Function x = m_x.get();

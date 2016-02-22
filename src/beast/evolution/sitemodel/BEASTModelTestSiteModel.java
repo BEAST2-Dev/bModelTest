@@ -24,7 +24,7 @@ public class BEASTModelTestSiteModel extends SiteModel {
 	IntegerParameter hasGammaRates;
 	
 	@Override
-	public void initAndValidate() throws Exception {
+	public void initAndValidate() {
 		//BooleanParameter dummy = new BooleanParameter("1");
 		hasInvariantSites = hasInvariantSitesInput.get();
 		//hasInvariantSites.assignFromWithoutID(dummy);
@@ -34,16 +34,16 @@ public class BEASTModelTestSiteModel extends SiteModel {
 		
 		// ensure categoryCount = gammaCategories + 1 by checking shape and invar parameters are present
 		if (shapeParameterInput.get() == null) {
-			throw new Exception("shape parameter must be specified");
+			throw new IllegalArgumentException("shape parameter must be specified");
 		}
 		if (shapeParameterInput.get().isEstimatedInput.get() == false) {
-			throw new Exception("shape parameter must be estimated");
+			throw new IllegalArgumentException("shape parameter must be estimated");
 		}
 		if (invarParameterInput.get() == null) {
-			throw new Exception("proportionInvariant parameter must be specified");
+			throw new IllegalArgumentException("proportionInvariant parameter must be specified");
 		}
 		if (invarParameterInput.get().isEstimatedInput.get() == false) {
-			throw new Exception("proportionInvariant parameter must be estimated");
+			throw new IllegalArgumentException("proportionInvariant parameter must be estimated");
 		}
 	}
 

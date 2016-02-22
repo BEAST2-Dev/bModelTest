@@ -1,6 +1,7 @@
 package beast.evolution.substitutionmodel;
 
 import java.io.PrintStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -268,7 +269,7 @@ public class NucleotideRevJumpSubstModel extends GeneralSubstitutionModel implem
 	IntegerParameter modelIndicator;
 	
 	@Override
-	public void initAndValidate() throws Exception {
+	public void initAndValidate() {
 		MODELS = generateAllModels();
 		
 		switch (modelChoiseInput.get()) {
@@ -319,10 +320,15 @@ public class NucleotideRevJumpSubstModel extends GeneralSubstitutionModel implem
         updateMatrix = true;
         nrOfStates = frequencies.getFreqs().length;
         if (nrOfStates != 4) {
-            throw new Exception("Frequencies has wrong size. Expected 4, but got " + nrOfStates);
+            throw new IllegalArgumentException("Frequencies has wrong size. Expected 4, but got " + nrOfStates);
         }
 
-        eigenSystem = createEigenSystem();
+        try {
+			eigenSystem = createEigenSystem();
+		} catch (SecurityException | ClassNotFoundException | InstantiationException | IllegalAccessException | IllegalArgumentException
+				| InvocationTargetException e) {
+			throw new IllegalArgumentException(e);
+		}
         rateMatrix = new double[nrOfStates][nrOfStates];
         relativeRates = new double[nrOfStates * (nrOfStates - 1)];
         storedRelativeRates = new double[nrOfStates * (nrOfStates - 1)];

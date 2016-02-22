@@ -287,7 +287,7 @@ public class MergeSplitOperatorTest extends TestCase {
 		}
 		
 		@Override
-		public void initAndValidate() throws Exception {
+		public void initAndValidate() {
 		}
 
 		@Override

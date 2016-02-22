@@ -18,7 +18,7 @@ public class CorrelatedEvolution extends NucleotideRevJumpSubstModel {
 	BooleanParameter rateMask;
 	
 	@Override
-	public void initAndValidate() throws Exception {
+	public void initAndValidate() {
 		isSymmetric = isSymmetricInput.get();
 		rateMask = rateMaskInput.get();
 		if (rateMask == null) {
