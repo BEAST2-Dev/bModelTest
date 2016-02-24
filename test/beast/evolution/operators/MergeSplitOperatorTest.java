@@ -291,7 +291,7 @@ public class MergeSplitOperatorTest extends TestCase {
 		}
 
 		@Override
-		public void init(PrintStream out) throws Exception {
+		public void init(PrintStream out) {
 			out.append("paramcount\t");
 		}
 

@@ -547,7 +547,7 @@ public class NucleotideRevJumpSubstModel extends GeneralSubstitutionModel implem
     }
 
 	@Override
-	public void init(PrintStream out) throws Exception {
+	public void init(PrintStream out) {
 		String partition = (getID().contains(".") ? getID().substring(getID().lastIndexOf('.')) : "");
 		out.append("rateAC" + partition + "\t");
 		out.append("rateAG" + partition + "\t");
