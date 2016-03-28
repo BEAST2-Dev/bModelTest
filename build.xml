@@ -13,12 +13,13 @@
 	<property name="libbModelTest" location="lib" />
 	<property name="release_dir" value="release" />
 	<property name="distbModelTest" location="${buildbModelTest}/dist" />
+	<property name="BEASTLabsclasspath" location="../BEASTLabs/build" />
 	<property name="beast2path" location="../beast2" />
 	<property name="libBeast2" location="${beast2path}/lib" />
 	<property name="srcBeast2" location="${beast2path}/src" />
 	<property name="beast2classpath" location="${beast2path}/build" />
 	<property name="Add_on_dir" value="${release_dir}/add-on" />
-	<property name="version" value="0.2.0" />
+	<property name="version" value="0.3.0" />
 
     <import file="${beast2path}/build.xml" />
 
@@ -34,6 +35,7 @@
         <fileset dir="${libBeast2}" includes="jam.jar"/>
         <fileset dir="${libBeast2}" includes="colt.jar"/>
         <pathelement path="${beast2classpath}"/>
+        <pathelement path="${BEASTLabsclasspath}"/>
 	</path>
 
 	<!-- start -->
