@@ -47,7 +47,7 @@ public class BModelAnalyser extends Runnable {
 			burnin = 0;
 		}
 		
-		LogAnalyser analyser = new LogAnalyser(file.getAbsolutePath(), burnin);
+		LogAnalyser analyser = new LogAnalyser(file.getAbsolutePath(), burnin, false, false);
 		for (String label : analyser.getLabels()) {
 			if (label.startsWith(prefix)) {
 				Double [] trace = analyser.getTrace(label);
@@ -83,7 +83,7 @@ public class BModelAnalyser extends Runnable {
 		int treshold = 95 * trace.length / 100;
 		int sum = 0;
 		NumberFormat formatter = new DecimalFormat("##0.00");     
-		for (int i = models.size() - 1; i > 0 && sum < treshold; i--) {
+		for (int i = models.size() - 1; i >= 0 && sum < treshold; i--) {
 			int current = models.get(i);
 			int contribution = countMap.get(current);
 			sum += contribution;

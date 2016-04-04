@@ -100,6 +100,9 @@
 			<fileset dir="${buildbModelTest}">
 				<include name="**/*.class" />
 			</fileset>
+			<fileset dir="${BEASTLabsclasspath}">
+				<include name="**/*.class"/>
+			</fileset>
 			<fileset dir="${beast2classpath}">
 				<include name="**/*.class" />
 				<include name="**/*.properties" />
