@@ -47,7 +47,10 @@ public class BModelAnalyser extends Runnable {
 			burnin = 0;
 		}
 		
+		System.err.println("REPLACE FOR V2.4.1 in BModelAnalyser.run(): LogAnalyser analyser = new LogAnalyser(file.getAbsolutePath(), burnin, false, false);");
+		// for v2.4.0 LogAnalyser analyser = new LogAnalyser(file.getAbsolutePath(), burnin);
 		LogAnalyser analyser = new LogAnalyser(file.getAbsolutePath(), burnin, false, false);
+		
 		for (String label : analyser.getLabels()) {
 			if (label.startsWith(prefix)) {
 				Double [] trace = analyser.getTrace(label);

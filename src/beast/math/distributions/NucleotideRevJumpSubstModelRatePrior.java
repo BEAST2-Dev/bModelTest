@@ -56,16 +56,19 @@ public class NucleotideRevJumpSubstModelRatePrior extends Prior {
 			}
 			if (dist == null) {
 				Log.warning.println("Setting transversion rate prior to exponential(1)");
-				dist = new Exponential();
 			}
 			break;
 		case onRates:
 			if (dist == null) {
 				Log.warning.println("Setting rate prior to exponential(1)");
-				dist = new Exponential();
 			}
 			break;
 		default:
+		}
+		if (dist == null) {
+			dist = new Exponential();
+			dist.setID(getID() + "x");
+			distInput.setValue(dist, this);
 		}
 		
 		modelIndicator = modelIndicatorInput.get();
