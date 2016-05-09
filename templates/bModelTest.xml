@@ -11,8 +11,8 @@ beast.evolution.sitemodel.BEASTModelTestSiteModel.gammaCategoryCount,
 beast.evolution.sitemodel.BEASTModelTestSiteModel.shape,
 beast.evolution.sitemodel.BEASTModelTestSiteModel.proportionInvariant,
 beast.evolution.sitemodel.BEASTModelTestSiteModel.hasGammaRates,
-beast.evolution.sitemodel.BEASTModelTestSiteModel.hasInvariantSites,
-beast.evolution.sitemodel.BEASTModelTestSiteModel.hasInvariantSites,
+beast.evolution.sitemodel.BEASTModelTestSiteModel.hasInvariableSites,
+beast.evolution.sitemodel.BEASTModelTestSiteModel.hasInvariableSites,
 beast.math.distributions.BMTPrior.x,
 beast.math.distributions.BMTPrior.count,
 beast.math.distributions.NucleotideRevJumpSubstModelRatePrior.substModel,
@@ -25,8 +25,8 @@ beast.math.distributions.NucleotideRevJumpSubstModelRatePrior.distr"
         <stateNode id="BMT_ModelIndicator.s:$(n)" spec="parameter.IntegerParameter" lower="0" upper="5">5</stateNode>
         <parameter id="BMT_Rates.s:$(n)" dimension="6" lower="0.01" name="stateNode" upper="100.0">1.0</parameter>
         <parameter id="BMT_gammaShape.s:$(n)" name="stateNode">1.0</parameter>
-        <parameter id="BMT_ProportionInvariant.s:$(n)" lower="0.0" name="stateNode" upper="1.0">0.1</parameter>
-        <stateNode id="hasInvariantSites.s:$(n)" spec="parameter.IntegerParameter">1</stateNode>        
+        <parameter id="BMT_ProportionInvariable.s:$(n)" lower="0.0" name="stateNode" upper="1.0">0.1</parameter>
+        <stateNode id="hasInvariableSites.s:$(n)" spec="parameter.IntegerParameter">1</stateNode>        
         <stateNode id="hasGammaRates.s:$(n)" spec="parameter.IntegerParameter">1</stateNode>        
 
         <!-- frequencies estimation -->
@@ -42,7 +42,7 @@ beast.math.distributions.NucleotideRevJumpSubstModelRatePrior.distr"
                 </Exponential>
 	    </distribution>
 	    
-    	<distribution id="BMT_PropInvariantPrior.s:$(n)" spec="beast.math.distributions.BMTPrior" count="@hasInvariantSites.s:$(n)" x="@BMT_ProportionInvariant.s:$(n)">
+    	<distribution id="BMT_PropInvariantPrior.s:$(n)" spec="beast.math.distributions.BMTPrior" count="@hasInvariableSites.s:$(n)" x="@BMT_ProportionInvariable.s:$(n)">
 	    	<Uniform name="distr" lower="0.0" upper="1.0"/>
     	</distribution>
 
@@ -54,8 +54,8 @@ beast.math.distributions.NucleotideRevJumpSubstModelRatePrior.distr"
             </prior>
             
 	    <siteModel id="BEASTModelTest.s:$(n)" spec="beast.evolution.sitemodel.BEASTModelTestSiteModel" 
-		    gammaCategoryCount="4" proportionInvariant="@BMT_ProportionInvariant.s:$(n)" shape="@BMT_gammaShape.s:$(n)"
-		    hasGammaRates="@hasGammaRates.s:$(n)" hasInvariantSites="@hasInvariantSites.s:$(n)">
+		    gammaCategoryCount="4" proportionInvariant="@BMT_ProportionInvariable.s:$(n)" shape="@BMT_gammaShape.s:$(n)"
+		    hasGammaRates="@hasGammaRates.s:$(n)" hasInvariableSites="@hasInvariableSites.s:$(n)">
 	        <parameter id="BMT_mutationRate.s:$(n)" estimate="false" name="mutationRate">1.0</parameter>
             <substModel id="RevJump.s:$(n)" spec="beast.evolution.substitutionmodel.NucleotideRevJumpSubstModel" 
                         modelIndicator="@BMT_ModelIndicator.s:$(n)" rates="@BMT_Rates.s:$(n)"
@@ -74,8 +74,8 @@ beast.math.distributions.NucleotideRevJumpSubstModelRatePrior.distr"
 	<operator id="BMT_hasGammaRatesFlipper.s:$(n)" spec="BMTBirthDeathOperator" count="@hasGammaRates.s:$(n)" rates="@BMT_gammaShape.s:$(n)" weight="0.1"/>
         <operator id="BMT_gammaShapeScaler.s:$(n)" spec="BMTScaleOperator" count="@hasGammaRates.s:$(n)" parameter="@BMT_gammaShape.s:$(n)" scaleFactor="0.5" weight="0.5"/>
 
-	<operator id="BMT_hasInvariantSitesFlipper.s:$(n)" spec="BMTBirthDeathOperator" count="@hasInvariantSites.s:$(n)" rates="@BMT_ProportionInvariant.s:$(n)" weight="0.1"/>
-        <operator id="BMT_ProportionInvariantScaler.s:$(n)" spec="BMTScaleOperator" count="@hasInvariantSites.s:$(n)" parameter="@BMT_ProportionInvariant.s:$(n)" scaleFactor="0.5" weight="0.5"/>
+	<operator id="BMT_hasInvariableSitesFlipper.s:$(n)" spec="BMTBirthDeathOperator" count="@hasInvariableSites.s:$(n)" rates="@BMT_ProportionInvariable.s:$(n)" weight="0.1"/>
+        <operator id="BMT_ProportionInvariableScaler.s:$(n)" spec="BMTScaleOperator" count="@hasInvariableSites.s:$(n)" parameter="@BMT_ProportionInvariable.s:$(n)" scaleFactor="0.5" weight="0.5"/>
 
         <operator id='BMT_mutationRateScaler.s:$(n)' spec='ScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@BMT_mutationRate.s:$(n)"/>
         
@@ -83,9 +83,9 @@ beast.math.distributions.NucleotideRevJumpSubstModelRatePrior.distr"
         <operator id="BMT_FreqsFlipOperator.s:$(n)" spec="BitFlipOperator" parameter="@hasEqualFreqs.s:$(n)" weight="0.1"/>
         <operator id='BMT_FrequenciesExchanger.s:$(n)' spec='DeltaExchangeOperator' delta="0.01" weight="0.1" parameter="@BMT_frequencies.s:$(n)"/>
     
-        <log id="ActivePropInvariant.s:$(n)" spec='beast.math.statistic.RPNcalculator' expression="BMT_ProportionInvariant.s:$(n) hasInvariantSites.s:$(n) *">
-	        <parameter idref="BMT_ProportionInvariant.s:$(n)"/>
-	        <parameter idref="hasInvariantSites.s:$(n)"/>
+        <log id="ActivePropInvariable.s:$(n)" spec='beast.math.statistic.RPNcalculator' expression="BMT_ProportionInvariable.s:$(n) hasInvariableSites.s:$(n) *">
+	        <parameter idref="BMT_ProportionInvariable.s:$(n)"/>
+	        <parameter idref="hasInvariableSites.s:$(n)"/>
         </log>
         <log id="ActiveGammaShape.s:$(n)" spec='beast.math.statistic.RPNcalculator' expression="BMT_gammaShape.s:$(n) hasGammaRates.s:$(n) *">
 	        <parameter idref="BMT_gammaShape.s:$(n)"/>
@@ -101,8 +101,8 @@ beast.math.distributions.NucleotideRevJumpSubstModelRatePrior.distr"
             <connect srcID='BMT_ModelIndicator.s:$(n)'       targetID='state' inputName='stateNode' if='inlikelihood(BEASTModelTest.s:$(n))'/>
             <connect srcID='BMT_Rates.s:$(n)'                targetID='state' inputName='stateNode' if='inlikelihood(BEASTModelTest.s:$(n)) and BMT_Rates.s:$(n)/estimate=true'/>
             <connect srcID='BMT_gammaShape.s:$(n)'           targetID='state' inputName='stateNode' if='inlikelihood(BEASTModelTest.s:$(n)) and BMT_gammaShape.s:$(n)/estimate=true'/>
-            <connect srcID='BMT_ProportionInvariant.s:$(n)'  targetID='state' inputName='stateNode' if='inlikelihood(BEASTModelTest.s:$(n)) and BMT_ProportionInvariant.s:$(n)/estimate=true'/>
-            <connect srcID='hasInvariantSites.s:$(n)'        targetID='state' inputName='stateNode' if='inlikelihood(BEASTModelTest.s:$(n))'/>
+            <connect srcID='BMT_ProportionInvariable.s:$(n)'  targetID='state' inputName='stateNode' if='inlikelihood(BEASTModelTest.s:$(n)) and BMT_ProportionInvariable.s:$(n)/estimate=true'/>
+            <connect srcID='hasInvariableSites.s:$(n)'        targetID='state' inputName='stateNode' if='inlikelihood(BEASTModelTest.s:$(n))'/>
             <connect srcID='hasGammaRates.s:$(n)'            targetID='state' inputName='stateNode' if='inlikelihood(BEASTModelTest.s:$(n))'/>
             <connect srcID='hasEqualFreqs.s:$(n)'            targetID='state' inputName='stateNode' if='inlikelihood(BEASTModelTest.s:$(n))'/>
             <connect srcID='BMT_frequencies.s:$(n)'          targetID='state' inputName='stateNode' if='inlikelihood(BEASTModelTest.s:$(n)) and BMTfreqs.s:$(n)/empirical=false'/>
@@ -117,15 +117,15 @@ beast.math.distributions.NucleotideRevJumpSubstModelRatePrior.distr"
             
             <connect srcID='BMT_RatesPrior.s:$(n)'                targetID='prior' inputName='distribution' if='inlikelihood(BEASTModelTest.s:$(n)) and BMT_Rates.s:$(n)/estimate=true'>Prior on substitution model rates for partition s:$(n)</connect>
             <connect srcID='BMT_GammaShapePrior.s:$(n)'           targetID='prior' inputName='distribution' if='inlikelihood(BEASTModelTest.s:$(n)) and BMT_gammaShape.s:$(n)/estimate=true'>Prior on gamma shape parameter for partition s:$(n)</connect>
-            <connect srcID='BMT_PropInvariantPrior.s:$(n)'        targetID='prior' inputName='distribution' if='inlikelihood(BEASTModelTest.s:$(n)) and BMT_ProportionInvariant.s:$(n)/estimate=true'>Prior on proportion invariant for partition s:$(n)</connect>
+            <connect srcID='BMT_PropInvariantPrior.s:$(n)'        targetID='prior' inputName='distribution' if='inlikelihood(BEASTModelTest.s:$(n)) and BMT_ProportionInvariable.s:$(n)/estimate=true'>Prior on proportion invariant for partition s:$(n)</connect>
             <connect srcID='BMT_freqsPrior.s:$(n)'                targetID='prior' inputName='distribution' if='inlikelihood(BEASTModelTest.s:$(n)) and BMTfreqs.s:$(n)/empirical=false'>Prior on frequencies for partition s:$(n)</connect>
 
             <connect srcID='BMT_ModelTestOperator.s:$(n)'         targetID='mcmc' inputName='operator' if='inlikelihood(BEASTModelTest.s:$(n))'>Resersible jump of subst models for partition s:$(n)</connect>
             <connect srcID='BMT_Ratescaler.s:$(n)'                targetID='mcmc' inputName='operator' if='inlikelihood(BEASTModelTest.s:$(n)) and BMT_Rates.s:$(n)/estimate=true'>Scales subst model rates of partition s:$(n)</connect>
             <connect srcID='BMT_gammaShapeScaler.s:$(n)'          targetID='mcmc' inputName='operator' if='inlikelihood(BEASTModelTest.s:$(n)) and BMT_gammaShape.s:$(n)/estimate=true'>Scales gamma shape parameter of partition s:$(n)</connect>
-            <connect srcID='BMT_ProportionInvariantScaler.s:$(n)' targetID='mcmc' inputName='operator' if='inlikelihood(BEASTModelTest.s:$(n)) and BMT_ProportionInvariant.s:$(n)/estimate=true'>Scales proportion invariant of partition s:$(n)</connect>
+            <connect srcID='BMT_ProportionInvariableScaler.s:$(n)' targetID='mcmc' inputName='operator' if='inlikelihood(BEASTModelTest.s:$(n)) and BMT_ProportionInvariable.s:$(n)/estimate=true'>Scales proportion invariant of partition s:$(n)</connect>
             <connect srcID='BMT_hasGammaRatesFlipper.s:$(n)'      targetID='mcmc' inputName='operator' if='inlikelihood(BEASTModelTest.s:$(n))'>Switches gamma rates on/off of partition s:$(n)</connect>
-            <connect srcID='BMT_hasInvariantSitesFlipper.s:$(n)'  targetID='mcmc' inputName='operator' if='inlikelihood(BEASTModelTest.s:$(n))'>Switches invariant sites on/off of partition s:$(n)</connect>
+            <connect srcID='BMT_hasInvariableSitesFlipper.s:$(n)'  targetID='mcmc' inputName='operator' if='inlikelihood(BEASTModelTest.s:$(n))'>Switches invariant sites on/off of partition s:$(n)</connect>
             <connect srcID='BMT_FreqsFlipOperator.s:$(n)'         targetID='mcmc' inputName='operator' if='inlikelihood(BEASTModelTest.s:$(n))'>Switches equal frequencies of partition s:$(n)</connect>
             <connect srcID='BMT_FrequenciesExchanger.s:$(n)'      targetID='mcmc' inputName='operator' if='inlikelihood(BEASTModelTest.s:$(n)) and BMTfreqs.s:$(n)/empirical=false'/>
             
@@ -133,10 +133,10 @@ beast.math.distributions.NucleotideRevJumpSubstModelRatePrior.distr"
             <connect srcID='BMT_ModelIndicator.s:$(n)'            targetID='tracelog' inputName='log' if='inlikelihood(BEASTModelTest.s:$(n))'/>
             <connect srcID='BMT_Rates.s:$(n)'                     targetID='tracelog' inputName='log' if='inlikelihood(BEASTModelTest.s:$(n))'/>
             <connect srcID='BMT_gammaShape.s:$(n)'                targetID='tracelog' inputName='log' if='inlikelihood(BEASTModelTest.s:$(n))'/>
-            <connect srcID='BMT_ProportionInvariant.s:$(n)'       targetID='tracelog' inputName='log' if='inlikelihood(BEASTModelTest.s:$(n))'/>
+            <connect srcID='BMT_ProportionInvariable.s:$(n)'       targetID='tracelog' inputName='log' if='inlikelihood(BEASTModelTest.s:$(n))'/>
             <connect srcID='hasGammaRates.s:$(n)'                 targetID='tracelog' inputName='log' if='inlikelihood(BEASTModelTest.s:$(n))'/>
-            <connect srcID='hasInvariantSites.s:$(n)'             targetID='tracelog' inputName='log' if='inlikelihood(BEASTModelTest.s:$(n))'/>
-            <connect srcID='ActivePropInvariant.s:$(n)'           targetID='tracelog' inputName='log' if='inlikelihood(BEASTModelTest.s:$(n))'/>
+            <connect srcID='hasInvariableSites.s:$(n)'             targetID='tracelog' inputName='log' if='inlikelihood(BEASTModelTest.s:$(n))'/>
+            <connect srcID='ActivePropInvariable.s:$(n)'           targetID='tracelog' inputName='log' if='inlikelihood(BEASTModelTest.s:$(n))'/>
             <connect srcID='ActiveGammaShape.s:$(n)'              targetID='tracelog' inputName='log' if='inlikelihood(BEASTModelTest.s:$(n))'/>
             <connect srcID='hasEqualFreqs.s:$(n)'                 targetID='tracelog' inputName='log' if='inlikelihood(BEASTModelTest.s:$(n))'/>
             <connect srcID='BMT_frequencies.s:$(n)'               targetID='tracelog' inputName='log' if='inlikelihood(BEASTModelTest.s:$(n)) and BMTfreqs.s:$(n)/empirical=false'/>
