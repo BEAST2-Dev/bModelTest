@@ -24,7 +24,7 @@ import beast.evolution.substitutionmodel.GeneralSubstitutionModel;
 		+ "reversible nucleotide substitution models")
 public class NucleotideRevJumpSubstModel extends GeneralSubstitutionModel implements Loggable {
 	
-	public enum ModelSet {allreversible, transitionTransversionSplit, namedSimple, namedExtended};
+	public enum ModelSet {allreversible, transitionTransversionSplit, namedSimple, namedExtended, namedExtended2};
 	public Input<ModelSet> modelChoiseInput = new Input<ModelSet>("modelSet", "Which set of models to choose, one of " + Arrays.toString(ModelSet.values()), 
 			ModelSet.transitionTransversionSplit, ModelSet.values());
 	public Input<IntegerParameter> modelIndicatorInput = new Input<IntegerParameter>("modelIndicator", "number of the model to be used", Validate.REQUIRED);
@@ -218,7 +218,7 @@ public class NucleotideRevJumpSubstModel extends GeneralSubstitutionModel implem
 		{0,1,2,2,3,1},			/* M156 */
 		{0,1,2,2,3,2},			/* M125 */
 		{0,1,2,2,3,3},			/* M143 */
-		{0,1,2,2,3,4},			/* M193 */
+		{0,1,2,2,3,4},			/* M193 TVM */
 		{0,1,2,3,0,0},			/* M133 */
 		{0,1,2,3,0,1},			/* M176 */
 		{0,1,2,3,0,2},			/* M164 */
@@ -254,6 +254,8 @@ public class NucleotideRevJumpSubstModel extends GeneralSubstitutionModel implem
 	final static int NEW = 197;	
 	final static int NEW2 = 176;	
 	final static int GTR = 202;
+	final static int TVM = 176;
+	final static int K81 = 164;
 	
 	// number of groups within a model
 	int [] groupCount;
@@ -314,6 +316,21 @@ public class NucleotideRevJumpSubstModel extends GeneralSubstitutionModel implem
 			setChildren(NEW, GTR);
 			models = filterModels();
 			break;
+		case namedExtended2:
+			models = MODELS;
+	        calcSubGroupCount(models);
+			calcDag();
+			setChildren(JC69, HKY);
+			setChildren(HKY, TN93);
+			splitModels[HKY].add(K81);
+			setChildren(TN93, TIM);
+			setChildren(K81, TVM);
+			setChildren(TIM, NEW);
+			splitModels[TIM].add(NEW2);
+			setChildren(TVM, GTR);
+			setChildren(NEW, GTR);
+			models = filterModels();
+			break;			
 		}
 
         frequencies = frequenciesInput.get();
@@ -577,7 +594,7 @@ public class NucleotideRevJumpSubstModel extends GeneralSubstitutionModel implem
 	List<Integer> [] splitModels;
 	
 	
-	String toDotty() {
+	public String toDotty() {
 		if (splitModels == null) {
 			calcDag();
 		}
@@ -627,7 +644,7 @@ public class NucleotideRevJumpSubstModel extends GeneralSubstitutionModel implem
 	
 	
 	/** return whether is model1 nested in model2, eg, HKY is nested in JC96 **/
-	boolean isSplit(int m1, int m2) {
+	public boolean isSplit(int m1, int m2) {
 		if (getGroupCount(m1) + 1 != (getGroupCount(m2))) {
 			return false;
 		}
