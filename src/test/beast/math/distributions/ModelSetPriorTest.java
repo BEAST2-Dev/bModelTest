@@ -1,11 +1,13 @@
-package beast.math.distributions;
+package test.beast.math.distributions;
+
 
 import org.junit.Test;
 
 import beast.core.parameter.IntegerParameter;
 import beast.evolution.substitutionmodel.NucleotideRevJumpSubstModel;
-import beast.evolution.substitutionmodel.NucleotideRevJumpSubstModelTest;
+import beast.math.distributions.ModelSetPrior;
 import junit.framework.TestCase;
+import test.beast.evolution.substitutionmodel.NucleotideRevJumpSubstModelTest;
 
 public class ModelSetPriorTest extends TestCase {
 	

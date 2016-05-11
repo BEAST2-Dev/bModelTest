@@ -1,4 +1,4 @@
-package beast.evolution.operators;
+package test.beast.evolution.operators;
 
 import java.io.PrintStream;
 
@@ -12,12 +12,12 @@ import beast.core.State;
 import beast.core.parameter.IntegerParameter;
 import beast.core.parameter.RealParameter;
 import beast.core.util.CompoundDistribution;
+import beast.evolution.operators.BMTMergeSplitOperator;
 import beast.evolution.substitutionmodel.NucleotideRevJumpSubstModel;
-import beast.evolution.substitutionmodel.NucleotideRevJumpSubstModelTest;
+import test.beast.evolution.substitutionmodel.NucleotideRevJumpSubstModelTest;
 import beast.math.distributions.ModelSetPrior;
 import beast.math.distributions.NucleotideRevJumpSubstModelRatePrior;
 import beast.util.LogAnalyser;
-import beast.util.MyLogAnalyser;
 import beast.util.Randomizer;
 import junit.framework.TestCase;
 
@@ -156,7 +156,7 @@ public class MergeSplitOperatorTest extends TestCase {
         
         
         int [] hist = new int[substModel.getModelCount()];
-        LogAnalyser analyser = new MyLogAnalyser(logFile);
+        LogAnalyser analyser = new LogAnalyser(logFile);
         
         Double [] trace = analyser.getTrace(MODEL_ID);
         for (double d : trace) {
@@ -231,7 +231,7 @@ public class MergeSplitOperatorTest extends TestCase {
         
         
         int [] hist = new int[substModel.getModelCount()];
-        LogAnalyser analyser = new MyLogAnalyser(logFile);
+        LogAnalyser analyser = new LogAnalyser(logFile);
         
         Double [] trace = analyser.getTrace(MODEL_ID);
         for (double d : trace) {
@@ -352,7 +352,7 @@ public class MergeSplitOperatorTest extends TestCase {
         
         
         double [] hist = new double[6];
-        LogAnalyser analyser = new MyLogAnalyser(logFile);
+        LogAnalyser analyser = new LogAnalyser(logFile);
         
         Double [] trace = analyser.getTrace("paramcount");
         for (double d : trace) {

@@ -1,12 +1,14 @@
-package beast.evolution.operators;
+package test.beast.evolution.operators;
+
 
 import org.junit.Test;
 
 import beast.core.State;
 import beast.core.parameter.IntegerParameter;
 import beast.core.parameter.RealParameter;
+import beast.evolution.operators.BMTExchangeOperator;
 import beast.evolution.substitutionmodel.NucleotideRevJumpSubstModel;
-import beast.evolution.substitutionmodel.NucleotideRevJumpSubstModelTest;
+import test.beast.evolution.substitutionmodel.NucleotideRevJumpSubstModelTest;
 import beast.util.Randomizer;
 import junit.framework.TestCase;
 

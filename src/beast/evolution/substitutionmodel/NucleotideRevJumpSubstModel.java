@@ -254,7 +254,8 @@ public class NucleotideRevJumpSubstModel extends GeneralSubstitutionModel implem
 	final static int NEW = 197;	
 	final static int NEW2 = 176;	
 	final static int GTR = 202;
-	final static int TVM = 176;
+	final static int TVM = 182;
+	final static int XTRA= 176;
 	final static int K81 = 164;
 	
 	// number of groups within a model

@@ -1,9 +1,11 @@
-package beast.evolution.substitutionmodel;
+package test.beast.evolution.substitutionmodel;
 
 import org.junit.Test;
 
 import beast.core.parameter.IntegerParameter;
 import beast.core.parameter.RealParameter;
+import beast.evolution.substitutionmodel.Frequencies;
+import beast.evolution.substitutionmodel.NucleotideRevJumpSubstModel;
 import junit.framework.TestCase;
 
 public class NucleotideRevJumpSubstModelTest extends TestCase {
@@ -42,6 +44,14 @@ public class NucleotideRevJumpSubstModelTest extends TestCase {
 
 		String dotty = sm.toDotty();
 		System.out.println(dotty);
+		for (int i = 0; i < 31; i++) {
+			int [] model = sm.getModel(i);
+			System.out.print("$m[" + i + "] = ");
+			for (int d : model) {
+				System.out.print(d+1);
+			}
+			System.out.println(";");
+		}
 
 	}
 
@@ -72,6 +82,16 @@ public class NucleotideRevJumpSubstModelTest extends TestCase {
 
 	}
 
+	@Test
+	public void testNamedExtendedModel2() throws Exception {
+		NucleotideRevJumpSubstModel sm = new NucleotideRevJumpSubstModel();
+		sm.initByName("rates", new RealParameter("1.0 1.0 1.0 1.0 1.0 1.0"), "modelIndicator", new IntegerParameter("0"), "frequencies", getFreqs(),
+				"modelSet", NucleotideRevJumpSubstModel.ModelSet.namedExtended2);
+		String dotty = sm.toDotty();
+		System.out.println(dotty);
+		assertEquals(9, sm.getModelCount());
+	}
+	
 	@Test
 	public void testNamedModel() throws Exception {
 		NucleotideRevJumpSubstModel sm = new NucleotideRevJumpSubstModel();

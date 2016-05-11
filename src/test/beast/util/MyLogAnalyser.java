@@ -1,4 +1,6 @@
-package beast.util;
+package test.beast.util;
+
+import beast.util.LogAnalyser;
 
 public class MyLogAnalyser extends LogAnalyser {
 
@@ -7,5 +9,5 @@ public class MyLogAnalyser extends LogAnalyser {
 	}
 
 	// suppress stats calculation
-	void calcStats() {};
+	public void calcStats() {};
 }
