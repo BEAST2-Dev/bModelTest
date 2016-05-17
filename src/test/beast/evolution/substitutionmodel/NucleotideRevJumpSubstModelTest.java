@@ -73,20 +73,20 @@ public class NucleotideRevJumpSubstModelTest extends TestCase {
 
 	}
 
-	@Test
-	public void testNamedExtendedModel() throws Exception {
-		NucleotideRevJumpSubstModel sm = new NucleotideRevJumpSubstModel();
-		sm.initByName("rates", new RealParameter("1.0 1.0 1.0 1.0 1.0 1.0"), "modelIndicator", new IntegerParameter("0"), "frequencies", getFreqs(),
-				"modelSet", NucleotideRevJumpSubstModel.ModelSet.namedExtended);
-		assertEquals(7, sm.getModelCount());
-
-	}
+//	@Test
+//	public void testNamedExtendedModel() throws Exception {
+//		NucleotideRevJumpSubstModel sm = new NucleotideRevJumpSubstModel();
+//		sm.initByName("rates", new RealParameter("1.0 1.0 1.0 1.0 1.0 1.0"), "modelIndicator", new IntegerParameter("0"), "frequencies", getFreqs(),
+//				"modelSet", NucleotideRevJumpSubstModel.ModelSet.namedExtended);
+//		assertEquals(7, sm.getModelCount());
+//
+//	}
 
 	@Test
 	public void testNamedExtendedModel2() throws Exception {
 		NucleotideRevJumpSubstModel sm = new NucleotideRevJumpSubstModel();
 		sm.initByName("rates", new RealParameter("1.0 1.0 1.0 1.0 1.0 1.0"), "modelIndicator", new IntegerParameter("0"), "frequencies", getFreqs(),
-				"modelSet", NucleotideRevJumpSubstModel.ModelSet.namedExtended2);
+				"modelSet", NucleotideRevJumpSubstModel.ModelSet.namedExtended);
 		String dotty = sm.toDotty();
 		System.out.println(dotty);
 		assertEquals(9, sm.getModelCount());

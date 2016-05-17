@@ -24,7 +24,7 @@ import beast.evolution.substitutionmodel.GeneralSubstitutionModel;
 		+ "reversible nucleotide substitution models")
 public class NucleotideRevJumpSubstModel extends GeneralSubstitutionModel implements Loggable {
 	
-	public enum ModelSet {allreversible, transitionTransversionSplit, namedSimple, namedExtended, namedExtended2};
+	public enum ModelSet {allreversible, transitionTransversionSplit, namedSimple, namedExtended};
 	public Input<ModelSet> modelChoiseInput = new Input<ModelSet>("modelSet", "Which set of models to choose, one of " + Arrays.toString(ModelSet.values()), 
 			ModelSet.transitionTransversionSplit, ModelSet.values());
 	public Input<IntegerParameter> modelIndicatorInput = new Input<IntegerParameter>("modelIndicator", "number of the model to be used", Validate.REQUIRED);
@@ -305,19 +305,19 @@ public class NucleotideRevJumpSubstModel extends GeneralSubstitutionModel implem
 			splitModels[3] = new ArrayList<>();
 			mergedModels[0] = new ArrayList<>();
 			break;
+//		case namedExtended:
+//			models = MODELS;
+//	        calcSubGroupCount(models);
+//			calcDag();
+//			setChildren(JC69, HKY);
+//			setChildren(HKY, TN93);
+//			setChildren(TN93, TIM);
+//			setChildren(TIM, NEW);
+//			splitModels[TIM].add(NEW2);
+//			setChildren(NEW, GTR);
+//			models = filterModels();
+//			break;
 		case namedExtended:
-			models = MODELS;
-	        calcSubGroupCount(models);
-			calcDag();
-			setChildren(JC69, HKY);
-			setChildren(HKY, TN93);
-			setChildren(TN93, TIM);
-			setChildren(TIM, NEW);
-			splitModels[TIM].add(NEW2);
-			setChildren(NEW, GTR);
-			models = filterModels();
-			break;
-		case namedExtended2:
 			models = MODELS;
 	        calcSubGroupCount(models);
 			calcDag();
