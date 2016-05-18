@@ -59,7 +59,7 @@ beast.math.distributions.NucleotideRevJumpSubstModelRatePrior.distr"
             <substModel id="RevJump.s:$(n)" spec="beast.evolution.substitutionmodel.NucleotideRevJumpSubstModel" 
                         modelIndicator="@BMT_ModelIndicator.s:$(n)" rates="@BMT_Rates.s:$(n)"
                         modelSet="transitionTransversionSplit">
-                        <frequencies id="BMTfreqs.s:$(n)" spec="ModelFrequencies" data="@$(n)" hasEqualFreqs='@hasEqualFreqs.s:$(n)'  empirical="true"/>
+                        <frequencies id="BMTfreqs.s:$(n)" spec="ModelFrequencies" data="@$(n)" hasEqualFreqs='@hasEqualFreqs.s:$(n)'  empirical="false"/>
                         <!--
                         <frequencies id="freqs.s:$(n)" spec="ModelFrequencies" frequencies="@BMT_frequencies.s:$(n)" hasEqualFreqs='@hasEqualFreqs.s:$(n)' empirical="false"/>
                         -->
