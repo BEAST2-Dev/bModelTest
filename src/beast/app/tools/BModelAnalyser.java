@@ -1,8 +1,11 @@
 package beast.app.tools;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -27,6 +30,7 @@ import beast.core.Input;
 import beast.core.Input.Validate;
 import beast.core.parameter.IntegerParameter;
 import beast.core.parameter.RealParameter;
+import beast.core.util.Log;
 import beast.evolution.substitutionmodel.Frequencies;
 import beast.evolution.substitutionmodel.NucleotideRevJumpSubstModel;
 import beast.core.Runnable;
@@ -37,7 +41,8 @@ public class BModelAnalyser extends Runnable {
 	public Input<LogFile> traceFileInput = new Input<>("file","trace log file containing output of a bModelTest analysis", Validate.REQUIRED);
 	public Input<String> prefixInput = new Input<>("prefix", "prefix of the entry in the log file containing the substitution model trace (default 'substmodel')" , "substmodel");
 	public Input<Integer> burninInput = new Input<>("burnin", "percentage of the log file to disregard as burn-in (default 10)" , 10);
-
+	public Input<Boolean> useBrowseInput = new Input<>("useBrowserForVisualisation", "use default web browser for visualising the dot graph. "
+			+ "Since not all browsers support all features, the alternative is to use an internal viewer, which requires an up to date Java 8 version.", true);
 	
 	@Override
 	public void initAndValidate() {
@@ -115,20 +120,22 @@ public class BModelAnalyser extends Runnable {
 		System.out.println();
 		
 		String dotty = toDotty(models2, countMap, isIn95HPD, trace.length);
-		//System.out.println(dotty);
-		
-		
 		String jsPath = getJavaScriptPath();
-		
-		
-		
+		try {
+	        FileWriter outfile = new FileWriter(jsPath + "/bModelTest.dot");
+	        outfile.write(dotty);
+	        outfile.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 		String html = "<html>\n" + 
 				"<header>\n" + 
-				"<script data-main='" + jsPath + "/bower_components/main' src='" + jsPath + "/bower_components/requirejs/require.js'></script>\n" + 
+				"<script data-main='" + jsPath + "/main' src='" + jsPath + "/requirejs/require.js'></script>\n" + 
 				" \n" + 
 				"<script>\n" + 
 				"requirejs.config({\n" + 
-				"    //By default load any module IDs from js/lib\n" + 
+				"    //By default load any module IDs from js-directory\n" + 
 				"    baseUrl: '"+jsPath+"',\n" + 
 				"    //except, if the module ID starts with 'app',\n" + 
 				"    //load it from the js/app directory. paths\n" + 
@@ -136,36 +143,42 @@ public class BModelAnalyser extends Runnable {
 				"    //never includes a '.js' extension since\n" + 
 				"    //the paths config could be for a directory.\n" + 
 				"    paths: {\n" + 
-				"        d3: 'bower_components/d3/d3',\n" + 
-				"        'dot-checker': 'bower_components/graphviz-d3-renderer/dist/dot-checker',\n" + 
-				"        'layout-worker': 'bower_components/graphviz-d3-renderer/dist/layout-worker',\n" + 
-				"        worker: 'bower_components/requirejs-web-workers/src/worker',\n" + 
-				"        renderer: 'bower_components/graphviz-d3-renderer/dist/renderer'\n" + 
+				"        d3: 'd3/d3',\n" + 
+				"        'dot-checker': 'graphviz-d3-renderer/dist/dot-checker',\n" + 
+				"        'layout-worker': 'graphviz-d3-renderer/dist/layout-worker',\n" + 
+				"        worker: 'requirejs-web-workers/src/worker',\n" + 
+				"        renderer: 'graphviz-d3-renderer/dist/renderer'\n" + 
 				"    }\n" + 
-				"});\n" + 
-				"</script>\n" + 
-				"\n" + 
-				"</header>\n" + 
-				"<body>\n" + 
-				"\n" + 
-				"\n" + 
-				"<svg id='graph' width='1224' height='1024'></svg>\n" + 
-				"\n" + 
+				"});\n" +
+				"</script>\n" +
+"\n" +
+"</header>\n" +
+"<body>\n" +
+"\n" +
+"<svg id='graph' width='1224' height='1024'></svg>\n" +
+"\n" +
+
 				"<script>\n" + 
 				"require(['renderer'],\n" + 
 				"  function (renderer) {\n" + 
 				"\n" + 
-				"  dotSource = '" + dotty.replaceAll("\n", "\\\\\n")+ "';\n" + 
+				"var client = new XMLHttpRequest();\n" + 
+				"client.open('GET', 'bModelTest.dot');\n" + 
+				"client.onreadystatechange = function() {\n" + 
+				"  dotSource = client.responseText;\n" + 
 				"  // initialize svg stage\n" + 
 				"  renderer.init('#graph');\n" + 
 				"\n" + 
 				"  // update stage with new dot source\n" + 
 				"  renderer.render(dotSource);\n" + 
-				"});\n" + 
+				"}\n" + 
+				"client.send();\n" + 
 				"\n" + 
+				"});\n" + 
 				"</script>\n" + 
 				"\n" + 
-				"</body>";
+				"</body>\n" +
+				"</html>";
 		try {
 	        FileWriter outfile = new FileWriter(jsPath + "/bModelTest.html");
 	        outfile.write(html);
@@ -174,8 +187,51 @@ public class BModelAnalyser extends Runnable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		new js.ConsoleApp("BModelAnalyser", jsPath);
+		
+		if (useBrowseInput.get()) {
+			try {
+				openUrl("file://" + jsPath + "/bModelTest.html");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			new beast.app.tools.WebViewer("BModelAnalyser", jsPath);
+		}
 	}
+	
+	void openUrl(String url) throws IOException {
+	    if(Desktop.isDesktopSupported()){
+	        Desktop desktop = Desktop.getDesktop();
+	        try {
+	            desktop.browse(new URI(url));
+	            return;
+	        } catch (IOException | URISyntaxException e) {
+	            // TODO Auto-generated catch block
+	            e.printStackTrace();
+	        }
+	    }
+	    if (Utils.isWindows()) {
+	    	Runtime rt = Runtime.getRuntime();
+	    	rt.exec( "rundll32 url.dll,FileProtocolHandler " + url);
+	    } else if (Utils.isMac()) {
+	    	Runtime rt = Runtime.getRuntime();
+	    	rt.exec( "open" + url);
+	    } else {
+	    	// Linux:
+	    	Runtime rt = Runtime.getRuntime();
+	    	String[] browsers = {"epiphany", "firefox", "mozilla", "konqueror",
+	    	                                 "netscape","opera","links","lynx"};
+
+	    	StringBuffer cmd = new StringBuffer();
+	    	for (int i=0; i<browsers.length; i++) {
+	    	     cmd.append( (i==0  ? "" : " || " ) + browsers[i] +" \"" + url + "\" ");
+	    	}
+	    	rt.exec(new String[] { "sh", "-c", cmd.toString() });
+	    }
+	    
+	   }
+	
 	
 	private String getJavaScriptPath() {
 		String classpath = System.getProperty("java.class.path");
@@ -185,23 +241,18 @@ public class BModelAnalyser extends Runnable {
 			FILESEP = "\\\\";
 		}
 		for (String pathEntry : classpathEntries) {
-			File parentFile = (new File(pathEntry)).getParentFile();
-			if (parentFile.getName().toLowerCase().equals("lib")) {
-				parentFile = parentFile.getParentFile();
-			}
-			String parent = parentFile.getPath();
-			String s = parent + FILESEP + "js" + FILESEP +
-					"bower_components" + FILESEP + "requirejs" + FILESEP +
-					"require.js";
-			System.out.print("Trying >" + s + "< ");
-			if (new File(s).exists()) {
-				System.out.println("Got it!");
+			Log.debug.print("Trying >" + pathEntry + "< ");
+			if (new File(pathEntry).getName().toLowerCase().equals("bmodeltest.addon.jar")) {
+				Log.debug.println("Got it!");
+				File parentFile = (new File(pathEntry)).getParentFile().getParentFile();
+				String parent = parentFile.getPath();
 				return parent + FILESEP + "js";
 			}
-			System.out.println("No luck ");
+			Log.debug.println("No luck ");
 		}
-		// TODO Auto-generated method stub
-		return null;
+		String jsPath = System.getProperty("user.dir") + FILESEP + "js";
+		Log.debug.println("Using default: " + jsPath);
+		return jsPath;
 	}
 
 	private String toDotty(List<Integer> models, Map<Integer, Integer> countMap, Set<Integer> isIn95HPD, int n) {
