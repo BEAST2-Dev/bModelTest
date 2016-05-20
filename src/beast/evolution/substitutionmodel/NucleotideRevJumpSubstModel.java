@@ -625,6 +625,30 @@ public class NucleotideRevJumpSubstModel extends GeneralSubstitutionModel implem
 		return sb.toString();
 	}
 	
+	public String toDottyGraphOnly() {
+		if (splitModels == null) {
+			calcDag();
+		}
+		
+		String [] labels = new String[models.length];
+		for (int i = 0; i < models.length; i++) {
+			labels[i] = "";
+			for (int j : getModel(i)) {
+				labels[i] += (j+1);
+			}				
+		}
+
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < models.length; i++) {
+			for (int j : splitModels[i]) {
+				sb.append(labels[i] + " -> ");
+				sb.append(labels[j]);
+				sb.append(";\n");
+			}
+		}
+		return sb.toString();
+	}
+
 	private void calcDag() {
 		mergedModels = new List[models.length];
 		splitModels = new List[models.length];
