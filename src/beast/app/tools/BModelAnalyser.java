@@ -16,8 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.sun.javafx.util.Utils;
-
+import beast.app.BEASTVersion2;
 import beast.app.beauti.BeautiConfig;
 import beast.app.beauti.BeautiDoc;
 import beast.app.draw.BEASTObjectDialog;
@@ -25,6 +24,7 @@ import beast.app.draw.BEASTObjectPanel;
 import beast.app.util.Application;
 import beast.app.util.ConsoleApp;
 import beast.app.util.LogFile;
+import beast.app.util.Utils;
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.Input.Validate;
@@ -33,6 +33,7 @@ import beast.core.parameter.RealParameter;
 import beast.core.util.Log;
 import beast.evolution.substitutionmodel.Frequencies;
 import beast.evolution.substitutionmodel.NucleotideRevJumpSubstModel;
+import beast.evolution.substitutionmodel.NucleotideRevJumpSubstModel.ModelSet;
 import beast.core.Runnable;
 import beast.util.LogAnalyser;
 
@@ -41,8 +42,13 @@ public class BModelAnalyser extends Runnable {
 	public Input<LogFile> traceFileInput = new Input<>("file","trace log file containing output of a bModelTest analysis", Validate.REQUIRED);
 	public Input<String> prefixInput = new Input<>("prefix", "prefix of the entry in the log file containing the substitution model trace (default 'substmodel')" , "substmodel");
 	public Input<Integer> burninInput = new Input<>("burnin", "percentage of the log file to disregard as burn-in (default 10)" , 10);
+	public Input<ModelSet> modelSetInput = new Input<>("modelSet", "Which set of models to choose, should be the same as used in the BEAST XML that generated the log file", 
+			ModelSet.transitionTransversionSplit, ModelSet.values());
 	public Input<Boolean> useBrowseInput = new Input<>("useBrowserForVisualisation", "use default web browser for visualising the dot graph. "
 			+ "Since not all browsers support all features, the alternative is to use an internal viewer, which requires an up to date Java 8 version.", true);
+	
+	
+	double max = 0;
 	
 	@Override
 	public void initAndValidate() {
@@ -66,15 +72,17 @@ public class BModelAnalyser extends Runnable {
 		// for v2.4.0 LogAnalyser analyser = new LogAnalyser(file.getAbsolutePath(), burnin);
 		LogAnalyser analyser = new LogAnalyser(file.getAbsolutePath(), burnin, false, false);
 		
+		int  instance = 0;
 		for (String label : analyser.getLabels()) {
 			if (label.startsWith(prefix)) {
 				Double [] trace = analyser.getTrace(label);
-				processTrace(label, trace);
+				processTrace(label, trace, instance);
+				instance++;
 			}
 		}
 	}
 
-	private void processTrace(String label, Double[] trace) {
+	private void processTrace(String label, Double[] trace, int instance) {
 		System.out.println(label);
 		int [] model = new int[trace.length];
 		for (int i = 0; i < trace.length; i++) {
@@ -104,33 +112,62 @@ public class BModelAnalyser extends Runnable {
 		int treshold = 95 * trace.length / 100;
 		int sum = 0;
 		NumberFormat formatter = new DecimalFormat("##0.00");     
-		for (int i = models.size() - 1; i >= 0 && sum < treshold; i--) {
+		StringBuilder b = new StringBuilder();
+		b.append("<tr><th>posterior support</th><th>cummulative support</th><th>model</th></tr>");
+		int i = 0;
+		for (i = models.size() - 1; i >= 0 && sum < treshold; i--) {
 			int current = models.get(i);
 			int contribution = countMap.get(current);
 			sum += contribution;
 			double con = 100*(contribution + 0.0)/trace.length;
 			if (con < 10) {
 				System.out.print(" ");
+				b.append(" ");
 			}
 			System.out.print(formatter.format(con) + "% " );
 			System.out.print(formatter.format(100*(sum + 0.0)/trace.length) + "% " );
 			System.out.println(current);
+			b.append("<tr" + (i%2 == 0 ? "" : " class='alt'")+ "><td>" + formatter.format(con) + "% " + "</td>");
+			b.append("<td>" + formatter.format(100*(sum + 0.0)/trace.length) + "% </td>" );
+			b.append("<td>" + current + "</td></tr>\n");
 			isIn95HPD.add(current);
 		}
 		System.out.println();
+
+		b.append("<tr class='ruled'><td/><td/><td/></tr>\n");
+		int listed = isIn95HPD.size();
+		while (i >= 0) {
+			int current = models.get(i);
+			int contribution = countMap.get(current);
+			sum += contribution;
+			double con = 100*(contribution + 0.0)/trace.length;
+			if (con > 0.1) {
+				b.append("<tr" + (i%2 == 0 ? "" : " class='alt'")+ "><td>" + formatter.format(con) + "% " + "</td>");
+				b.append("<td>" + formatter.format(100*(sum + 0.0)/trace.length) + "% </td>" );
+				b.append("<td>" + current + "</td></tr>\n");
+				listed++;
+			}
+			i--;
+		}
+		
 		
 		String dotty = toDotty(models2, countMap, isIn95HPD, trace.length);
 		String jsPath = getJavaScriptPath();
 		try {
-	        FileWriter outfile = new FileWriter(jsPath + "/bModelTest.dot");
+	        FileWriter outfile = new FileWriter(jsPath + "/bModelTest" + instance + ".dot");
 	        outfile.write(dotty);
 	        outfile.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
+		String log = traceFileInput.get().getName();
+		String header = "<h2> File: " + log + " item: " + label + "</h2>";
+
 		String html = "<html>\n" + 
+				"<title>BEAST " + new BEASTVersion2().getVersionString() + ": BModelAnalyser</title>\n" +
 				"<header>\n" + 
+				"<link rel='stylesheet' type='text/css' href='css/style.css'>\n" +
 				"<script data-main='" + jsPath + "/main' src='" + jsPath + "/requirejs/require.js'></script>\n" + 
 				" \n" + 
 				"<script>\n" + 
@@ -151,19 +188,34 @@ public class BModelAnalyser extends Runnable {
 				"    }\n" + 
 				"});\n" +
 				"</script>\n" +
-"\n" +
-"</header>\n" +
-"<body>\n" +
-"\n" +
-"<svg id='graph' width='1224' height='1024'></svg>\n" +
-"\n" +
-
+				"\n" +
+				"</header>\n" +
+				"<body>\n" +
+				header + "\n" +
+				"<div>Models with blue circles are inside 95%HPD, red outside, and without circles have at most " + formatter.format(max) + "% support.</div>\n" + 
+				"<table><tr class='x'><td class='x'><table>" + b.toString() + "</table>"
+						+ "   <div style=\"height:" + (1024 - 82 - listed * 29) + "\"></div></td>\n" +
+				"<td class='x'><svg id='graph' width='1224' height='1024'></svg></td></table>\n" +
+				"\n" +
+				"<div id=\"img\" onclick=\"continueExecution()\">Create downloadable image</div>\n" + 
+				"\n" + 
 				"<script>\n" + 
+				"  continueExecution = function() {\n" + 
+				"var html = d3.select(\"svg\")\n" + 
+				"        .attr(\"title\", \"bModelTest\")\n" + 
+				"        .attr(\"version\", 1.1)\n" + 
+				"        .attr(\"xmlns\", \"http://www.w3.org/2000/svg\")\n" + 
+				"        .node().parentNode.innerHTML;\n" + 
+				"d3.select(\"#img\")\n" + 
+				"        .html(\"Right-click on this preview and choose Save as<br />Left-Click to dismiss<br />\")\n" + 
+				"        .append(\"img\")\n" + 
+				"        .attr(\"src\", \"data:image/svg+xml;base64,\"+ btoa(html));\n" + 
+				"}\n" + 
 				"require(['renderer'],\n" + 
 				"  function (renderer) {\n" + 
 				"\n" + 
 				"var client = new XMLHttpRequest();\n" + 
-				"client.open('GET', 'bModelTest.dot');\n" + 
+				"client.open('GET', 'bModelTest" + instance + ".dot');\n" + 
 				"client.onreadystatechange = function() {\n" + 
 				"  dotSource = client.responseText;\n" + 
 				"  // initialize svg stage\n" + 
@@ -180,7 +232,7 @@ public class BModelAnalyser extends Runnable {
 				"</body>\n" +
 				"</html>";
 		try {
-	        FileWriter outfile = new FileWriter(jsPath + "/bModelTest.html");
+	        FileWriter outfile = new FileWriter(jsPath + "/bModelTest" + instance + ".html");
 	        outfile.write(html);
 	        outfile.close();
 		} catch (IOException e) {
@@ -190,13 +242,13 @@ public class BModelAnalyser extends Runnable {
 		
 		if (useBrowseInput.get()) {
 			try {
-				openUrl("file://" + jsPath + "/bModelTest.html");
+				openUrl("file://" + jsPath + "/bModelTest" + instance + ".html");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} else {
-			new beast.app.tools.WebViewer("BModelAnalyser", jsPath);
+			new beast.app.tools.WebViewer("BModelAnalyser", "file://" + jsPath + "/bModelTest" + instance + ".html");
 		}
 	}
 	
@@ -261,12 +313,13 @@ public class BModelAnalyser extends Runnable {
 		frequencies.initByName("frequencies", "0.25 0.25 0.25 0.25");
 		NucleotideRevJumpSubstModel sm = new NucleotideRevJumpSubstModel();
 		sm.initByName("rates", new RealParameter("1.0 1.0 1.0 1.0 1.0 1.0"), "modelIndicator", new IntegerParameter("0"), "frequencies", frequencies,
-				"modelSet", NucleotideRevJumpSubstModel.ModelSet.transitionTransversionSplit);
+				"modelSet", modelSetInput.get());
 
 	
 		
 		StringBuilder b = new StringBuilder();
 		b.append("digraph {\n");
+			b.append(" graph [mindist=0.0, nodesep=0.25, ranksep=0.4]\n;");
 			b.append(" node [fontsize=\"9\", style=\"solid\", color=\"#0000FF60\"];\n");
 			b.append(" \n");
 			
@@ -277,7 +330,8 @@ public class BModelAnalyser extends Runnable {
 				sum += con;
 			}
 			sum = 1.5 * sum / models.size();
-		
+			max = 0;
+			
 			for (int i = 0; i < sm.getModelCount(); i++) {
 				int [] model = sm.getModel(i);
 				int modelID = 0;
@@ -290,7 +344,12 @@ public class BModelAnalyser extends Runnable {
 				int current = modelID;
 				int contribution = countMap.containsKey(current)? countMap.get(current) : 0;
 				double con = Math.sqrt((contribution + 0.0)/n) / sum;
-				b.append(current + " [width=" + con + ", height=" + con+", fixedsize=\"true\"" + (isIn95HPD.contains(current) ? "" : ", color=\"#FF000060\"")+ "];\n");
+				if (con <= 0.1) {
+					b.append(current + " [width=0.25, height=0.25, fixedsize=\"true\",color=\"#FFFFFF\"];\n");
+					max = Math.max(max, 100 * (contribution + 0.0)/n);
+				} else {
+					b.append(current + " [width=" + con + ", height=" + con +", fixedsize=\"true\"" + (isIn95HPD.contains(current) ? "" : ", color=\"#FF000060\"") +"];\n");
+				}
 			}
 			b.append(" \n");
 			b.append(sm.toDottyGraphOnly());
@@ -328,10 +387,10 @@ public class BModelAnalyser extends Runnable {
 			if (dialog.showDialog()) {
 				dialog.accept(analyser, doc);
 				// create a console to show standard error and standard output
-				app = new ConsoleApp("BModelAnalyser", 
-						"BModelAnalyser: " + analyser.traceFileInput.get().getPath(),
-						null
-						);
+				//app = new ConsoleApp("BModelAnalyser", 
+				//		"BModelAnalyser: " + analyser.traceFileInput.get().getPath(),
+				//		null
+				//		);
 				analyser.initAndValidate();
 				analyser.run();
 			}

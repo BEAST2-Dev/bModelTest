@@ -21,7 +21,8 @@ public class WebViewer extends JFrame {
 	private final JFXPanel jfxPanel = new JFXPanel();
 	private WebEngine engine;
 	static String title = "BEAST " + new BEASTVersion2().getVersionString();
-	static String jsPath = System.getProperty("user.dir") +"/js";
+	static String url = System.getProperty("user.dir") +"/js";
+	static int instance = 0;
 
 	private final JPanel panel = new JPanel(new BorderLayout());
 
@@ -29,9 +30,9 @@ public class WebViewer extends JFrame {
 		super();
 	}
 
-	public WebViewer(String title, String jsPath) {
+	public WebViewer(String title, String url) {
 		WebViewer.title = WebViewer.title + " " + title;
-		WebViewer.jsPath = jsPath;
+		WebViewer.url = url;
 		WebViewer.main(new String[] {});
 	}
 
@@ -59,7 +60,7 @@ public class WebViewer extends JFrame {
 				engine = view.getEngine();
 
 		        // load the home page        
-				engine.load("file://" + jsPath + "/bModelTest.html");
+				engine.load(url);
 
 				jfxPanel.setScene(new Scene(view));
 			}
