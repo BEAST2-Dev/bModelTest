@@ -113,7 +113,7 @@ public class BModelAnalyser extends Runnable {
 		int sum = 0;
 		NumberFormat formatter = new DecimalFormat("##0.00");     
 		StringBuilder b = new StringBuilder();
-		b.append("<tr><th>posterior support</th><th>cummulative support</th><th>model</th></tr>");
+		b.append("<tr><th>posterior support</th><th>cumulative support</th><th>model</th></tr>");
 		int i = 0;
 		for (i = models.size() - 1; i >= 0 && sum < treshold; i--) {
 			int current = models.get(i);
@@ -192,7 +192,7 @@ public class BModelAnalyser extends Runnable {
 				"</header>\n" +
 				"<body>\n" +
 				header + "\n" +
-				"<div>Models with blue circles are inside 95%HPD, red outside, and without circles have at most " + formatter.format(max) + "% support.</div>\n" + 
+				"<div>Models with blue circles are inside 95%HPD, red outside, and without circles have " + (max > 0 ? "at most " : "") + formatter.format(max) + "% support.</div>\n" + 
 				"<table><tr class='x'><td class='x'><table>" + b.toString() + "</table>"
 						+ "   <div style=\"height:" + (1024 - 82 - listed * 29) + "\"></div></td>\n" +
 				"<td class='x'><svg id='graph' width='1224' height='1024'></svg></td></table>\n" +
