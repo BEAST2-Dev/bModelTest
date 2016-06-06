@@ -253,6 +253,7 @@ public class BModelAnalyser extends Runnable {
 	}
 	
 	void openUrl(String url) throws IOException {
+		url = url.replaceAll(" ", "%20");
 	    if(Desktop.isDesktopSupported()){
 	        Desktop desktop = Desktop.getDesktop();
 	        try {
@@ -293,17 +294,17 @@ public class BModelAnalyser extends Runnable {
 			FILESEP = "\\\\";
 		}
 		for (String pathEntry : classpathEntries) {
-			Log.debug.print("Trying >" + pathEntry + "< ");
+			//Log.debug.print("Trying >" + pathEntry + "< ");
 			if (new File(pathEntry).getName().toLowerCase().equals("bmodeltest.addon.jar")) {
 				Log.debug.println("Got it!");
 				File parentFile = (new File(pathEntry)).getParentFile().getParentFile();
 				String parent = parentFile.getPath();
 				return parent + FILESEP + "js";
 			}
-			Log.debug.println("No luck ");
+			//Log.debug.println("No luck ");
 		}
 		String jsPath = System.getProperty("user.dir") + FILESEP + "js";
-		Log.debug.println("Using default: " + jsPath);
+		//Log.debug.println("Using default: " + jsPath);
 		return jsPath;
 	}
 
@@ -387,10 +388,10 @@ public class BModelAnalyser extends Runnable {
 			if (dialog.showDialog()) {
 				dialog.accept(analyser, doc);
 				// create a console to show standard error and standard output
-				//app = new ConsoleApp("BModelAnalyser", 
-				//		"BModelAnalyser: " + analyser.traceFileInput.get().getPath(),
-				//		null
-				//		);
+				app = new ConsoleApp("BModelAnalyser", 
+						"BModelAnalyser: " + analyser.traceFileInput.get().getPath(),
+						null
+						);
 				analyser.initAndValidate();
 				analyser.run();
 			}
