@@ -93,6 +93,11 @@ public class BMTMergeSplitOperator extends Operator {
 			newrates[i1] = r1;
 			newrates[i2] = r2;
 			for (int i = 0; i < substModel.getGroupCount(newModelID); i++) {
+				if (newrates[i] < rates.getLower() || newrates[i] > rates.getUpper()) {
+					return Double.NEGATIVE_INFINITY;
+				}
+			}
+			for (int i = 0; i < substModel.getGroupCount(newModelID); i++) {
 				rates.setValue(i, newrates[i]);
 			}
 			
@@ -152,6 +157,12 @@ public class BMTMergeSplitOperator extends Operator {
 				newrates[newModel[i]] =  rates.getValue(model[i]);				
 			}
 			newrates[Math.min(i1, i2)] = r;
+			
+			for (int i = 0; i < substModel.getGroupCount(newModelID); i++) {
+				if (newrates[i] < rates.getLower() || newrates[i] > rates.getUpper()) {
+					return Double.NEGATIVE_INFINITY;
+				}
+			}
 			for (int i = 0; i < substModel.getGroupCount(newModelID); i++) {
 				rates.setValue(i, newrates[i]);
 			}
