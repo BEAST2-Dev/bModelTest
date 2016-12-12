@@ -360,7 +360,7 @@ public class BModelAnalyser extends Runnable {
 			b.append("123456 [label=\"SYM\\nGTR\"]\n");
 			b.append("121131 [label=\"121131\\nTN93\"]\n");
 			b.append("123341 [label=\"123341\\nTIM\"]\n");
-			b.append("123421 [label=\"123421\\nTVM\"]\n");
+			b.append("123425 [label=\"123425\\nTVM\"]\n");
 			b.append("123321 [label=\"123321\\nK81\"]\n");
 			b.append("}\n");
 		return b.toString();

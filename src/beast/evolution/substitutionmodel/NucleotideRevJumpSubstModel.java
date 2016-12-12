@@ -209,7 +209,7 @@ public class NucleotideRevJumpSubstModel extends GeneralSubstitutionModel implem
 		{0,1,2,2,1,0},	 // Kimura 81		/* M122 */
 		{0,1,2,2,1,1},			/* M52 */
 		{0,1,2,2,1,2},			/* M50 */
-		{0,1,2,2,1,3},			/* M157 */
+		{0,1,2,2,1,3},			/* M157 NEW2 */
 		{0,1,2,2,2,0},			/* M61 */
 		{0,1,2,2,2,1},			/* M51 */
 		{0,1,2,2,2,2},			/* M33 */
@@ -218,7 +218,7 @@ public class NucleotideRevJumpSubstModel extends GeneralSubstitutionModel implem
 		{0,1,2,2,3,1},			/* M156 */
 		{0,1,2,2,3,2},			/* M125 */
 		{0,1,2,2,3,3},			/* M143 */
-		{0,1,2,2,3,4},			/* M193 TVM */
+		{0,1,2,2,3,4},			/* M193 NEW */
 		{0,1,2,3,0,0},			/* M133 */
 		{0,1,2,3,0,1},			/* M176 */
 		{0,1,2,3,0,2},			/* M164 */
@@ -233,7 +233,7 @@ public class NucleotideRevJumpSubstModel extends GeneralSubstitutionModel implem
 		{0,1,2,3,2,1},			/* M153 */
 		{0,1,2,3,2,2},			/* M124 */
 		{0,1,2,3,2,3},			/* M144 */
-		{0,1,2,3,2,4},			/* M192 */
+		{0,1,2,3,2,4},			/* M192 TVM */
 		{0,1,2,3,3,0},			/* M160 */
 		{0,1,2,3,3,1},			/* M148 */
 		{0,1,2,3,3,2},			/* M145 */
@@ -251,10 +251,10 @@ public class NucleotideRevJumpSubstModel extends GeneralSubstitutionModel implem
 	final static int HKY = 55;
 	final static int TN93 = 58;
 	final static int TIM = 172;
-	final static int NEW = 197;	
-	final static int NEW2 = 176;	
+	final static int NEW = 176;	
+	final static int NEW2 = 167;	
 	final static int GTR = 202;
-	final static int TVM = 182;
+	final static int TVM = 190;
 	final static int XTRA= 176;
 	final static int K81 = 164;
 	
@@ -325,9 +325,9 @@ public class NucleotideRevJumpSubstModel extends GeneralSubstitutionModel implem
 			setChildren(HKY, TN93);
 			splitModels[HKY].add(K81);
 			setChildren(TN93, TIM);
-			setChildren(K81, TVM);
+			setChildren(K81, NEW2);
 			setChildren(TIM, NEW);
-			splitModels[TIM].add(NEW2);
+			splitModels[TIM].add(NEW);
 			setChildren(TVM, GTR);
 			setChildren(NEW, GTR);
 			models = filterModels();
