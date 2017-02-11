@@ -261,7 +261,7 @@ public class BModelAnalyser extends Runnable {
 	            return;
 	        } catch (IOException | URISyntaxException e) {
 	            // TODO Auto-generated catch block
-	            e.printStackTrace();
+	            //e.printStackTrace();
 	        }
 	    }
 	    if (Utils.isWindows()) {
@@ -304,6 +304,11 @@ public class BModelAnalyser extends Runnable {
 			//Log.debug.println("No luck ");
 		}
 		String jsPath = System.getProperty("user.dir") + FILESEP + "js";
+		if (Utils.isWindows()) {
+			jsPath = jsPath.replaceAll("\\\\","/");
+			jsPath = "/" + jsPath;
+		}
+		
 		//Log.debug.println("Using default: " + jsPath);
 		return jsPath;
 	}
