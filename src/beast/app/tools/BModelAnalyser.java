@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.swing.JOptionPane;
+
 import beast.app.BEASTVersion2;
 import beast.app.beauti.BeautiConfig;
 import beast.app.beauti.BeautiDoc;
@@ -152,6 +154,9 @@ public class BModelAnalyser extends Runnable {
 		
 		
 		String dotty = toDotty(models2, countMap, isIn95HPD, trace.length);
+		String dotty2 = dotty;
+		dotty2 = dotty2.replaceAll("\n", "\\\\\n");
+		dotty2 = dotty2.replaceAll("'", "&quot;");
 		String jsPath = getJavaScriptPath();
 		try {
 	        FileWriter outfile = new FileWriter(jsPath + "/bModelTest" + instance + ".dot");
@@ -214,17 +219,18 @@ public class BModelAnalyser extends Runnable {
 				"require(['renderer'],\n" + 
 				"  function (renderer) {\n" + 
 				"\n" + 
-				"var client = new XMLHttpRequest();\n" + 
-				"client.open('GET', 'bModelTest" + instance + ".dot');\n" + 
-				"client.onreadystatechange = function() {\n" + 
-				"  dotSource = client.responseText;\n" + 
+				//"var client = new XMLHttpRequest();\n" + 
+				//"client.open('GET', 'bModelTest" + instance + ".dot');\n" + 
+				//"client.onreadystatechange = function() {\n" + 
+				//"  dotSource = client.responseText;\n" +
+				" dotSource = '" + dotty2 + "'\n" +
 				"  // initialize svg stage\n" + 
 				"  renderer.init('#graph');\n" + 
 				"\n" + 
 				"  // update stage with new dot source\n" + 
 				"  renderer.render(dotSource);\n" + 
-				"}\n" + 
-				"client.send();\n" + 
+				//"}\n" + 
+				//"client.send();\n" + 
 				"\n" + 
 				"});\n" + 
 				"</script>\n" + 
@@ -248,6 +254,20 @@ public class BModelAnalyser extends Runnable {
 				e.printStackTrace();
 			}
 		} else {
+			// test for JavaFX
+			boolean isJavaFxAvailable;
+			try {
+			  Class.forName("javafx.embed.swing.JFXPanel");
+			  isJavaFxAvailable = true;
+			} catch (ClassNotFoundException e) {
+			  isJavaFxAvailable = false;
+			}
+			if (!isJavaFxAvailable) {
+				JOptionPane.showMessageDialog(null, "It looks like JavaFX is not available.\n "
+						+ "To fix this, you can install the JDK from Oracle, available here\n"
+						+ "http://www.oracle.com/technetwork/java/javase/downloads/index.html\n\n"
+						+ "The webviewer will be started, but expect things to not show properly.>");
+			}
 			new beast.app.tools.WebViewer("BModelAnalyser", "file://" + jsPath + "/bModelTest" + instance + ".html");
 		}
 	}
