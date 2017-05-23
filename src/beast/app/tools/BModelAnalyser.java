@@ -174,7 +174,7 @@ public class BModelAnalyser extends Runnable {
 				"<title>BEAST " + new BEASTVersion2().getVersionString() + ": BModelAnalyser</title>\n" +
 				"<header>\n" + 
 				"<link rel='stylesheet' type='text/css' href='css/style.css'>\n" +
-				"<script data-main='" + jsPath + "/main' src='" + jsPath + "/requirejs/require.js'></script>\n" + 
+/*				"<script data-main='" + jsPath + "/main' src='" + jsPath + "/requirejs/require.js'></script>\n" + 
 				" \n" + 
 				"<script>\n" + 
 				"requirejs.config({\n" + 
@@ -194,21 +194,23 @@ public class BModelAnalyser extends Runnable {
 				"    }\n" + 
 				"});\n" +
 				"</script>\n" +
-				"\n" +
+*/				"\n" +
 				"</header>\n" +
 				"<body>\n" +
 				header + "\n" +
 				"<div>Models with blue circles are inside 95%HPD, red outside, and without circles have " + (max > 0 ? "at most " : "") + formatter.format(max) + "% support.</div>\n" + 
 				"<table><tr class='x'><td class='x'><table>" + b.toString() + "</table>"
 						+ "   <div style=\"height:" + (1024 - 82 - listed * 29) + "\"></div></td>\n" +
-				"<td class='x'>"
-				+ (!Utils.isWindows() ? svg : "<svg id='graph' width='1224' height='1024'></svg>")
+				"<td class='x'>" +
+				svg
+				//+ (!Utils.isWindows() ? svg : "<svg id='graph' width='1224' height='1024'></svg>")
 				+ "</td></table>\n" +
 				"\n" +
-				"<div id=\"img\" onclick=\"continueExecution()\">Create downloadable image</div>\n" + 
+/*				"<div id=\"img\" onclick=\"continueExecution()\">Create downloadable image</div>\n" + 
 				"\n" + 
 				"<script>\n" + 
 				"  continueExecution = function() {\n" + 
+				
 				"var html = d3.select(\"svg\")\n" + 
 				"        .attr(\"title\", \"bModelTest\")\n" + 
 				"        .attr(\"version\", 1.1)\n" + 
@@ -236,8 +238,7 @@ public class BModelAnalyser extends Runnable {
 				//"client.send();\n" + 
 				"\n" + 
 				"});\n" + 
-				"</script>\n" + 
-				svg +				
+*/				"</script>\n" + 
 				"\n" + 
 				"</body>\n" +
 				"</html>";
@@ -370,8 +371,45 @@ public class BModelAnalyser extends Runnable {
 		double [] maxcon = new double[7];
 		double [] x = new double[N];
 		double [] radius = new double[N];
-				
-		for (int i = 0; i < sm.getModelCount(); i++) {
+
+		
+//		List<Integer>[]level = new ArrayList[6];
+//		for (int i = 0; i < 6; i++) {
+//			level[i] = new ArrayList<>();
+//		}
+//		for (int i = 0; i < N; i++) {
+//			int g = sm.getGroupCount(i);
+//			level[g - 1].add(i); 
+//		}
+//
+//		for (int i = 4; i > 0; i--) {
+//			int [] map = new int[N];
+//			for (int i1 = 0; i1 < level[i+1].size(); i1++) {
+//				map[level[i+1].get(i1)] = i1;
+//			}
+//			for (int i1 = 0; i1 < level[i].size(); i1++) {
+//				int p1 = level[i].get(i1);
+//				for (int i2 = 0; i2 < level[i].size(); i2++) {
+//					int p2 = level[i].get(i2);
+//					if (p1 != p2) {
+//						int cur = countCrosses(i1, i2, p1, p2, sm, map);
+//						int swapped = countCrosses(i1, i2, p2, p1, sm, map);
+//						if (swapped < cur) {
+//							level[i].set(i1, p2);
+//							level[i].set(i2, p1);
+//						}
+//					}
+//				}
+//			}
+//		}
+//	
+//		List<Integer> order = new ArrayList<>();
+//		for (int i = 0; i < 6; i++) {
+//			order.addAll(level[i]);
+//		}
+		
+		for (int q = 0; q < N; q++) {
+			int i = q;//order.get(q);
 			int [] model = sm.getModel(i);
 			int modelID = 0;
 			int k = 1;
@@ -467,6 +505,23 @@ public class BModelAnalyser extends Runnable {
 		return svgStart + b.toString() + "</svg>";
 	}
 	
+	private int countCrosses(int i1, int i2, int p1, int p2, NucleotideRevJumpSubstModel sm, int [] map) {
+		int crosses = 0;
+		for (int c1 : sm.getSplitCanditates(p1)) {
+			int pos1 = map[c1];
+			for (int c2 : sm.getSplitCanditates(p2)) {
+				int pos2 = map[c2];
+				if (i1 < i2 && pos1 > pos2) {
+					crosses++;
+				}
+				if (i1 > i2 && pos1 < pos2) {
+					crosses++;
+				}
+			}
+		}
+		return crosses;
+	}
+
 	private void appendSVGLine(StringBuilder b, double x1, double y1, double r1, double x2, double y2, double r2, double mid) {
 		double phi1 = Math.atan2(y1 - y2, x2 - x1);
 		phi1 = (Math.PI/2 + phi1)/2;

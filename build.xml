@@ -198,7 +198,7 @@
 		</copy>
 		<copy todir="${Add_on_dir}/js">
 			<fileset dir="js">
-				<include name="**/*" />
+				<include name="**/*css" />
 			</fileset>
         </copy>
 
