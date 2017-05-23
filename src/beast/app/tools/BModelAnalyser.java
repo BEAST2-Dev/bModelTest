@@ -201,7 +201,9 @@ public class BModelAnalyser extends Runnable {
 				"<div>Models with blue circles are inside 95%HPD, red outside, and without circles have " + (max > 0 ? "at most " : "") + formatter.format(max) + "% support.</div>\n" + 
 				"<table><tr class='x'><td class='x'><table>" + b.toString() + "</table>"
 						+ "   <div style=\"height:" + (1024 - 82 - listed * 29) + "\"></div></td>\n" +
-				"<td class='x'><svg id='graph' width='1224' height='1024'></svg></td></table>\n" +
+				"<td class='x'>"
+				+ (!Utils.isWindows() ? svg : "<svg id='graph' width='1224' height='1024'></svg>")
+				+ "</td></table>\n" +
 				"\n" +
 				"<div id=\"img\" onclick=\"continueExecution()\">Create downloadable image</div>\n" + 
 				"\n" + 
@@ -239,11 +241,6 @@ public class BModelAnalyser extends Runnable {
 				"\n" + 
 				"</body>\n" +
 				"</html>";
-		
-		
-
-		html = "<html>\n<body>\n" + svg + "</body>\n+</html>\n";
-
 		
 		try {
 	        FileWriter outfile = new FileWriter(jsPath + "/bModelTest" + instance + ".html");
@@ -345,7 +342,7 @@ public class BModelAnalyser extends Runnable {
 		double scale = 100;
 		int maxWidth = 1200;
 		double VGAP = 0.3;
-		double HGAP = 0.0;
+		double HGAP = 0.1;
 		Frequencies frequencies = new Frequencies();
 		frequencies.initByName("frequencies", "0.25 0.25 0.25 0.25");
 		NucleotideRevJumpSubstModel sm = new NucleotideRevJumpSubstModel();
@@ -437,39 +434,40 @@ public class BModelAnalyser extends Runnable {
 			y[i] = h[g];
 		}		
 	
-		// draw circles
-		for (int i = 0; i < sm.getModelCount(); i++) {
-			b.append("<circle cx=\""+ x[i] + "\" cy=\""+ y[i] + "\" r=\""+ radius[i] +"\" class=\"" + atts[i] + "\"/>\n");
-			b.append("<text x=\""+ x[i] + "\" y=\""+ (y[i]+6) + "\" class=\"btext\">" + label[i] + "</text>\n");
-		}		
-				
 		// draw lines
 		for (int i = 0; i < sm.getModelCount(); i++) {
+			int g = sm.getGroupCount(i);
 			for (int j : sm.getSplitCanditates(i)) {				
 				b.append("<!--" + i + " => " + j + "-->\n");
-				appendSVGLine(b, x[i], y[i], radius[i], x[j], y[j], radius[j]);
+				appendSVGLine(b, x[i], y[i], radius[i], x[j], y[j], radius[j], (h[g] + h[g+1])/2.0);
 			}
 		}
 			
+		// draw circles
+		for (int i = 0; i < sm.getModelCount(); i++) {
+			b.append("<circle cx=\""+ x[i] + "\" cy=\""+ y[i] + "\" r=\""+ radius[i] +"\" class=\"" + atts[i] + "\"/>\n");
+			b.append("<text x=\""+ x[i] + "\" y=\""+ (y[i]+4) + "\" class=\"btext\">" + label[i] + "</text>\n");
+		}		
+				
 		String svgStart = 
 		"<svg width=\""+(maxWidth+100)+"px\" height=\"1000px\">\n" +
 		"  <defs>\n" +
 		"  <style  type=\"text/css\">\n" +
-		"  .btext {fill:#000080;font-size:12pt;font-family:arial;text-anchor:middle;text-align:center;}\n" +
-		"  .csmall {fill:none;stroke-width:2;stroke:#a0a0a0;}\n" +
-		"  .cdefault {fill:none;stroke-width:2;stroke:#000080;}\n" +
-		"  .c95hpd {fill:none;stroke-width:2;stroke:#ff0000;}\n" +
+		"  .btext {fill:#000080;font-size:8pt;font-family:arial;text-anchor:middle;text-align:center;}\n" +
+		"  .csmall {fill:none;stroke-width:1.5;stroke:none;}\n" +
+		"  .c95hpd {fill:none;stroke-width:1.5;stroke:#0000ff;}\n" +
+		"  .cdefault {fill:none;stroke-width:1.5;stroke:#ff0000;}\n" +
 		" .line {fill:none;stroke-width:1;stroke:#a0a0a0;}\n" +
 		"  </style>\n" +
-	    "    <marker id=\"arrow\" markerWidth=\"15\" markerHeight=\"15\" refX=\"10\" refY=\"4.5\" orient=\"auto\" markerUnits=\"strokeWidth\">\n" +
+	    "    <marker id=\"arrow\" markerWidth=\"15\" markerHeight=\"15\" refX=\"8\" refY=\"4.5\" orient=\"auto\" markerUnits=\"strokeWidth\">\n" +
 	    "      <path d=\"M0,0 l0,13.5 l13.5,-6.75 z\" fill=\"#a0a0a0\" />\n" +
 		"    </marker>\n" +
-		"  </defs>\n";
-		
+		"  </defs>\n" +
+		"<rect width=\"100%\" height=\"100%\" style=\"fill:white\"/>\n";
 		return svgStart + b.toString() + "</svg>";
 	}
 	
-	private void appendSVGLine(StringBuilder b, double x1, double y1, double r1, double x2, double y2, double r2) {
+	private void appendSVGLine(StringBuilder b, double x1, double y1, double r1, double x2, double y2, double r2, double mid) {
 		double phi1 = Math.atan2(y1 - y2, x2 - x1);
 		phi1 = (Math.PI/2 + phi1)/2;
 		double cx1 = x1 + r1 * Math.sin(phi1);
@@ -477,8 +475,8 @@ public class BModelAnalyser extends Runnable {
 		
 		double phi2 = -Math.abs(Math.atan2(y2 - y1, x1 - x2));
 		phi2 = Math.PI - (Math.PI/2 + phi2)/2;
-		double cx2 = x2 + r2 * Math.sin(phi2);
-		double cy2 = y2 + r2 * Math.cos(phi2);
+		double cx2 = x2 + (r2 + 4) * Math.sin(phi2);
+		double cy2 = y2 + (r2 + 4) * Math.cos(phi2);
 		
 		b.append("<path d=\"M" + cx1+ "," + cy1);
 		x1 = x1 + 2 * (cx1 - x1); 
@@ -487,7 +485,7 @@ public class BModelAnalyser extends Runnable {
 		y2 = y2 + 2 * (cy2 - y2); 
 //		y1 = y1 + 2 * (r1); 
 //		y2 = y2 - 2 * (r2); 
-		b.append(" C"+x1+","+y1+ " " + x2+ "," + y2 +" " + cx2+","+ cy2 + "\" ");
+		b.append(" C"+x1+","+mid+ " " + x2+ "," + mid +" " + cx2+","+ cy2 + "\" ");
 		b.append(" class=\"line\" marker-end=\"url(#arrow)\"/>\n");
 	}
 
