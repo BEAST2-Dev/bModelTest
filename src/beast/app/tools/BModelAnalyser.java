@@ -154,6 +154,7 @@ public class BModelAnalyser extends Runnable {
 		
 		
 		String dotty = toDotty(models2, countMap, isIn95HPD, trace.length);
+		String svg = toSVG(models2, countMap, isIn95HPD, trace.length);
 		String dotty2 = dotty;
 		dotty2 = dotty2.replaceAll("\n", "\\\\\n");
 		dotty2 = dotty2.replaceAll("'", "&quot;");
@@ -234,9 +235,16 @@ public class BModelAnalyser extends Runnable {
 				"\n" + 
 				"});\n" + 
 				"</script>\n" + 
+				svg +				
 				"\n" + 
 				"</body>\n" +
 				"</html>";
+		
+		
+
+		html = "<html>\n<body>\n" + svg + "</body>\n+</html>\n";
+
+		
 		try {
 	        FileWriter outfile = new FileWriter(jsPath + "/bModelTest" + instance + ".html");
 	        outfile.write(html);
@@ -331,6 +339,143 @@ public class BModelAnalyser extends Runnable {
 		
 		//Log.debug.println("Using default: " + jsPath);
 		return jsPath;
+	}
+
+	private String toSVG(List<Integer> models, Map<Integer, Integer> countMap, Set<Integer> isIn95HPD, int n) {
+		double scale = 100;
+		int maxWidth = 1200;
+		Frequencies frequencies = new Frequencies();
+		frequencies.initByName("frequencies", "0.25 0.25 0.25 0.25");
+		NucleotideRevJumpSubstModel sm = new NucleotideRevJumpSubstModel();
+		sm.initByName("rates", new RealParameter("1.0 1.0 1.0 1.0 1.0 1.0"), "modelIndicator", new IntegerParameter("0"), "frequencies", frequencies,
+				"modelSet", modelSetInput.get());
+
+		double sum = 0;
+		for (int current : models) {
+			int contribution = countMap.get(current);
+			double con = Math.sqrt((contribution + 0.0)/n);
+			sum += con;
+		}
+		sum = 1.5 * sum / models.size();
+		max = 0;
+		
+		StringBuilder b = new StringBuilder();
+
+		
+		int N = sm.getModelCount();
+		String [] label = new String[N];
+		String [] atts = new String[N];
+		int [] y = new int[N];
+		int [] nodeCount = new int[7];
+		double [] offset = new double[7];
+		double [] x = new double[N];
+		double [] radius = new double[N];
+				
+		for (int i = 0; i < sm.getModelCount(); i++) {
+			int [] model = sm.getModel(i);
+			int modelID = 0;
+			int k = 1;
+			for (int j = model.length - 1; j >= 0; j--) {
+				modelID += (model[j]+1) * k;
+				k = k * 10;
+			}
+
+			int current = modelID;
+			int contribution = countMap.containsKey(current)? countMap.get(current) : 0;
+			double con = Math.sqrt((contribution + 0.0)/n) / sum;
+			switch (current) {
+				case 111111 : label[i] = "JC69/F81"; break;
+				case 121121 : label[i] = "K80/HKY"; break;
+				case 123456 : label[i] = "SYM/GTR"; break;
+				case 121131 : label[i] = "121131/TN93"; break;
+				case 123341 : label[i] = "123341/TIM"; break;
+				case 123425 : label[i] = "123425/TVM"; break;
+				case 123321 : label[i] = "123321/K81"; break;
+				default : label[i] = current + "";
+			}
+			
+			if (con <= 0.1) {
+				atts[i] = "csmall";
+				radius[i] = 0.25;
+				max = Math.max(max, 100 * (contribution + 0.0)/n);
+			} else {
+				atts[i] =  (isIn95HPD.contains(current) ? "c95hpd" : "cdefault");
+				radius[i] = con;
+			}
+			
+			y[i] = sm.getGroupCount(i);
+			x[i] = offset[y[i]] + 1 + con;
+			offset[y[i]] += 1 + con;
+			nodeCount[sm.getGroupCount(i)]++;
+		}
+
+		// center
+		double max = 0;
+		for (double d : offset) {
+			max = Math.max(d, max);
+		}
+		for (int i = 0; i < sm.getModelCount(); i++) {
+			int g = sm.getGroupCount(i);
+			double delta = (max - offset[g]) / 2.0;
+			System.out.println(label[i] + " " + delta);
+			x[i] += delta;
+			x[i] *= maxWidth/max;
+			y[i] *= scale;
+			radius[i] *= scale / 2.0; 
+		}		
+	
+		// draw circles
+		for (int i = 0; i < sm.getModelCount(); i++) {
+			b.append("<circle cx=\""+ x[i] + "\" cy=\""+ y[i] + "\" r=\""+ radius[i] +"\" class=\"" + atts[i] + "\"/>\n");
+			b.append("<text x=\""+ x[i] + "\" y=\""+ y[i] + "\" class=\"btext\">" + label[i] + "</text>\n");
+		}		
+				
+		// draw lines
+		for (int i = 0; i < sm.getModelCount(); i++) {
+			for (int j : sm.getSplitCanditates(i)) {				
+				b.append("<!--" + i + " => " + j + "-->\n");
+				appendSVGLine(b, x[i], y[i], radius[i], x[j], y[j], radius[j]);
+			}
+		}
+			
+		String svgStart = 
+		"<svg width=\""+(maxWidth+100)+"px\" height=\"1000px\">\n" +
+		"  <defs>\n" +
+		"  <style  type=\"text/css\">\n" +
+		"  .btext {fill:#000080;font-size:12pt;font-family:arial;text-anchor:middle;alignment-baseline:centre;}\n" +
+		"  .csmall {fill:none;stroke-width:2;stroke:#000000;}\n" +
+		"  .cdefault {fill:none;stroke-width:2;stroke:#000080;}\n" +
+		"  .c95hpd {fill:none;stroke-width:2;stroke:#ff0000;}\n" +
+		" .line {fill:none;stroke-width:1;stroke:#000;}\n" +
+		"  </style>\n" +
+		"    <marker id=\"arrow\" markerWidth=\"10\" markerHeight=\"10\" refX=\"0\" refY=\"3\" orient=\"auto\" markerUnits=\"strokeWidth\">\n" +
+		"      <path d=\"M0,0 L0,6 L9,3 z\" fill=\"#f00\" />\n" +
+		"    </marker>\n" +
+		"  </defs>\n";
+		
+		return svgStart + b.toString() + "</svg>";
+	}
+	
+	private void appendSVGLine(StringBuilder b, double x1, double y1, double r1, double x2, double y2, double r2) {
+		double phi1 = Math.atan2(y1 - y2, x2 - x1);
+		phi1 = (Math.PI/2 + phi1)/2;
+		double cx1 = x1 + r1 * Math.sin(phi1);
+		double cy1 = y1 + r1 * Math.cos(phi1);
+		
+		double phi2 = -Math.abs(Math.atan2(y2 - y1, x1 - x2));
+		phi2 = Math.PI - (Math.PI/2 + phi2)/2;
+		double cx2 = x2 + r2 * Math.sin(phi2);
+		double cy2 = y2 + r2 * Math.cos(phi2);
+		
+		b.append("<path d=\"M" + cx1+ "," + cy1);
+		x1 = x1 + 2 * (cx1 - x1); 
+		y1 = y1 + 2 * (cy1 - y1); 
+		x2 = x2 + 2 * (cx2 - x2); 
+		y2 = y2 + 2 * (cy2 - y2); 
+//		y1 = y1 + 2 * (r1); 
+//		y2 = y2 - 2 * (r2); 
+		b.append(" C"+x1+","+y1+ " " + x2+ "," + y2 +" " + cx2+","+ cy2 + "\" ");
+		b.append(" class=\"line\" marker-end=\"url(#arrow)\"/>\n");
 	}
 
 	private String toDotty(List<Integer> models, Map<Integer, Integer> countMap, Set<Integer> isIn95HPD, int n) {
