@@ -344,6 +344,8 @@ public class BModelAnalyser extends Runnable {
 	private String toSVG(List<Integer> models, Map<Integer, Integer> countMap, Set<Integer> isIn95HPD, int n) {
 		double scale = 100;
 		int maxWidth = 1200;
+		double VGAP = 0.3;
+		double HGAP = 0.0;
 		Frequencies frequencies = new Frequencies();
 		frequencies.initByName("frequencies", "0.25 0.25 0.25 0.25");
 		NucleotideRevJumpSubstModel sm = new NucleotideRevJumpSubstModel();
@@ -365,9 +367,10 @@ public class BModelAnalyser extends Runnable {
 		int N = sm.getModelCount();
 		String [] label = new String[N];
 		String [] atts = new String[N];
-		int [] y = new int[N];
 		int [] nodeCount = new int[7];
 		double [] offset = new double[7];
+		double [] lastcon = new double[7];
+		double [] maxcon = new double[7];
 		double [] x = new double[N];
 		double [] radius = new double[N];
 				
@@ -394,8 +397,8 @@ public class BModelAnalyser extends Runnable {
 				default : label[i] = current + "";
 			}
 			
-			if (con <= 0.1) {
-				atts[i] = "csmall";
+			if (con <= 0.25) {
+				atts[i] =  (isIn95HPD.contains(current) ? "c95hpd" : "csmall");
 				radius[i] = 0.25;
 				max = Math.max(max, 100 * (contribution + 0.0)/n);
 			} else {
@@ -403,31 +406,41 @@ public class BModelAnalyser extends Runnable {
 				radius[i] = con;
 			}
 			
-			y[i] = sm.getGroupCount(i);
-			x[i] = offset[y[i]] + 1 + con;
-			offset[y[i]] += 1 + con;
+			con = radius[i];
+			
+			int g = sm.getGroupCount(i);
+			x[i] = offset[g] + HGAP + con/2 + lastcon[g]/2;
+			offset[g] += HGAP + con/2 + lastcon[g]/2;
+			lastcon[g] = con;
+			maxcon[g] = Math.max(maxcon[g], con);
 			nodeCount[sm.getGroupCount(i)]++;
 		}
 
+		double [] h = new double[7];
+		h[0] = VGAP * scale;
+		for (int i = 1; i < 7; i++) {
+			h[i] = h[i-1] + (maxcon[i-1]/2.0 + maxcon[i]/2.0 + VGAP) * scale;
+		}
+		
 		// center
 		double max = 0;
 		for (double d : offset) {
 			max = Math.max(d, max);
 		}
+		double [] y = new double[N];
 		for (int i = 0; i < sm.getModelCount(); i++) {
 			int g = sm.getGroupCount(i);
 			double delta = (max - offset[g]) / 2.0;
-			System.out.println(label[i] + " " + delta);
 			x[i] += delta;
 			x[i] *= maxWidth/max;
-			y[i] *= scale;
-			radius[i] *= scale / 2.0; 
+			radius[i] *= scale / 2.0;
+			y[i] = h[g];
 		}		
 	
 		// draw circles
 		for (int i = 0; i < sm.getModelCount(); i++) {
 			b.append("<circle cx=\""+ x[i] + "\" cy=\""+ y[i] + "\" r=\""+ radius[i] +"\" class=\"" + atts[i] + "\"/>\n");
-			b.append("<text x=\""+ x[i] + "\" y=\""+ y[i] + "\" class=\"btext\">" + label[i] + "</text>\n");
+			b.append("<text x=\""+ x[i] + "\" y=\""+ (y[i]+6) + "\" class=\"btext\">" + label[i] + "</text>\n");
 		}		
 				
 		// draw lines
@@ -442,14 +455,14 @@ public class BModelAnalyser extends Runnable {
 		"<svg width=\""+(maxWidth+100)+"px\" height=\"1000px\">\n" +
 		"  <defs>\n" +
 		"  <style  type=\"text/css\">\n" +
-		"  .btext {fill:#000080;font-size:12pt;font-family:arial;text-anchor:middle;alignment-baseline:centre;}\n" +
-		"  .csmall {fill:none;stroke-width:2;stroke:#000000;}\n" +
+		"  .btext {fill:#000080;font-size:12pt;font-family:arial;text-anchor:middle;text-align:center;}\n" +
+		"  .csmall {fill:none;stroke-width:2;stroke:#a0a0a0;}\n" +
 		"  .cdefault {fill:none;stroke-width:2;stroke:#000080;}\n" +
 		"  .c95hpd {fill:none;stroke-width:2;stroke:#ff0000;}\n" +
-		" .line {fill:none;stroke-width:1;stroke:#000;}\n" +
+		" .line {fill:none;stroke-width:1;stroke:#a0a0a0;}\n" +
 		"  </style>\n" +
-		"    <marker id=\"arrow\" markerWidth=\"10\" markerHeight=\"10\" refX=\"0\" refY=\"3\" orient=\"auto\" markerUnits=\"strokeWidth\">\n" +
-		"      <path d=\"M0,0 L0,6 L9,3 z\" fill=\"#f00\" />\n" +
+	    "    <marker id=\"arrow\" markerWidth=\"15\" markerHeight=\"15\" refX=\"10\" refY=\"4.5\" orient=\"auto\" markerUnits=\"strokeWidth\">\n" +
+	    "      <path d=\"M0,0 l0,13.5 l13.5,-6.75 z\" fill=\"#a0a0a0\" />\n" +
 		"    </marker>\n" +
 		"  </defs>\n";
 		
