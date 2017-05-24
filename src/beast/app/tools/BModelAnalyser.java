@@ -343,7 +343,7 @@ public class BModelAnalyser extends Runnable {
 		double scale = 100;
 		int maxWidth = 1200;
 		double VGAP = 0.3;
-		double HGAP = 0.1;
+		double HGAP = 0.05;
 		Frequencies frequencies = new Frequencies();
 		frequencies.initByName("frequencies", "0.25 0.25 0.25 0.25");
 		NucleotideRevJumpSubstModel sm = new NucleotideRevJumpSubstModel();
@@ -477,7 +477,7 @@ public class BModelAnalyser extends Runnable {
 			int g = sm.getGroupCount(i);
 			for (int j : sm.getSplitCanditates(i)) {				
 				b.append("<!--" + i + " => " + j + "-->\n");
-				appendSVGLine(b, x[i], y[i], radius[i], x[j], y[j], radius[j], (h[g] + h[g+1])/2.0);
+				appendSVGLine(b, x[i], y[i], radius[i], x[j], y[j], radius[j], h[g] + (maxcon[g]/2.0 +VGAP/2.0)* scale);
 			}
 		}
 			
@@ -533,14 +533,18 @@ public class BModelAnalyser extends Runnable {
 		double cx2 = x2 + (r2 + 4) * Math.sin(phi2);
 		double cy2 = y2 + (r2 + 4) * Math.cos(phi2);
 		
-		b.append("<path d=\"M" + cx1+ "," + cy1);
+		b.append("<path d=\"M" + cx1+ " " + cy1);
 		x1 = x1 + 2 * (cx1 - x1); 
 		y1 = y1 + 2 * (cy1 - y1); 
 		x2 = x2 + 2 * (cx2 - x2); 
 		y2 = y2 + 2 * (cy2 - y2); 
 //		y1 = y1 + 2 * (r1); 
 //		y2 = y2 - 2 * (r2); 
-		b.append(" C"+x1+","+mid+ " " + x2+ "," + mid +" " + cx2+","+ cy2 + "\" ");
+		b.append(" C"+x1+","+mid);
+		if (Math.abs(x1-x2) > 250) {
+			b.append(" " + (cx1+(cx2-cx1)/2) + " " + (mid-5) + " " + (cx1+2*(cx2-cx1)/3) + " " + (mid+5) + " S");
+		}
+		b.append(" " + x2+ "," + mid +" " + cx2+" "+ cy2 + "\" ");
 		b.append(" class=\"line\" marker-end=\"url(#arrow)\"/>\n");
 	}
 
