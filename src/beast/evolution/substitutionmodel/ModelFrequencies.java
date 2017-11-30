@@ -37,7 +37,7 @@ public class ModelFrequencies extends Frequencies {
 		return super.getFreqs();
 	}
 	
-    void update() {
+    protected void update() {
         if (frequenciesInput.get() != null) {
         	super.update();
         }
