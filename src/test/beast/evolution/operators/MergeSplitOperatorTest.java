@@ -296,7 +296,7 @@ public class MergeSplitOperatorTest extends TestCase {
 		}
 
 		@Override
-		public void log(int nSample, PrintStream out) {
+		public void log(long nSample, PrintStream out) {
 			int groupCount = substModel.getGroupCount(modelIndicator.getValue());
 			out.append(groupCount + "\t");
 		}

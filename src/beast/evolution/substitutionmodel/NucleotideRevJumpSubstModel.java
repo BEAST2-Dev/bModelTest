@@ -577,7 +577,7 @@ public class NucleotideRevJumpSubstModel extends GeneralSubstitutionModel implem
 	}
 
 	@Override
-	public void log(int nSample, PrintStream out) {
+	public void log(long nSample, PrintStream out) {
         Function rates = this.ratesInput.get();
     	int [] model = getModel(modelIndicator.getValue());
     	for (int i = 0; i < 6 ;i++) {
