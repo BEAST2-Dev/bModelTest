@@ -1,9 +1,9 @@
-<addon name='bModelTest' version='1.0.4'>
-	<depends on='beast2' atleast='2.4.0'/>
-	<depends on='BEASTLabs' atleast='1.5.3'/>
+<package name='bModelTest' version='1.1.0'>
+	<depends on='beast2' atleast='2.5.0'/>
+	<depends on='BEASTLabs' atleast='1.8.0'/>
 
-<addonapp description="BModelAnalyser"
+<packageapp description="BModelAnalyser"
               class="beast.app.tools.BModelAnalyser"
               args=""
             />
-</addon>
+</package>
