@@ -17,6 +17,7 @@ import beast.evolution.substitutionmodel.NucleotideRevJumpSubstModel;
 import test.beast.evolution.substitutionmodel.NucleotideRevJumpSubstModelTest;
 import beast.math.distributions.ModelSetPrior;
 import beast.math.distributions.NucleotideRevJumpSubstModelRatePrior;
+import beast.math.distributions.Uniform;
 import beast.util.LogAnalyser;
 import beast.util.Randomizer;
 import junit.framework.TestCase;
@@ -133,7 +134,8 @@ public class MergeSplitOperatorTest extends TestCase {
         		"priorType", NucleotideRevJumpSubstModelRatePrior.BMTPriorType.asScaledDirichlet);
 
 		ModelSetPrior prior2 = new ModelSetPrior();        
-		prior2.initByName("x", modelIndicator, "substModel", substModel, "priorType", ModelSetPrior.PriorType.uniformOnModel);
+		prior2.initByName("x", modelIndicator, "substModel", substModel, "priorType", ModelSetPrior.PriorType.uniformOnModel, 
+				"distr", new Uniform());
 		CompoundDistribution prior = new CompoundDistribution();
 		
 		prior.initByName("distribution", prior1, "distribution", prior2);
@@ -145,7 +147,7 @@ public class MergeSplitOperatorTest extends TestCase {
         
         MCMC mcmc = new MCMC();
         mcmc.initByName(
-                "chainLength", CHAINLENGTH,
+                "chainLength", (long) (CHAINLENGTH * 100/90),
                 "state", state,
                 "distribution", prior,
                 "operator", operator,
@@ -208,7 +210,8 @@ public class MergeSplitOperatorTest extends TestCase {
         		"priorType", NucleotideRevJumpSubstModelRatePrior.BMTPriorType.asScaledDirichlet);
 
 		ModelSetPrior prior2 = new ModelSetPrior();        
-		prior2.initByName("x", modelIndicator, "substModel", substModel, "priorType", ModelSetPrior.PriorType.uniformOnModel);
+		prior2.initByName("x", modelIndicator, "substModel", substModel, "priorType", ModelSetPrior.PriorType.uniformOnModel, 
+				"distr", new Uniform());
 		CompoundDistribution prior = new CompoundDistribution();
 		
 		prior.initByName("distribution", prior1, "distribution", prior2);
@@ -220,7 +223,7 @@ public class MergeSplitOperatorTest extends TestCase {
         
         MCMC mcmc = new MCMC();
         mcmc.initByName(
-                "chainLength", CHAINLENGTH,
+                "chainLength", (long) (CHAINLENGTH * 100/90),
                 "state", state,
                 "distribution", prior,
                 "operator", operator,
@@ -328,7 +331,8 @@ public class MergeSplitOperatorTest extends TestCase {
         		"priorType", NucleotideRevJumpSubstModelRatePrior.BMTPriorType.asScaledDirichlet);
 
 		ModelSetPrior prior2 = new ModelSetPrior();        
-		prior2.initByName("x", modelIndicator, "substModel", substModel, "priorType", ModelSetPrior.PriorType.uniformOnParameterCount);
+		prior2.initByName("x", modelIndicator, "substModel", substModel, "priorType", ModelSetPrior.PriorType.uniformOnParameterCount,
+				"distr", new Uniform());
 		CompoundDistribution prior = new CompoundDistribution();
 		
 		prior.initByName("distribution", prior1, "distribution", prior2);
@@ -341,7 +345,7 @@ public class MergeSplitOperatorTest extends TestCase {
         
         MCMC mcmc = new MCMC();
         mcmc.initByName(
-                "chainLength", CHAINLENGTH,
+                "chainLength", (long) (CHAINLENGTH * 100 / 90),
                 "state", state,
                 "distribution", prior,
                 "operator", operator,

@@ -88,7 +88,7 @@ public class NucleotideRevJumpSubstModelRatePrior extends Prior {
 				sr += substModel.getSubGroupCount(modelID)[i] * x.getArrayValue(i);
 			}
 			if (Math.abs(sr - 6.0) > 1e-6) {
-				throw new RuntimeException("Rates do not add to 6.00000");
+				throw new RuntimeException("Rates do not add to 6.00000 but " + sr);
 			}
 		}
 
