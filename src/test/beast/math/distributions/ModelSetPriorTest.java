@@ -6,6 +6,7 @@ import org.junit.Test;
 import beast.core.parameter.IntegerParameter;
 import beast.evolution.substitutionmodel.NucleotideRevJumpSubstModel;
 import beast.math.distributions.ModelSetPrior;
+import beast.math.distributions.Uniform;
 import junit.framework.TestCase;
 import test.beast.evolution.substitutionmodel.NucleotideRevJumpSubstModelTest;
 
@@ -16,7 +17,7 @@ public class ModelSetPriorTest extends TestCase {
 		ModelSetPrior prior = new ModelSetPrior();
 		NucleotideRevJumpSubstModel sm = NucleotideRevJumpSubstModelTest.getSubstModel();
 		prior.initByName("x", sm.modelIndicatorInput.get(), 
-				"substModel", sm);
+				"substModel", sm, "distr", new Uniform());
 		
 		for (int i = 0; i < sm.getModelCount(); i++) {
 			sm.modelIndicatorInput.get().assignFromWithoutID(new IntegerParameter(i +""));
@@ -30,7 +31,8 @@ public class ModelSetPriorTest extends TestCase {
 		NucleotideRevJumpSubstModel sm = NucleotideRevJumpSubstModelTest.getSubstModel();
 		prior.initByName("x", sm.modelIndicatorInput.get(), 
 				"substModel", sm,
-				"priorType", "uniformOnParameterCount");
+				"priorType", "uniformOnParameterCount",
+				"distr", new Uniform());
 		
 		// JC69
 		sm.modelIndicatorInput.get().assignFromWithoutID(new IntegerParameter(0 +""));
