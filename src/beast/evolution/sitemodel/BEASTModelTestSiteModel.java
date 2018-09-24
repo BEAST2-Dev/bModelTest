@@ -14,7 +14,7 @@ import beast.core.parameter.IntegerParameter;
 import beast.evolution.tree.Node;
 
 @Description("Site model that jumps between with and without gamma sites, as well as with and without invariant sites")
-@Citation(value="Remco Bouckaert. bModelTest: Bayesian site model selection for nucleotide data. BioRxiv 2015/06/11/020792", DOI="http://dx.doi.org/10.1101/020792")
+@Citation(value="Bouckaert RR, Drummond AJ. bModelTest: Bayesian phylogenetic site model averaging and model comparison. BMC evolutionary biology. 2017 Dec;17(1):42.", DOI="https://doi.org/10.1186/s12862-017-0890-6")
 public class BEASTModelTestSiteModel extends SiteModel {
 
 	public Input<IntegerParameter> hasGammaRatesInput = new Input<IntegerParameter>("hasGammaRates", "flag indicating whether gamma rate heterogeneity should be used (if 1) or not (if 0)", Validate.REQUIRED);
