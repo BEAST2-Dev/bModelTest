@@ -1,4 +1,4 @@
-<package name='bModelTest' version='1.1.0'>
+<package name='bModelTest' version='1.1.1'>
 	<depends on='beast2' atleast='2.5.0'/>
 	<depends on='BEASTLabs' atleast='1.8.0'/>
 
