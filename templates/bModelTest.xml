@@ -81,7 +81,7 @@ beast.math.distributions.NucleotideRevJumpSubstModelRatePrior.distr"
         
         <!-- frequencies estimation -->
         <operator id="BMT_FreqsFlipOperator.s:$(n)" spec="BitFlipOperator" parameter="@hasEqualFreqs.s:$(n)" weight="0.1"/>
-        <operator id='BMT_FrequenciesExchanger.s:$(n)' spec='DeltaExchangeOperator' delta="0.01" weight="0.1" parameter="@BMT_frequencies.s:$(n)"/>
+        <operator id='BMT_FrequenciesExchanger.s:$(n)' spec='DeltaExchangeOperator' delta="0.01" weight="0.2" parameter="@BMT_frequencies.s:$(n)"/>
     
     <!--
         <log id="ActivePropInvariable.s:$(n)" spec='beast.math.statistic.RPNcalculator' expression="BMT_ProportionInvariable.s:$(n) hasInvariableSites.s:$(n) *">
@@ -141,7 +141,7 @@ beast.math.distributions.NucleotideRevJumpSubstModelRatePrior.distr"
             
             <connect srcID='RevJump.s:$(n)'                       targetID='tracelog' inputName='log' if='inlikelihood(BEASTModelTest.s:$(n))'/>
             <connect srcID='BMT_ModelIndicator.s:$(n)'            targetID='tracelog' inputName='log' if='inlikelihood(BEASTModelTest.s:$(n))'/>
-            <connect srcID='BMT_Rates.s:$(n)'                     targetID='tracelog' inputName='log' if='inlikelihood(BEASTModelTest.s:$(n))'/>
+            <!--connect srcID='BMT_Rates.s:$(n)'                     targetID='tracelog' inputName='log' if='inlikelihood(BEASTModelTest.s:$(n))'/-->
             <connect srcID='BMT_gammaShape.s:$(n)'                targetID='tracelog' inputName='log' if='inlikelihood(BEASTModelTest.s:$(n))'/>
             <connect srcID='BMT_ProportionInvariable.s:$(n)'       targetID='tracelog' inputName='log' if='inlikelihood(BEASTModelTest.s:$(n))'/>
             <connect srcID='hasGammaRates.s:$(n)'                 targetID='tracelog' inputName='log' if='inlikelihood(BEASTModelTest.s:$(n))'/>
