@@ -18,24 +18,24 @@ public class ExchangeOperatorTest extends TestCase {
 	public void testExchangeOperatorOnJC69() throws Exception {
 		IntegerParameter modelIndicator = new IntegerParameter("0");
         RealParameter rates = new RealParameter("1.0 0.0 0.0 0.0 0.0 0.0");
-        testExchangeOperator(modelIndicator, rates);
+        testExchangeOperator(modelIndicator, rates, 6.0);
 	}
 	
 	@Test
 	public void testExchangeOperatorOnHKY() throws Exception {
 		IntegerParameter modelIndicator = new IntegerParameter("1");
         RealParameter rates = new RealParameter("0.5 2.0 0.0 0.0 0.0 0.0");
-        testExchangeOperator(modelIndicator, rates);
+        testExchangeOperator(modelIndicator, rates, 6.0);
 	}
 	
 	@Test
 	public void testExchangeOperatorOnGTR() throws Exception {
 		IntegerParameter modelIndicator = new IntegerParameter("30");
         RealParameter rates = new RealParameter("1.0 1.0 1.0 1.0 1.0 1.0");
-        testExchangeOperator(modelIndicator, rates);
+        testExchangeOperator(modelIndicator, rates, 6.0);
 	}
 
-	private void testExchangeOperator(IntegerParameter modelIndicator, RealParameter rates) throws Exception {
+	private void testExchangeOperator(IntegerParameter modelIndicator, RealParameter rates, double sumOfRates) throws Exception {
         NucleotideRevJumpSubstModel substModel = NucleotideRevJumpSubstModelTest.getSubstModel();
         rates.setUpper(Double.POSITIVE_INFINITY);
         

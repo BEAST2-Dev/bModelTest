@@ -2,6 +2,12 @@
 // bModelTest model by sampling from the prior, simulate sequences and
 // running ananlyses to recover the model.
 
+
+// set to true to use equal frequencies, otherwise sample frequencies from Dirichlet(1,1,1,1)
+equalFreqs = false;
+useGamma = false;
+usePropInvariant = false;
+
 // Requirements: the file analysis.xml must be in the directory
 // from where this script is run.
 
@@ -23,30 +29,57 @@ System.setProperty("beagle.preferred.flags", Long.toString(beagleFlags));
 N = 100;
 // draw gamma shape from the prior (exp(1.0))
 shapes = rexp(N, 1.0);
+pInv = runif(N, 0, 1);
 modelIndicator = new IntegerParameter(value="0");
 rates = new RealParameter(value="1.0 1.0 1.0 1.0 1.0 1.0");
 freqs = new Frequencies(frequencies="0.25 0.25 0.25 0.25");
+// draw frequencies
+f = new double[N][4];
+for (int i = 0; i < N; i++) {
+    if (equalFreqs) {
+		for (int j = 0; j < 4; j++ ) {
+			f[i][j] = 0.25;
+		}
+	} else {
+		a = 1.0;
+		// draw from Dirichlet(a,a,a,a)
+	    x = rgamma(4, a, 1);
+		for (int j = 0; j < 4; j++) {
+			f[i][j] = x.get(j) / sum(x);
+		}
+	}
+}
+
 substModel0 = new NucleotideRevJumpSubstModel(modelSet="transitionTransversionSplit", modelIndicator=modelIndicator, rates=rates, frequencies=freqs);
 // draw models
 modelID = runif(N, 0, 31);
 // draw rates
 r = new Double[N][6];
+
+		// draw from Dirichlet(0.5,2.0,0.5,0.5,2.0)
+
 for (int i = 0; i < N; i++) {
 	m = (int)modelID.get(i);
 	model = substModel0.getModel((int) m);
-	r[i][model[0]] = rexp(1, 1.0).get(0);
-	r[i][model[1]] = rlnorm(1, 1, 1.25).get(0);
-	r[i][model[2]] = rexp(1, 1.0).get(0);
-	r[i][model[3]] = rexp(1, 1.0).get(0);
-	r[i][model[4]] = rlnorm(1, 1, 1.25).get(0);
-	r[i][model[5]] = rexp(1, 1.0).get(0);
+		// draw from Dirichlet(0.5,2.0,0.5,0.5,2.0)
+	r[i][model[0]] = rgamma(1, 0.5, 1.0).get(0);
+	r[i][model[1]] = rgamma(1, 2.0, 1.0).get(0);
+	r[i][model[2]] = rgamma(1, 0.5, 1.0).get(0);
+	r[i][model[3]] = rgamma(1, 0.5, 1.0).get(0);
+	r[i][model[4]] = rgamma(1, 2.0, 1.0).get(0);
+	r[i][model[5]] = rgamma(1, 0.5, 1.0).get(0);
+
+//	r[i][model[0]] = rexp(1, 0.5).get(0);
+//	r[i][model[1]] = rlnorm(1, 0, 1.17741).get(0);
+//	r[i][model[2]] = rexp(1, 0.5).get(0);
+//	r[i][model[3]] = rexp(1, 0.5).get(0);
+//	r[i][model[4]] = rlnorm(1, 0, 1.17741).get(0);
+//	r[i][model[5]] = rexp(1, 0.5).get(0);
 	sum = 0;
 	for (j = 0; j < 6; j++) { sum += r[i][model[j]];}
 	sum = sum / 6.0;
 	for (j = 0; j < substModel0.getGroupCount(m); j++) { r[i][j] /= sum;}
 }
-
-
 
 for (int i = 0; i < N; i++) {
 	m = (int)modelID.get(i);
@@ -60,8 +93,10 @@ for (int i = 0; i < N; i++) {
 		);
 	tree = new beast.util.TreeParser(newick="(human:0.2,(chimp:0.15,bonobo:0.15):0.05)", taxa=data, IsLabelledNewick=true);
 	rates = new RealParameter(value = r[i][model[0]] + " " + r[i][model[1]] + " " + r[i][model[2]] + " " + r[i][model[3]] + " " + r[i][model[4]] + " " + r[i][model[5]]);
+
+	freqs=(equalFreqs ? new RealParameter(value="0.25 0.25 0.25 0.25") : new RealParameter(value=f[i][0] + " " + f[i][1] + " " + f[i][2] + " " + f[i][3]));
 	
-	gtr = new GTR(frequencies=new Frequencies(data=data), 
+	gtr = new GTR(frequencies=new Frequencies(frequencies=freqs), 
 		rateAC = r[i][model[0]] + "",
 		rateAG = r[i][model[1]] + "",
 		rateAT = r[i][model[2]] + "",
@@ -73,11 +108,50 @@ for (int i = 0; i < N; i++) {
 
 
 	// change gammaCategoryCount=1 for generating without gamma rate categories
-	sitemodel = new SiteModel(gammaCategoryCount=4, substModel=gtr, shape=""+shapes.get(i));
+	gcc = (useGamma ? 4 : 1);
+     p = new RealParameter(value=(usePropInvariant ? pInv.get(i) : 0.0));
+	sitemodel = new SiteModel(gammaCategoryCount=gcc, substModel=gtr, shape=""+shapes.get(i), proportionInvariant=p);
 	mergewith = new beast.app.seqgen.MergeDataWith(template="../bModelTest/test/analysis.xml", output="/tmp/analysis-out" + i + ".xml");
 	sim = new beast.app.seqgen.SequenceSimulator(data=data, tree=tree, sequencelength=10000, outputFileName="gammaShapeSequence.xml", siteModel=sitemodel, branchRateModel=clockmodel, merge=mergewith);
 	// produce gammaShapeSequence.xml and merge with analysis.xml to get analysis-out.xml
 	sim.run();
+
+}
+
+buf = new StringBuilder();
+for (i = 0; i < N; i++) {
+	m = (int)modelID.get(i);
+	s = m + " ";
+	model = substModel0.getModel((int) m);
+	for (k = 0; k < 6; k++) {
+		s  += r[i][model[k]] + " ";
+	}
+	s += shapes.get(i) + " " + pInv.get(i) + " ";
+	for (k = 0; k < 4; k++) {
+		s += f[i][k] + " ";
+	}
+	buf.append(s);
+	buf.append('\n');
+	print(s);
+}
+
+
+
+	
+	print("iteration: " + i + " model = " + m);
+	print("iteration: " + i + " rateAC = " + r[i][model[0]]);
+	print("iteration: " + i + " rateAC = " + r[i][model[1]]);
+	print("iteration: " + i + " rateAC = " + r[i][model[2]]);
+	print("iteration: " + i + " rateAC = " + r[i][model[3]]);
+	print("iteration: " + i + " rateAC = " + r[i][model[4]]);
+	print("iteration: " + i + " rateAC = " + r[i][model[5]]);
+	print("iteration: " + i + " shape = " + (useGamma ? shapes.get(i) : 0));
+	print("iteration: " + i + " pInv = " + (usePropInvariant ? pInv.get(i) : 0));
+
+	print("iteration: " + i + " freqsA = " + freqs.getValue(0));
+	print("iteration: " + i + " freqsC = " + freqs.getValue(1));
+	print("iteration: " + i + " freqsG = " + freqs.getValue(2));
+	print("iteration: " + i + " freqsT = " + freqs.getValue(3));
 }
 	// run the analysis
 	mcmc = (new XMLParser()).parseFile(new File("/tmp/analysis-out" + i + ".xml"));

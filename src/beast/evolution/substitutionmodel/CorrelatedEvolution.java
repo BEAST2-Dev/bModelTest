@@ -49,7 +49,7 @@ public class CorrelatedEvolution extends NucleotideRevJumpSubstModel {
     	if (isSymmetric) {
 	        relativeRates[0] = (mask[0] ? rates.getArrayValue(model[0]) : 0.0); // 00->01
 	        relativeRates[1] = (mask[1] ? rates.getArrayValue(model[1]) : 0.0); // 00->10
-	        relativeRates[2] = 0.0; // 00-11
+	        relativeRates[2] = 0.0; // 00->11
 
 	        relativeRates[3] = relativeRates[0]; // 01->00
 	        relativeRates[4] = 0.0; // 01->10
@@ -65,7 +65,7 @@ public class CorrelatedEvolution extends NucleotideRevJumpSubstModel {
 		} else {
 	        relativeRates[0] = (mask[0] ? rates.getArrayValue(model[0]) : 0.0); // 00->01
 	        relativeRates[1] = (mask[1] ? rates.getArrayValue(model[1]) : 0.0); // 00->10
-	        relativeRates[2] = 0.0; // 00-11
+	        relativeRates[2] = 0.0; // 00->11
 
 	        relativeRates[3] = (mask[2] ? rates.getArrayValue(model[2]) : 0.0); // 01->00
 	        relativeRates[4] = 0.0; // 01->10
