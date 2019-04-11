@@ -195,6 +195,7 @@
 		</copy>
 		<copy todir="${Add_on_dir}/templates">
 			<fileset file="templates/bModelTest.xml" />
+			<fileset file="templates/methods.cfg" />
 		</copy>
 		<copy todir="${Add_on_dir}/js">
 			<fileset dir="js">

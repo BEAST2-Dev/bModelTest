@@ -37,7 +37,7 @@ beast.math.distributions.NucleotideRevJumpSubstModelRatePrior.distr"
             priorType="onTransitionsAndTraversals" substModel="@RevJump.s:$(n)"/>
 
         <distribution id="BMT_GammaShapePrior.s:$(n)" spec="beast.math.distributions.BMTPrior" count="@hasGammaRates.s:$(n)" x="@BMT_gammaShape.s:$(n)">
-                <Exponential id="Exponential.0" name="distr">
+                <Exponential name="distr">
                     <parameter lower="0.0" name="mean" upper="0.0" estimate='false'>1.0</parameter>
                 </Exponential>
 	    </distribution>
