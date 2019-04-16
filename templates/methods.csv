@@ -1,4 +1,4 @@
-"BEASTModelTest.s:$(n)","bModelTest"," site model with ","gammaCategoryCount"," gamma categories ","substModel"
+"BEASTModelTest.s:$(n)","bModelTest"," site model (",cite(BEASTModelTest.s:$(n)),") with ","gammaCategoryCount"," gamma categories ","substModel"
 #,BMT_PropInvariablePrior.s:$(n),BMT_freqsPrior.s:$(n),BMT_GammaShapePrior.s:$(n),BMT_GammaShapePrior.s:$(n)
 "RevJump.s:$(n)","using ","modelSet"," substitution models"
 
