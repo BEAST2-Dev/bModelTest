@@ -37,6 +37,7 @@ import beast.evolution.substitutionmodel.Frequencies;
 import beast.evolution.substitutionmodel.NucleotideRevJumpSubstModel;
 import beast.evolution.substitutionmodel.NucleotideRevJumpSubstModel.ModelSet;
 import beast.core.Runnable;
+import beast.util.BEASTClassLoader;
 import beast.util.LogAnalyser;
 
 @Description("Analyses bModelTest log and list useful stats such as 95% HPDs of model indicators")
@@ -263,7 +264,7 @@ public class BModelAnalyser extends Runnable {
 			// test for JavaFX
 			boolean isJavaFxAvailable;
 			try {
-			  Class.forName("javafx.embed.swing.JFXPanel");
+			  BEASTClassLoader.forName("javafx.embed.swing.JFXPanel");
 			  isJavaFxAvailable = true;
 			} catch (ClassNotFoundException e) {
 			  isJavaFxAvailable = false;
