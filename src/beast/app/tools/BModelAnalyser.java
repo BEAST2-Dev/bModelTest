@@ -321,12 +321,18 @@ public class BModelAnalyser extends Runnable {
 			FILESEP = "\\\\";
 		}
 		for (String pathEntry : classpathEntries) {
-			//Log.debug.print("Trying >" + pathEntry + "< ");
+			// Log.info("Trying >" + pathEntry + "< ");
 			if (new File(pathEntry).getName().toLowerCase().equals("bmodeltest.addon.jar")) {
 				Log.debug.println("Got it!");
 				File parentFile = (new File(pathEntry)).getParentFile().getParentFile();
 				String parent = parentFile.getPath();
-				return parent + FILESEP + "js";
+				String jsPath = parent + FILESEP + "js";
+				if (new File(jsPath).exists()) {
+					return jsPath;
+				}
+				// perhaps a space in the file name (especially on OS X)
+				jsPath = jsPath.replaceAll("%20"," ");
+				return jsPath;
 			}
 			//Log.debug.println("No luck ");
 		}
@@ -335,6 +341,7 @@ public class BModelAnalyser extends Runnable {
 			jsPath = jsPath.replaceAll("\\\\","/");
 			jsPath = "/" + jsPath;
 		}
+
 		
 		//Log.debug.println("Using default: " + jsPath);
 		return jsPath;
