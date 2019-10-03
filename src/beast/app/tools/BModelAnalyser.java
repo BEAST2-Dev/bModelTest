@@ -255,7 +255,7 @@ public class BModelAnalyser extends Runnable {
 		
 		if (useBrowseInput.get()) {
 			try {
-				openUrl("file://" + jsPath + "/bModelTest" + instance + ".html");
+				Application.openUrl("file://" + jsPath + "/bModelTest" + instance + ".html");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -279,39 +279,7 @@ public class BModelAnalyser extends Runnable {
 		}
 	}
 	
-	void openUrl(String url) throws IOException {
-		url = url.replaceAll(" ", "%20");
-	    if(Desktop.isDesktopSupported()){
-	        Desktop desktop = Desktop.getDesktop();
-	        try {
-	            desktop.browse(new URI(url));
-	            return;
-	        } catch (IOException | URISyntaxException e) {
-	            // TODO Auto-generated catch block
-	            //e.printStackTrace();
-	        }
-	    }
-	    if (Utils.isWindows()) {
-	    	Runtime rt = Runtime.getRuntime();
-	    	rt.exec( "rundll32 url.dll,FileProtocolHandler " + url);
-	    } else if (Utils.isMac()) {
-	    	Runtime rt = Runtime.getRuntime();
-	    	rt.exec( "open" + url);
-	    } else {
-	    	// Linux:
-	    	Runtime rt = Runtime.getRuntime();
-	    	String[] browsers = {"epiphany", "firefox", "mozilla", "konqueror",
-	    	                                 "netscape","opera","links","lynx"};
 
-	    	StringBuffer cmd = new StringBuffer();
-	    	for (int i=0; i<browsers.length; i++) {
-	    	     cmd.append( (i==0  ? "" : " || " ) + browsers[i] +" \"" + url + "\" ");
-	    	}
-	    	rt.exec(new String[] { "sh", "-c", cmd.toString() });
-	    }
-	    
-	   }
-	
 	
 	private String getJavaScriptPath() {
 		String classpath = System.getProperty("java.class.path");
