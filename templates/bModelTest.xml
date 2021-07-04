@@ -83,23 +83,13 @@ beast.math.distributions.NucleotideRevJumpSubstModelRatePrior.distr"
         <operator id="BMT_FreqsFlipOperator.s:$(n)" spec="BitFlipOperator" parameter="@hasEqualFreqs.s:$(n)" weight="0.1"/>
         <operator id='BMT_FrequenciesExchanger.s:$(n)' spec='DeltaExchangeOperator' delta="0.01" weight="0.2" parameter="@BMT_frequencies.s:$(n)"/>
     
-    <!--
-        <log id="ActivePropInvariable.s:$(n)" spec='beast.math.statistic.RPNcalculator' expression="BMT_ProportionInvariable.s:$(n) hasInvariableSites.s:$(n) *">
+        <log id="ActivePropInvariable.s:$(n)" spec='beast.evolution.substitutionmodel.ActiveLogger'>
 	        <parameter idref="BMT_ProportionInvariable.s:$(n)"/>
-	        <parameter idref="hasInvariableSites.s:$(n)"/>
+	        <mask idref="hasInvariableSites.s:$(n)"/>
         </log>
-        <log id="ActiveGammaShape.s:$(n)" spec='beast.math.statistic.RPNcalculator' expression="BMT_gammaShape.s:$(n) hasGammaRates.s:$(n) *">
+        <log id="ActiveGammaShape.s:$(n)" spec='beast.evolution.substitutionmodel.ActiveLogger'>
 	        <parameter idref="BMT_gammaShape.s:$(n)"/>
-	        <parameter idref="hasGammaRates.s:$(n)"/>
-        </log>
-        -->
-        <log id="ActivePropInvariable.s:$(n)" spec='beast.util.Script' expression="BMT_ProportionInvariable * hasInvariableSites" argnames="BMT_ProportionInvariable hasInvariableSites">
-	        <x idref="BMT_ProportionInvariable.s:$(n)"/>
-	        <x idref="hasInvariableSites.s:$(n)"/>
-        </log>
-        <log id="ActiveGammaShape.s:$(n)" spec='beast.util.Script' expression="BMT_gammaShape * hasGammaRates" argnames="BMT_gammaShape hasGammaRates">
-	        <x idref="BMT_gammaShape.s:$(n)"/>
-	        <x idref="hasGammaRates.s:$(n)"/>
+	        <mask idref="hasGammaRates.s:$(n)"/>
         </log>
 
 
