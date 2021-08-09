@@ -105,7 +105,7 @@ public class BMTMergeSplitOperator extends Operator {
 			List<Integer> reverseCandidates = substModel.getMergeCanditates(newModelID);
 			// split/merge probabilities
 			logHR -= -Math.log(candidates.size()) + Math.log(reverseCandidates.size());
-			// density of getting into new state due to choise of new rates
+			// density of getting into new state due to choice of new rates
 			logHR -=  - Math.log(r * (n1 + n2));
 			// Jacobian
 			logHR -= Math.log(n1 * n2) - Math.log(n1 + n2);

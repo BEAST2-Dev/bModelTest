@@ -19,7 +19,11 @@
 	<property name="srcBeast2" location="${beast2path}/src" />
 	<property name="beast2classpath" location="${beast2path}/build" />
 	<property name="Add_on_dir" value="${release_dir}/add-on" />
+	<property name="bModelTestdir" value="."/>
+	<!--
 	<property name="version" value="1.2.1" />
+	-->
+
 
     <import file="${beast2path}/build.xml" />
 
@@ -41,6 +45,15 @@
 	<!-- start -->
 	<target name="initbModelTest">
 		<echo message="${ant.project.name}: ${ant.file}" />
+
+	    <available file="${bModelTestdir}/version.xml" property="versionAvailable"/>
+    	<fail unless="versionAvailable">
+	      ** Required file version.xml does not exist. **
+	    </fail>
+
+    	<!-- Read package name and version from xml file -->
+	    <xmlproperty file="${bModelTestdir}/version.xml" prefix="fromVersionFile" />
+    	<property name="bModelTestversion" value="${fromVersionFile.package(version)}" />
 	</target>
 
 	<target name="cleanbModelTest">
@@ -203,12 +216,12 @@
 			</fileset>
         </copy>
 
-		<jar jarfile="${distbModelTest}/bModelTest.addon.v${version}.zip">
+		<jar jarfile="${distbModelTest}/bModelTest.addon.v${bModelTestversion}.zip">
 			<fileset dir="${Add_on_dir}">
 				<include name="**/*" />
 			</fileset>
         </jar>
-		<echo message="Add-on version v${version} release is finished." />
+		<echo message="Add-on version v${bModelTestversion} release is finished." />
 	</target>
 
 </project>
