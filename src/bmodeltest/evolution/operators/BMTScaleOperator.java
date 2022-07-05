@@ -1,13 +1,13 @@
-package beast.evolution.operators;
+package bmodeltest.evolution.operators;
 
-import beast.core.Description;
-import beast.core.Input;
-import beast.core.Input.Validate;
-import beast.core.parameter.BooleanParameter;
-import beast.core.parameter.IntegerParameter;
-import beast.core.parameter.RealParameter;
-import beast.evolution.operators.ScaleOperator;
-import beast.util.Randomizer;
+import beast.base.core.Description;
+import beast.base.core.Input;
+import beast.base.core.Input.Validate;
+import beast.base.inference.parameter.BooleanParameter;
+import beast.base.inference.parameter.IntegerParameter;
+import beast.base.inference.parameter.RealParameter;
+import beast.base.evolution.operator.ScaleOperator;
+import beast.base.util.Randomizer;
 
 
 @Description("Operator for bModelTest to scale shape/proportiona invariant if gamma rate heterogeneity and/or invariant sites are present")
@@ -36,7 +36,7 @@ public class BMTScaleOperator extends ScaleOperator {
             final int nDegreesOfFreedom = degreesOfFreedomInput.get();
             final boolean bScaleAllIndependently = scaleAllIndependentlyInput.get();
 
-            final RealParameter param = parameterInput.get(this);
+            final RealParameter param = parameterInput.get();
 
             assert param.getLower() != null  && param.getUpper() != null;
 

@@ -1,17 +1,17 @@
-package beast.evolution.sitemodel;
+package bmodeltest.evolution.sitemodel;
 
 import java.util.Arrays;
 
 import org.apache.commons.math.distribution.GammaDistribution;
 import org.apache.commons.math.distribution.GammaDistributionImpl;
 
-import beast.core.Citation;
-import beast.core.Description;
-import beast.core.Input;
-import beast.core.Input.Validate;
-import beast.core.parameter.BooleanParameter;
-import beast.core.parameter.IntegerParameter;
-import beast.evolution.tree.Node;
+import beast.base.core.Citation;
+import beast.base.core.Description;
+import beast.base.core.Input;
+import beast.base.core.Input.Validate;
+import beast.base.inference.parameter.IntegerParameter;
+import beast.base.evolution.sitemodel.SiteModel;
+import beast.base.evolution.tree.Node;
 
 @Description("Site model that jumps between with and without gamma sites, as well as with and without invariant sites")
 @Citation(value="Bouckaert RR, Drummond AJ. bModelTest: Bayesian phylogenetic site model averaging and model comparison. BMC evolutionary biology. 2017 Dec;17(1):42.", DOI="https://doi.org/10.1186/s12862-017-0890-6")

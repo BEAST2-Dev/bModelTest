@@ -1,18 +1,18 @@
-package beast.evolution.operators;
+package bmodeltest.evolution.operators;
 
 
 import org.apache.commons.math.MathException;
 
-import beast.core.Description;
-import beast.core.Input;
-import beast.core.Operator;
-import beast.core.Input.Validate;
-import beast.core.parameter.IntegerParameter;
-import beast.core.parameter.RealParameter;
-import beast.math.distributions.Exponential;
-import beast.math.distributions.ParametricDistribution;
-import beast.math.distributions.BMTPrior;
-import beast.util.Randomizer;
+import beast.base.core.Description;
+import beast.base.core.Input;
+import beast.base.inference.Operator;
+import beast.base.core.Input.Validate;
+import beast.base.inference.parameter.IntegerParameter;
+import beast.base.inference.parameter.RealParameter;
+import beast.base.inference.distribution.Exponential;
+import beast.base.inference.distribution.ParametricDistribution;
+import beast.base.util.Randomizer;
+import bmodeltest.math.distributions.BMTPrior;
 
 @Description("Operator for bModelTest to jump between presence/absence of gamma rate heterogeneity and/or invariant sites")
 public class BMTBirthDeathOperator extends Operator {

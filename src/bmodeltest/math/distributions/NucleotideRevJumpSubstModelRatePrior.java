@@ -1,19 +1,23 @@
-package beast.math.distributions;
+package bmodeltest.math.distributions;
 
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-import beast.core.Description;
-import beast.core.Function;
-import beast.core.Input;
-import beast.core.State;
-import beast.core.Input.Validate;
-import beast.core.parameter.IntegerParameter;
-import beast.core.util.Log;
-import beast.evolution.substitutionmodel.NucleotideRevJumpSubstModel;
-import beast.math.GammaFunction;
+import beast.base.core.Description;
+import beast.base.core.Function;
+import beast.base.core.Input;
+import beast.base.inference.State;
+import beast.base.inference.distribution.Exponential;
+import beast.base.inference.distribution.LogNormalDistributionModel;
+import beast.base.inference.distribution.ParametricDistribution;
+import beast.base.inference.distribution.Prior;
+import beast.base.core.Input.Validate;
+import beast.base.inference.parameter.IntegerParameter;
+import beast.base.core.Log;
+import beast.base.util.GammaFunction;
+import bmodeltest.evolution.substitutionmodel.NucleotideRevJumpSubstModel;
 
 @Description("Prior on rates for reversible jump based substitution model, one of "
 		+ "1. Dirichlet prior on rates ensuring they sum to 6. "

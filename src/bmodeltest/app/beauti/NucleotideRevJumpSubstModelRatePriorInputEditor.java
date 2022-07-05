@@ -1,15 +1,16 @@
-package beast.app.beauti;
+package bmodeltest.app.beauti;
 
-import javax.swing.JLabel;
 
-import beast.app.draw.EnumInputEditor;
-import beast.app.draw.InputEditor;
-import beast.core.BEASTInterface;
-import beast.core.Input;
-import beast.math.distributions.NucleotideRevJumpSubstModelRatePrior;
+
+import beastfx.app.inputeditor.BeautiDoc;
+import beastfx.app.inputeditor.EnumInputEditor;
+import beastfx.app.inputeditor.InputEditor;
+import bmodeltest.math.distributions.NucleotideRevJumpSubstModelRatePrior;
+import javafx.scene.control.Label;
+import beast.base.core.BEASTInterface;
+import beast.base.core.Input;
 
 public class NucleotideRevJumpSubstModelRatePriorInputEditor extends InputEditor.Base {
-	private static final long serialVersionUID = 1L;
 
 	@Override
 	public Class<?> type() {
@@ -23,11 +24,11 @@ public class NucleotideRevJumpSubstModelRatePriorInputEditor extends InputEditor
 	@Override
 	public void init(Input<?> input, BEASTInterface beastObject, int itemNr, ExpandOption isExpandOption,
 			boolean addButtons) {
-		add(new JLabel(beastObject.getID() + ":"));
+		pane.getChildren().add(new Label(beastObject.getID() + ":"));
 		
 		EnumInputEditor editor = new EnumInputEditor(doc);
 		editor.init(beastObject.getInput("priorType"), beastObject, -1, isExpandOption, true);
-		add(editor);
+		pane.getChildren().add(editor);
 	}
 
 }

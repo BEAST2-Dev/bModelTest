@@ -1,4 +1,4 @@
-package beast.evolution.substitutionmodel;
+package bmodeltest.evolution.substitutionmodel;
 
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
@@ -10,15 +10,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import beast.core.Description;
-import beast.core.Function;
-import beast.core.Input;
-import beast.core.Loggable;
-import beast.core.Input.Validate;
-import beast.core.parameter.IntegerParameter;
-import beast.evolution.datatype.DataType;
-import beast.evolution.datatype.Nucleotide;
-import beast.evolution.substitutionmodel.GeneralSubstitutionModel;
+import beast.base.core.Description;
+import beast.base.core.Function;
+import beast.base.core.Input;
+import beast.base.core.Loggable;
+import beast.base.core.Input.Validate;
+import beast.base.inference.parameter.IntegerParameter;
+import beast.base.evolution.datatype.DataType;
+import beast.base.evolution.datatype.Nucleotide;
+import beast.base.evolution.substitutionmodel.GeneralSubstitutionModel;
 
 @Description("Reversible jump based substitution model that can jump between all "
 		+ "reversible nucleotide substitution models")

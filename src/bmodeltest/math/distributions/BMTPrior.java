@@ -1,13 +1,13 @@
-package beast.math.distributions;
+package bmodeltest.math.distributions;
 
 
 
-import beast.core.Description;
-import beast.core.Function;
-import beast.core.Input;
-import beast.core.Input.Validate;
-import beast.core.parameter.IntegerParameter;
-import beast.math.distributions.Prior;
+import beast.base.core.Description;
+import beast.base.core.Function;
+import beast.base.core.Input;
+import beast.base.core.Input.Validate;
+import beast.base.inference.parameter.IntegerParameter;
+import beast.base.inference.distribution.Prior;
 
 @Description("Prior for reversible jump based parameters, applies prior only to the rates that are in use")
 public class BMTPrior extends Prior {

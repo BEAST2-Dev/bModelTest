@@ -3,13 +3,13 @@ package test.beast.evolution.operators;
 
 import org.junit.Test;
 
-import beast.core.State;
-import beast.core.parameter.IntegerParameter;
-import beast.core.parameter.RealParameter;
-import beast.evolution.operators.BMTExchangeOperator;
-import beast.evolution.substitutionmodel.NucleotideRevJumpSubstModel;
+import beast.base.inference.State;
+import beast.base.inference.parameter.IntegerParameter;
+import beast.base.inference.parameter.RealParameter;
 import test.beast.evolution.substitutionmodel.NucleotideRevJumpSubstModelTest;
-import beast.util.Randomizer;
+import beast.base.util.Randomizer;
+import bmodeltest.evolution.operators.BMTExchangeOperator;
+import bmodeltest.evolution.substitutionmodel.NucleotideRevJumpSubstModel;
 import junit.framework.TestCase;
 
 public class ExchangeOperatorTest extends TestCase {

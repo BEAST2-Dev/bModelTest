@@ -1,6 +1,6 @@
-package beast.evolution.sitemodel;
+package bmodeltest.evolution.sitemodel;
 
-import beast.core.Description;
+import beast.base.core.Description;
 
 @Description("Used for backward compatibiliy only, so files generated with previous versions of modeltest can still run:")
 @Deprecated

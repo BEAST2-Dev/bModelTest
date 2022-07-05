@@ -1,6 +1,6 @@
 package test.beast.util;
 
-import beast.util.LogAnalyser;
+import beastfx.app.tools.LogAnalyser;
 
 public class MyLogAnalyser extends LogAnalyser {
 

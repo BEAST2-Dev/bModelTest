@@ -1,16 +1,16 @@
-package beast.evolution.operators;
+package bmodeltest.evolution.operators;
 
 
 import java.util.List;
 
-import beast.core.Description;
-import beast.core.Input;
-import beast.core.Input.Validate;
-import beast.core.Operator;
-import beast.core.parameter.IntegerParameter;
-import beast.core.parameter.RealParameter;
-import beast.evolution.substitutionmodel.NucleotideRevJumpSubstModel;
-import beast.util.Randomizer;
+import beast.base.core.Description;
+import beast.base.core.Input;
+import beast.base.core.Input.Validate;
+import beast.base.inference.Operator;
+import beast.base.inference.parameter.IntegerParameter;
+import beast.base.inference.parameter.RealParameter;
+import beast.base.util.Randomizer;
+import bmodeltest.evolution.substitutionmodel.NucleotideRevJumpSubstModel;
 
 @Description("Increases or decreases number of groups of subst models")
 public class BMTMergeSplitOperator extends Operator {

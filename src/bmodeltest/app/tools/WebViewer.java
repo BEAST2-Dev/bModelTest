@@ -1,4 +1,4 @@
-package beast.app.tools;
+package bmodeltest.app.tools;
 
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
@@ -9,8 +9,8 @@ import javafx.scene.web.WebView;
 import javax.swing.*;
 
 
-import beast.app.BEASTVersion2;
-import beast.core.util.Log;
+import beast.base.core.BEASTVersion2;
+import beast.base.core.Log;
 
 import java.awt.*;
 

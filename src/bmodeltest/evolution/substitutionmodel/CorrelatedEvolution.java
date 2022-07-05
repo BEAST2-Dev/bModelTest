@@ -1,10 +1,10 @@
-package beast.evolution.substitutionmodel;
+package bmodeltest.evolution.substitutionmodel;
 
-import beast.core.Description;
-import beast.core.Function;
-import beast.core.Input;
-import beast.core.parameter.BooleanParameter;
-import beast.evolution.datatype.DataType;
+import beast.base.core.Description;
+import beast.base.core.Function;
+import beast.base.core.Input;
+import beast.base.inference.parameter.BooleanParameter;
+import beast.base.evolution.datatype.DataType;
 
 // Pagel & Meade 2005
 @Description("Substitution model for correlated evolution of discrete characters by reversible‐jump")

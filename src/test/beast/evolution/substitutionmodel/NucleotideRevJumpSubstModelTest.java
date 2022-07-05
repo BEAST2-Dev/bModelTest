@@ -2,10 +2,10 @@ package test.beast.evolution.substitutionmodel;
 
 import org.junit.Test;
 
-import beast.core.parameter.IntegerParameter;
-import beast.core.parameter.RealParameter;
-import beast.evolution.substitutionmodel.Frequencies;
-import beast.evolution.substitutionmodel.NucleotideRevJumpSubstModel;
+import beast.base.inference.parameter.IntegerParameter;
+import beast.base.inference.parameter.RealParameter;
+import bmodeltest.evolution.substitutionmodel.NucleotideRevJumpSubstModel;
+import beast.base.evolution.substitutionmodel.Frequencies;
 import junit.framework.TestCase;
 
 public class NucleotideRevJumpSubstModelTest extends TestCase {

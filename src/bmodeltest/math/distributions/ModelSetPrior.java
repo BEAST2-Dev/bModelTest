@@ -1,11 +1,12 @@
-package beast.math.distributions;
+package bmodeltest.math.distributions;
 
 import java.util.*;
 
-import beast.core.Description;
-import beast.core.Input;
-import beast.core.Input.Validate;
-import beast.evolution.substitutionmodel.NucleotideRevJumpSubstModel;
+import beast.base.core.Description;
+import beast.base.core.Input;
+import beast.base.core.Input.Validate;
+import beast.base.inference.distribution.Prior;
+import bmodeltest.evolution.substitutionmodel.NucleotideRevJumpSubstModel;
 
 @Description("Prior on models, uniform on model number, or uniform on parameter number")
 public class ModelSetPrior extends Prior {

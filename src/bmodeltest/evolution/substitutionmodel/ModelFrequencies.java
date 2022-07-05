@@ -1,9 +1,10 @@
-package beast.evolution.substitutionmodel;
+package bmodeltest.evolution.substitutionmodel;
 
-import beast.core.Description;
-import beast.core.Input;
-import beast.core.Input.Validate;
-import beast.core.parameter.BooleanParameter;
+import beast.base.core.Description;
+import beast.base.core.Input;
+import beast.base.core.Input.Validate;
+import beast.base.evolution.substitutionmodel.Frequencies;
+import beast.base.inference.parameter.BooleanParameter;
 
 @Description("Frequencies for ModelTest model, can switch between equal and empricial/estimated frequencies")
 public class ModelFrequencies extends Frequencies {

@@ -1,14 +1,14 @@
-package beast.evolution.substitutionmodel;
+package bmodeltest.evolution.substitutionmodel;
 
 import java.io.PrintStream;
 
-import beast.core.BEASTObject;
-import beast.core.Description;
-import beast.core.Input;
-import beast.core.Input.Validate;
-import beast.core.Loggable;
-import beast.core.parameter.IntegerParameter;
-import beast.core.parameter.RealParameter;
+import beast.base.core.BEASTObject;
+import beast.base.core.Description;
+import beast.base.core.Input;
+import beast.base.core.Input.Validate;
+import beast.base.core.Loggable;
+import beast.base.inference.parameter.IntegerParameter;
+import beast.base.inference.parameter.RealParameter;
 
 @Description("Logs parameter when indicated the parameter is in active use by the mask input")
 public class ActiveLogger extends BEASTObject implements Loggable {

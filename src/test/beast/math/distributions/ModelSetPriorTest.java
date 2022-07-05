@@ -3,10 +3,10 @@ package test.beast.math.distributions;
 
 import org.junit.Test;
 
-import beast.core.parameter.IntegerParameter;
-import beast.evolution.substitutionmodel.NucleotideRevJumpSubstModel;
-import beast.math.distributions.ModelSetPrior;
-import beast.math.distributions.Uniform;
+import beast.base.inference.parameter.IntegerParameter;
+import bmodeltest.evolution.substitutionmodel.NucleotideRevJumpSubstModel;
+import bmodeltest.math.distributions.ModelSetPrior;
+import beast.base.inference.distribution.Uniform;
 import junit.framework.TestCase;
 import test.beast.evolution.substitutionmodel.NucleotideRevJumpSubstModelTest;
 

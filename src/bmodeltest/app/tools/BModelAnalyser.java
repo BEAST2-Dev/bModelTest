@@ -1,4 +1,5 @@
-package beast.app.tools;
+package bmodeltest.app.tools;
+
 
 import java.awt.Desktop;
 import java.io.File;
@@ -18,27 +19,26 @@ import java.util.Set;
 
 import javax.swing.JOptionPane;
 
-import beast.app.BEASTVersion2;
-import beast.app.beauti.BeautiConfig;
-import beast.app.beauti.BeautiDoc;
-import beast.app.draw.BEASTObjectDialog;
-import beast.app.draw.BEASTObjectPanel;
-import beast.app.util.Application;
-import beast.app.util.ConsoleApp;
-import beast.app.util.LogFile;
-import beast.app.util.Utils;
-import beast.core.Description;
-import beast.core.Input;
-import beast.core.Input.Validate;
-import beast.core.parameter.IntegerParameter;
-import beast.core.parameter.RealParameter;
-import beast.core.util.Log;
-import beast.evolution.substitutionmodel.Frequencies;
-import beast.evolution.substitutionmodel.NucleotideRevJumpSubstModel;
-import beast.evolution.substitutionmodel.NucleotideRevJumpSubstModel.ModelSet;
-import beast.core.Runnable;
-import beast.util.BEASTClassLoader;
-import beast.util.LogAnalyser;
+import beast.base.core.BEASTVersion2;
+import beastfx.app.inputeditor.BeautiConfig;
+import beastfx.app.inputeditor.BeautiDoc;
+import beastfx.app.inputeditor.BEASTObjectDialog;
+import beastfx.app.inputeditor.BEASTObjectPanel;
+import beastfx.app.tools.Application;
+import beastfx.app.tools.LogAnalyser;
+import beastfx.app.util.LogFile;
+import beastfx.app.util.Utils;
+import bmodeltest.evolution.substitutionmodel.NucleotideRevJumpSubstModel;
+import bmodeltest.evolution.substitutionmodel.NucleotideRevJumpSubstModel.ModelSet;
+import beast.base.core.Description;
+import beast.base.core.Input;
+import beast.base.core.Input.Validate;
+import beast.base.inference.parameter.IntegerParameter;
+import beast.base.inference.parameter.RealParameter;
+import beast.base.core.Log;
+import beast.base.evolution.substitutionmodel.Frequencies;
+import beast.base.inference.Runnable;
+import beast.pkgmgmt.BEASTClassLoader;
 
 @Description("Analyses bModelTest log and list useful stats such as 95% HPDs of model indicators")
 public class BModelAnalyser extends Runnable {
@@ -275,7 +275,7 @@ public class BModelAnalyser extends Runnable {
 						+ "http://www.oracle.com/technetwork/java/javase/downloads/index.html\n\n"
 						+ "The webviewer will be started, but expect things to not show properly.>");
 			}
-			new beast.app.tools.WebViewer("BModelAnalyser", "file://" + jsPath + "/bModelTest" + instance + ".html");
+			new bmodeltest.app.tools.WebViewer("BModelAnalyser", "file://" + jsPath + "/bModelTest" + instance + ".html");
 		}
 	}
 	
@@ -582,42 +582,13 @@ public class BModelAnalyser extends Runnable {
 		return b.toString();
 	}
 
-	static ConsoleApp app;
+	// static ConsoleApp app;
 	public static void main(String[] args) throws Exception {
 		BModelAnalyser analyser = new BModelAnalyser();
 		analyser.setID("Analyses bModelTest trace logs");
 		analyser.traceFileInput.setValue(new LogFile("someTrace.log"), analyser);
-	
-		if (args.length == 0) {
-			// create BeautiDoc and beauti configuration
-			BeautiDoc doc = new BeautiDoc();
-			doc.beautiConfig = new BeautiConfig();
-			doc.beautiConfig.initAndValidate();
-					
-			// create panel with entries for the application
-			BEASTObjectPanel panel = new BEASTObjectPanel(analyser, analyser.getClass(), doc);
-			
-			// wrap panel in a dialog
-			BEASTObjectDialog dialog = new BEASTObjectDialog(panel, null);
-	
-			// show the dialog
-			if (dialog.showDialog()) {
-				dialog.accept(analyser, doc);
-				// create a console to show standard error and standard output
-				app = new ConsoleApp("BModelAnalyser", 
-						"BModelAnalyser: " + analyser.traceFileInput.get().getPath(),
-						null
-						);
-				analyser.initAndValidate();
-				analyser.run();
-			}
-			return;
-		}
 
-		Application main = new Application(analyser);
-		main.parseArgs(args, false);
-		analyser.initAndValidate();
-		analyser.run();
+		new Application(analyser, analyser.getID(), args);
 	}
 
 }
