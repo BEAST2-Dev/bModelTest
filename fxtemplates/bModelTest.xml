@@ -6,7 +6,7 @@
             <!-- site models -->
         <!-- gamma site model -->
         <!-- inputLabelMap='beast.evolution.sitemodel.BEASTModelTestSiteModel.mutationRate=Substitution Rate'-->
-        <subtemplate id='BEAST Model Test' class='beast.evolution.sitemodel.BEASTModelTestSiteModel' mainid='BEASTModelTest.s:$(n)'
+        <subtemplate id='BEAST Model Test' class='bmodeltest.evolution.sitemodel.BEASTModelTestSiteModel' mainid='BEASTModelTest.s:$(n)'
 
 			suppressInputs="bmodeltest.evolution.sitemodel.BEASTModelTestSiteModel.substModel,
 bmodeltest.evolution.sitemodel.BEASTModelTestSiteModel.gammaCategoryCount,
@@ -61,10 +61,7 @@ bmodeltest.math.distributions.NucleotideRevJumpSubstModelRatePrior.distr"
             <substModel id="RevJump.s:$(n)" spec="bmodeltest.evolution.substitutionmodel.NucleotideRevJumpSubstModel" 
                         modelIndicator="@BMT_ModelIndicator.s:$(n)" rates="@BMT_Rates.s:$(n)"
                         modelSet="transitionTransversionSplit">
-                        <frequencies id="BMTfreqs.s:$(n)" spec="ModelFrequencies" data="@$(n)" hasEqualFreqs='@hasEqualFreqs.s:$(n)'  empirical="false"/>
-                        <!--
-                        <frequencies id="freqs.s:$(n)" spec="ModelFrequencies" frequencies="@BMT_frequencies.s:$(n)" hasEqualFreqs='@hasEqualFreqs.s:$(n)' empirical="false"/>
-                        -->
+                        <frequencies id="BMTfreqs.s:$(n)" spec="bmodeltest.evolution.substitutionmodel.ModelFrequencies" data="@$(n)" hasEqualFreqs='@hasEqualFreqs.s:$(n)'  empirical="false"/>
 	        </substModel>
 	    </siteModel>
 
@@ -78,11 +75,11 @@ bmodeltest.math.distributions.NucleotideRevJumpSubstModelRatePrior.distr"
 	<operator id="BMT_hasInvariableSitesFlipper.s:$(n)" spec="bmodeltest.evolution.operators.BMTBirthDeathOperator" count="@hasInvariableSites.s:$(n)" rates="@BMT_ProportionInvariable.s:$(n)" weight="0.1"/>
         <operator id="BMT_ProportionInvariableScaler.s:$(n)" spec="bmodeltest.evolution.operators.BMTScaleOperator" count="@hasInvariableSites.s:$(n)" parameter="@BMT_ProportionInvariable.s:$(n)" scaleFactor="0.5" weight="0.5"/>
 
-        <operator id='BMT_mutationRateScaler.s:$(n)' spec='BactrianScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@BMT_mutationRate.s:$(n)"/>
+        <operator id='BMT_mutationRateScaler.s:$(n)' spec='kernel.BactrianScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@BMT_mutationRate.s:$(n)"/>
         
         <!-- frequencies estimation -->
         <operator id="BMT_FreqsFlipOperator.s:$(n)" spec="BitFlipOperator" parameter="@hasEqualFreqs.s:$(n)" weight="0.1"/>
-        <operator id='BMT_FrequenciesExchanger.s:$(n)' spec='DeltaExchangeOperator' delta="0.01" weight="0.2" parameter="@BMT_frequencies.s:$(n)"/>
+        <operator id='BMT_FrequenciesExchanger.s:$(n)' spec='kernel.BactrianDeltaExchangeOperator' delta="0.01" weight="0.2" parameter="@BMT_frequencies.s:$(n)"/>
     
         <log id="ActivePropInvariable.s:$(n)" spec='bmodeltest.evolution.substitutionmodel.ActiveLogger'>
 	        <parameter idref="BMT_ProportionInvariable.s:$(n)"/>
@@ -97,7 +94,7 @@ bmodeltest.math.distributions.NucleotideRevJumpSubstModelRatePrior.distr"
 
             ]]>
 
-            <connect method="beast.app.inputeditor.SiteModelInputEditor.customConnector"/>
+            <connect method="beastfx.app.inputeditor.SiteModelInputEditor.customConnector"/>
 
             <connect srcID='BMT_ModelIndicator.s:$(n)'       targetID='state' inputName='stateNode' if='inlikelihood(BEASTModelTest.s:$(n))'/>
             <connect srcID='BMT_Rates.s:$(n)'                targetID='state' inputName='stateNode' if='inlikelihood(BEASTModelTest.s:$(n)) and BMT_Rates.s:$(n)/estimate=true'/>

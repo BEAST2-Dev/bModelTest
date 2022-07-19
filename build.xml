@@ -20,6 +20,8 @@
 	<property name="beast2classpath" location="${beast2path}/build" />
 	<property name="Add_on_dir" value="${release_dir}/add-on" />
 	<property name="bModelTestdir" value="."/>
+	<property name="beastapp2path" location="../BeastFX" />
+	<property name="beastapp2classpath" location="${beastapp2path}/build" />
 	<!--
 	<property name="version" value="1.2.1" />
 	-->
@@ -32,15 +34,15 @@
 
 	<path id="classpath">
         <pathelement path="${buildbModelTest}"/>
-	<fileset dir="${libBeast2}" includes="antlr-runtime-4.7.jar"/>	
-	<fileset dir="${libBeast2}" includes="junit-4.8.2.jar"/>
-	<fileset dir="${libBeast2}" includes="fest.jar"/>
+	    <fileset dir="${libBeast2}" includes="antlr-runtime-4.10.1.jar"/>	
+	    <fileset dir="${libBeast2}" includes="fest.jar"/>
         <fileset dir="${libBeast2}" includes="beagle.jar"/>
         <fileset dir="${libBeast2}" includes="jam.jar"/>
         <fileset dir="${libBeast2}" includes="colt.jar"/>
         <pathelement path="${beast2classpath}"/>
-        <pathelement path="${BEASTLabsclasspath}"/>
-	</path>
+        <pathelement path="${beastapp2classpath}"/>
+         <fileset dir="${libBeast2}/junit" includes="junit-platform-console-standalone-1.8.2.jar"/>
+ 	</path>
 
 	<!-- start -->
 	<target name="initbModelTest">
@@ -88,11 +90,11 @@
 		<mkdir dir="${buildbModelTest}" />
 
 		<!-- Compile the java code from ${srcbModelTest} into ${buildbModelTest} /bin -->
-		<javac target="1.8" srcdir="${srcbModelTest}" destdir="${buildbModelTest}" classpathref="classpath" 
+		<javac source="1.8" target="1.8" srcdir="${srcbModelTest}" destdir="${buildbModelTest}" classpathref="classpath" 
 		       fork="true"
 		       memoryinitialsize="256m"
 		       memorymaximumsize="256m">
-			<include name="beast/**/**" />
+			<include name="bmodeltest/**/**" />
 			<!-- compile JUnit test classes -->
 			<include name="test/beast/**" />
 		</javac>
