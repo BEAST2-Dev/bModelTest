@@ -539,7 +539,7 @@ public class NucleotideRevJumpSubstModel extends GeneralSubstitutionModel implem
 	}
 
 	@Override
-	protected void setupRelativeRates() {
+	public void setupRelativeRates() {
         Function rates = this.ratesInput.get();
     	int [] model = getModel(modelIndicator.getValue());
         relativeRates[0] = rates.getArrayValue(model[0]); // A->C

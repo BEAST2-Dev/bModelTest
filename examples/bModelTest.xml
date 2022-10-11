@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><beast beautitemplate='Standard' beautistatus='' namespace="beast.core:beast.evolution.alignment:beast.evolution.tree.coalescent:beast.core.util:beast.evolution.nuc:beast.evolution.operators:beast.evolution.sitemodel:beast.evolution.substitutionmodel:beast.evolution.likelihood" version="2.0">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><beast beautitemplate='Standard' beautistatus='' namespace="beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.alignment:beast.base.evolution.tree.coalescent:beast.pkgmgmt:beast.base.core:beast.base.inference.util:beast.evolution.nuc:beast.base.evolution.operator:beast.base.inference.operator:beast.base.evolution.sitemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.likelihood" version="2.0">
 
 
     <data
@@ -24,19 +24,19 @@ name="alignment">
 
 
     
-<map name="Uniform" >beast.math.distributions.Uniform</map>
-<map name="Exponential" >beast.math.distributions.Exponential</map>
-<map name="LogNormal" >beast.math.distributions.LogNormalDistributionModel</map>
-<map name="Normal" >beast.math.distributions.Normal</map>
-<map name="Beta" >beast.math.distributions.Beta</map>
-<map name="Gamma" >beast.math.distributions.Gamma</map>
-<map name="LaplaceDistribution" >beast.math.distributions.LaplaceDistribution</map>
-<map name="prior" >beast.math.distributions.Prior</map>
-<map name="InverseGamma" >beast.math.distributions.InverseGamma</map>
-<map name="OneOnX" >beast.math.distributions.OneOnX</map>
+<map name="Uniform" >beast.base.inference.distribution.Uniform</map>
+<map name="Exponential" >beast.base.inference.distribution.Exponential</map>
+<map name="LogNormal" >beast.base.inference.distribution.LogNormalDistributionModel</map>
+<map name="Normal" >beast.base.inference.distribution.Normal</map>
+<map name="Beta" >beast.base.inference.distribution.Beta</map>
+<map name="Gamma" >beast.base.inference.distribution.Gamma</map>
+<map name="LaplaceDistribution" >beast.base.inference.distribution.LaplaceDistribution</map>
+<map name="prior" >beast.base.inference.distribution.Prior</map>
+<map name="InverseGamma" >beast.base.inference.distribution.InverseGamma</map>
+<map name="OneOnX" >beast.base.inference.distribution.OneOnX</map>
 
 
-<run id="mcmc" spec="MCMC" chainLength="10000000">
+<run id="mcmc" spec="beast.base.inference.MCMC" chainLength="10000000">
     <state id="state" storeEvery="5000">
         <tree id="Tree.t:dna" name="stateNode">
             <taxonset id="TaxonSet.dna" spec="TaxonSet">
@@ -56,28 +56,28 @@ name="alignment">
         <stateNode id="frequencies.s:dna" spec="parameter.RealParameter">0.25 0.25 0.25 0.25</stateNode>
     </state>
 
-    <init id="RandomTree.t:dna" spec="beast.evolution.tree.RandomTree" estimate="false" initial="@Tree.t:dna" taxa="@dna">
+    <init id="RandomTree.t:dna" spec="beast.base.evolution.tree.coalescent.RandomTree" estimate="false" initial="@Tree.t:dna" taxa="@dna">
         <populationModel id="ConstantPopulation0.t:dna" spec="ConstantPopulation">
             <parameter id="randomPopSize.t:dna" name="popSize">1.0</parameter>
         </populationModel>
     </init>
 
-    <distribution id="posterior" spec="util.CompoundDistribution">
-        <distribution id="prior" spec="util.CompoundDistribution">
-            <distribution id="YuleModel.t:dna" spec="beast.evolution.speciation.YuleModel" birthDiffRate="@birthRate.t:dna" tree="@Tree.t:dna"/>
+    <distribution id="posterior" spec="beast.base.inference.CompoundDistribution">
+        <distribution id="prior" spec="beast.base.inference.CompoundDistribution">
+            <distribution id="YuleModel.t:dna" spec="beast.base.evolution.speciation.YuleModel" birthDiffRate="@birthRate.t:dna" tree="@Tree.t:dna"/>
 
-            <distribution id="BMTprior.s:dna" spec="beast.math.distributions.NucleotideRevJumpSubstModelRatePrior"
+            <distribution id="BMTprior.s:dna" spec="bmodeltest.math.distributions.NucleotideRevJumpSubstModelRatePrior"
                 priorType="onTransitionsAndTraversals"
                 modelIndicator="@BMTmodelIndicator.s:dna" x="@BMTrates.s:dna" substModel="@RevJump.s:dna"/>
             <prior id="YuleBirthRatePrior.t:dna" name="distribution" x="@birthRate.t:dna">
                 <Uniform id="Uniform.0" name="distr" upper="Infinity"/>
             </prior>
 
-            <distribution id="BMTPropInvariantPrior.s:dna" spec="beast.math.distributions.BMTPrior" x="@proportionInvariant.s:dna" count='@hasInvariantSites.s:dna'>
+            <distribution id="BMTPropInvariantPrior.s:dna" spec="bmodeltest.math.distributions.BMTPrior" x="@proportionInvariant.s:dna" count='@hasInvariantSites.s:dna'>
                 <Uniform id="Uniform.01" name="distr" lower="0" upper="1.0"/>
             </distribution>
 
-            <distribution id="BMTGammaShapePrior.s:dna" spec="beast.math.distributions.BMTPrior" x="@gammaShape.s:dna" count='@hasGammaRates.s:dna'>
+            <distribution id="BMTGammaShapePrior.s:dna" spec="bmodeltest.math.distributions.BMTPrior" x="@gammaShape.s:dna" count='@hasGammaRates.s:dna'>
                 <Exponential id="Exponential.0" name="distr">
                     <parameter id="RealParameter.02" lower="0.0" name="mean" upper="0.0">1.0</parameter>
                 </Exponential>
@@ -85,17 +85,17 @@ name="alignment">
             
             <!-- frequencies estimation -->
             <prior  id="freqsPrior.s:dna"  name="distribution" x="@frequencies.s:dna">
-            	<distr spec="beast.math.distributions.Dirichlet" alpha="1.0 1.0 1.0 1.0"/>
+            	<distr spec="beast.base.inference.distribution.Dirichlet" alpha="1.0 1.0 1.0 1.0"/>
             </prior>
 
         </distribution>
-        <distribution id="likelihood" spec="util.CompoundDistribution">
+        <distribution id="likelihood" spec="beast.base.inference.CompoundDistribution">
             <distribution id="treeLikelihood.dna" spec="TreeLikelihood" data="@dna" tree="@Tree.t:dna">
-                <siteModel id="SiteModel.s:dna" spec="beast.evolution.sitemodel.BEASTModelTest" 
+                <siteModel id="SiteModel.s:dna" spec="bmodeltest.evolution.sitemodel.BEASTModelTest" 
                 	gammaCategoryCount="4" proportionInvariant="@proportionInvariant.s:dna" shape="@gammaShape.s:dna"
                 	hasGammaRates="@hasGammaRates.s:dna" hasInvariantSites="@hasInvariantSites.s:dna">
                     <parameter id="mutationRate.s:dna" estimate="false" name="mutationRate">1.0</parameter>
-                    <substModel id="RevJump.s:dna" spec="beast.evolution.substitutionmodel.NucleotideRevJumpSubstModel" 
+                    <substModel id="RevJump.s:dna" spec="bmodeltest.evolution.substitutionmodel.NucleotideRevJumpSubstModel" 
                         modelIndicator="@BMTmodelIndicator.s:dna" rates="@BMTrates.s:dna"
                         modelSet="transitionTransversionSplit">
                         
@@ -104,11 +104,11 @@ name="alignment">
                         <frequencies id="freqs.s:dna" spec="ModelFrequencies" data="@dna" hasEqualFreqs='@hasEqualFreqs.s:dna' emprical="true"/>
                         -->
                         <!-- case where we switch between empirical and estimated frequencies -->
-                        <frequencies id="freqs.s:dna" spec="ModelFrequencies" frequencies="@frequencies.s:dna" hasEqualFreqs='@hasEqualFreqs.s:dna' empirical="false"/>
+                        <frequencies id="freqs.s:dna" spec="bmodeltest.evolution.substitutionmodel.ModelFrequencies" frequencies="@frequencies.s:dna" hasEqualFreqs='@hasEqualFreqs.s:dna' empirical="false"/>
                         
                     </substModel>
                 </siteModel>
-                <branchRateModel id="StrictClock.c:dna" spec="beast.evolution.branchratemodel.StrictClockModel">
+                <branchRateModel id="StrictClock.c:dna" spec="beast.base.evolution.branchratemodel.StrictClockModel">
                     <parameter id="clockRate.c:dna" estimate="false" name="clock.rate">1.0</parameter>
                 </branchRateModel>
             </distribution>
@@ -131,14 +131,14 @@ name="alignment">
 
     <operator id="WilsonBalding.t:dna" spec="WilsonBalding" tree="@Tree.t:dna" weight="3.0"/>
 
-    <operator id="BMTOperator.s:dna" spec="BMTMergeSplitOperator" modelIndicator="@BMTmodelIndicator.s:dna" rates="@BMTrates.s:dna" substModel="@RevJump.s:dna" weight="1.0"/>
-    <operator id="BMTexchanger.s:dna" spec="BMTExchangeOperator" modelIndicator="@BMTmodelIndicator.s:dna" rates="@BMTrates.s:dna" substModel="@RevJump.s:dna"  delta="0.1" weight="1.0"/>
+    <operator id="BMTOperator.s:dna" spec="bmodeltest.evolution.operators.BMTMergeSplitOperator" modelIndicator="@BMTmodelIndicator.s:dna" rates="@BMTrates.s:dna" substModel="@RevJump.s:dna" weight="1.0"/>
+    <operator id="BMTexchanger.s:dna" spec="bmodeltest.evolution.operators.BMTExchangeOperator" modelIndicator="@BMTmodelIndicator.s:dna" rates="@BMTrates.s:dna" substModel="@RevJump.s:dna"  delta="0.1" weight="1.0"/>
 
-    <operator id="BMTshapeOperator.s:dna" spec="BMTBirthDeathOperator" count="@hasGammaRates.s:dna" rates="@gammaShape.s:dna" weight="1.0"/>
-    <operator id="BMTshapecaler.s:dna" spec="BMTScaleOperator" count="@hasGammaRates.s:dna" parameter="@gammaShape.s:dna" scaleFactor="0.5" weight="1.0"/>
+    <operator id="BMTshapeOperator.s:dna" spec="bmodeltest.evolution.operators.BMTBirthDeathOperator" count="@hasGammaRates.s:dna" rates="@gammaShape.s:dna" weight="1.0"/>
+    <operator id="BMTshapecaler.s:dna" spec="bmodeltest.evolution.operators.BMTScaleOperator" count="@hasGammaRates.s:dna" parameter="@gammaShape.s:dna" scaleFactor="0.5" weight="1.0"/>
 
-    <operator id="BMTpinvOperator.s:dna" spec="BMTBirthDeathOperator" count="@hasInvariantSites.s:dna" rates="@proportionInvariant.s:dna" weight="1.0"/>
-    <operator id="BMTpInvscaler.s:dna" spec="BMTScaleOperator" count="@hasInvariantSites.s:dna" parameter="@proportionInvariant.s:dna" scaleFactor="0.5" weight="1.0"/>
+    <operator id="BMTpinvOperator.s:dna" spec="bmodeltest.evolution.operators.BMTBirthDeathOperator" count="@hasInvariantSites.s:dna" rates="@proportionInvariant.s:dna" weight="1.0"/>
+    <operator id="BMTpInvscaler.s:dna" spec="bmodeltest.evolution.operators.BMTScaleOperator" count="@hasInvariantSites.s:dna" parameter="@proportionInvariant.s:dna" scaleFactor="0.5" weight="1.0"/>
    
     <!-- frequencies estimation -->
     <operator id="BMTFreqsFlipOperator.s:dna" spec="BitFlipOperator" parameter="@hasEqualFreqs.s:dna" weight="0.1"/>
@@ -150,7 +150,7 @@ name="alignment">
         <log idref="likelihood"/>
         <log idref="prior"/>
         <log idref="treeLikelihood.dna"/>
-        <log id="TreeHeight.t:dna" spec="beast.evolution.tree.TreeHeightLogger" tree="@Tree.t:dna"/>
+        <log id="TreeHeight.t:dna" spec="beast.base.evolution.tree.TreeHeightLogger" tree="@Tree.t:dna"/>
         <log idref="YuleModel.t:dna"/>
         <log idref="birthRate.t:dna"/>
         <log idref="BMTmodelIndicator.s:dna"/>
@@ -158,11 +158,11 @@ name="alignment">
         <log idref="BMTrates.s:dna"/>
         <log idref="gammaShape.s:dna"/>
         
-        <log id="ActivePropInvariant" spec='beast.math.statistic.RPNcalculator' expression="proportionInvariant.s:dna hasInvariantSites.s:dna *">
+        <log id="ActivePropInvariant" spec='beast.base.inference.util.RPNcalculator' expression="proportionInvariant.s:dna hasInvariantSites.s:dna *">
 	        <parameter idref="proportionInvariant.s:dna"/>
 	        <parameter idref="hasInvariantSites.s:dna"/>
         </log>
-        <log id="ActiveGammaShape" spec='beast.math.statistic.RPNcalculator' expression="gammaShape.s:dna hasGammaRates.s:dna *">
+        <log id="ActiveGammaShape" spec='beast.base.inference.util.RPNcalculator' expression="gammaShape.s:dna hasGammaRates.s:dna *">
 	        <parameter idref="gammaShape.s:dna"/>
 	        <parameter idref="hasGammaRates.s:dna"/>
         </log>
@@ -188,7 +188,7 @@ name="alignment">
     </logger>
 
     <logger id="treelog.t:dna" fileName="dna.trees" logEvery="1000" mode="tree">
-        <log id="TreeWithMetaDataLogger.t:dna" spec="beast.evolution.tree.TreeWithMetaDataLogger" tree="@Tree.t:dna"/>
+        <log id="TreeWithMetaDataLogger.t:dna" spec="beast.base.evolution.TreeWithMetaDataLogger" tree="@Tree.t:dna"/>
     </logger>
 
 </run>

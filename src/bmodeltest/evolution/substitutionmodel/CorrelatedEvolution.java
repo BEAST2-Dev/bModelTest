@@ -42,7 +42,7 @@ public class CorrelatedEvolution extends NucleotideRevJumpSubstModel {
 	}
 
 	@Override
-	protected void setupRelativeRates() {
+	public void setupRelativeRates() {
         Function rates = this.ratesInput.get();
     	int [] model = getModel(modelIndicator.getValue());
     	Boolean [] mask = rateMask.getValues();

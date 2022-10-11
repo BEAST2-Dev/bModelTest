@@ -1,8 +1,6 @@
 package bmodeltest.app.beauti;
 
 
-import javax.swing.Box;
-
 import beastfx.app.inputeditor.BeautiDoc;
 import beastfx.app.inputeditor.BooleanInputEditor;
 import beastfx.app.inputeditor.EnumInputEditor;
