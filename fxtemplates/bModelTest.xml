@@ -20,6 +20,7 @@ bmodeltest.math.distributions.NucleotideRevJumpSubstModelRatePrior.substModel,
 bmodeltest.math.distributions.NucleotideRevJumpSubstModelRatePrior.x,
 bmodeltest.math.distributions.NucleotideRevJumpSubstModelRatePrior.modelIndicator,
 bmodeltest.math.distributions.NucleotideRevJumpSubstModelRatePrior.distr"
+            hmc="BEASTModelTest=/SiteModel/bModelTest/"
 			>
             <![CDATA[
 
