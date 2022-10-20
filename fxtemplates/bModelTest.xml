@@ -10,7 +10,7 @@
         <!-- inputLabelMap='beast.evolution.sitemodel.BEASTModelTestSiteModel.mutationRate=Substitution Rate'-->
         <subtemplate id='BEAST Model Test' class='bmodeltest.evolution.sitemodel.BEASTModelTestSiteModel' mainid='BEASTModelTest.s:$(n)'
 
-			suppressInputs="bmodeltest.evolution.sitemodel.BEASTModelTestSiteModel.substModel,
+            suppressInputs="bmodeltest.evolution.sitemodel.BEASTModelTestSiteModel.substModel,
 bmodeltest.evolution.sitemodel.BEASTModelTestSiteModel.gammaCategoryCount,
 bmodeltest.evolution.sitemodel.BEASTModelTestSiteModel.shape,
 bmodeltest.evolution.sitemodel.BEASTModelTestSiteModel.proportionInvariant,
@@ -22,7 +22,8 @@ bmodeltest.math.distributions.NucleotideRevJumpSubstModelRatePrior.substModel,
 bmodeltest.math.distributions.NucleotideRevJumpSubstModelRatePrior.x,
 bmodeltest.math.distributions.NucleotideRevJumpSubstModelRatePrior.modelIndicator,
 bmodeltest.math.distributions.NucleotideRevJumpSubstModelRatePrior.distr"
-			>
+hmc="BEASTModelTest=/SiteModel/bModelTest/"
+            >
             <![CDATA[
 
         <stateNode id="BMT_ModelIndicator.s:$(n)" spec="parameter.IntegerParameter" lower="0" upper="5">5</stateNode>
@@ -43,38 +44,38 @@ bmodeltest.math.distributions.NucleotideRevJumpSubstModelRatePrior.distr"
                 <Exponential name="distr">
                     <parameter lower="0.0" name="mean" upper="0.0" estimate='false'>1.0</parameter>
                 </Exponential>
-	    </distribution>
-	    
-    	<distribution id="BMT_PropInvariablePrior.s:$(n)" spec="bmodeltest.math.distributions.BMTPrior" count="@hasInvariableSites.s:$(n)" x="@BMT_ProportionInvariable.s:$(n)">
-	    	<Beta name="distr" alpha="1.0" beta="4.0"/>
-    	</distribution>
+        </distribution>
+        
+        <distribution id="BMT_PropInvariablePrior.s:$(n)" spec="bmodeltest.math.distributions.BMTPrior" count="@hasInvariableSites.s:$(n)" x="@BMT_ProportionInvariable.s:$(n)">
+            <Beta name="distr" alpha="1.0" beta="4.0"/>
+        </distribution>
 
-    	<prior id='BMT_MutationRatePrior.s:$(n)' x='@BMT_mutationRate.s:$(n)'><distr spec="OneOnX"/></prior>
+        <prior id='BMT_MutationRatePrior.s:$(n)' x='@BMT_mutationRate.s:$(n)'><distr spec="OneOnX"/></prior>
 
             <!-- frequencies estimation -->
             <prior  id="BMT_freqsPrior.s:$(n)"  name="distribution" x="@BMT_frequencies.s:$(n)">
-            	<distr spec="beast.base.inference.distribution.Dirichlet" alpha="1.0 1.0 1.0 1.0"/>
+                <distr spec="beast.base.inference.distribution.Dirichlet" alpha="1.0 1.0 1.0 1.0"/>
             </prior>
             
-	    <siteModel id="BEASTModelTest.s:$(n)" spec="bmodeltest.evolution.sitemodel.BEASTModelTestSiteModel" 
-		    gammaCategoryCount="4" proportionInvariant="@BMT_ProportionInvariable.s:$(n)" shape="@BMT_gammaShape.s:$(n)"
-		    hasGammaRates="@hasGammaRates.s:$(n)" hasInvariantSites="@hasInvariableSites.s:$(n)">
-	        <parameter id="BMT_mutationRate.s:$(n)" estimate="false" name="mutationRate">1.0</parameter>
+        <siteModel id="BEASTModelTest.s:$(n)" spec="bmodeltest.evolution.sitemodel.BEASTModelTestSiteModel" 
+            gammaCategoryCount="4" proportionInvariant="@BMT_ProportionInvariable.s:$(n)" shape="@BMT_gammaShape.s:$(n)"
+            hasGammaRates="@hasGammaRates.s:$(n)" hasInvariantSites="@hasInvariableSites.s:$(n)">
+            <parameter id="BMT_mutationRate.s:$(n)" estimate="false" name="mutationRate">1.0</parameter>
             <substModel id="RevJump.s:$(n)" spec="bmodeltest.evolution.substitutionmodel.NucleotideRevJumpSubstModel" 
                         modelIndicator="@BMT_ModelIndicator.s:$(n)" rates="@BMT_Rates.s:$(n)"
                         modelSet="transitionTransversionSplit">
                         <frequencies id="BMTfreqs.s:$(n)" spec="bmodeltest.evolution.substitutionmodel.ModelFrequencies" data="@$(n)" hasEqualFreqs='@hasEqualFreqs.s:$(n)'  empirical="false"/>
-	        </substModel>
-	    </siteModel>
+            </substModel>
+        </siteModel>
 
-	<operator id="BMT_ModelTestOperator.s:$(n)" spec="bmodeltest.evolution.operators.BMTMergeSplitOperator" modelIndicator="@BMT_ModelIndicator.s:$(n)" rates="@BMT_Rates.s:$(n)" substModel="@RevJump.s:$(n)" weight="1.0"/>
+    <operator id="BMT_ModelTestOperator.s:$(n)" spec="bmodeltest.evolution.operators.BMTMergeSplitOperator" modelIndicator="@BMT_ModelIndicator.s:$(n)" rates="@BMT_Rates.s:$(n)" substModel="@RevJump.s:$(n)" weight="1.0"/>
         <operator id="BMT_Ratescaler.s:$(n)" spec="bmodeltest.evolution.operators.BMTExchangeOperator" modelIndicator="@BMT_ModelIndicator.s:$(n)" rates="@BMT_Rates.s:$(n)" substModel="@RevJump.s:$(n)" delta="0.15" weight="1.0"/>
-	
+    
 
-	<operator id="BMT_hasGammaRatesFlipper.s:$(n)" spec="bmodeltest.evolution.operators.BMTBirthDeathOperator" count="@hasGammaRates.s:$(n)" rates="@BMT_gammaShape.s:$(n)" weight="0.1"/>
+    <operator id="BMT_hasGammaRatesFlipper.s:$(n)" spec="bmodeltest.evolution.operators.BMTBirthDeathOperator" count="@hasGammaRates.s:$(n)" rates="@BMT_gammaShape.s:$(n)" weight="0.1"/>
         <operator id="BMT_gammaShapeScaler.s:$(n)" spec="bmodeltest.evolution.operators.BMTScaleOperator" count="@hasGammaRates.s:$(n)" parameter="@BMT_gammaShape.s:$(n)" scaleFactor="0.5" weight="0.5"/>
 
-	<operator id="BMT_hasInvariableSitesFlipper.s:$(n)" spec="bmodeltest.evolution.operators.BMTBirthDeathOperator" count="@hasInvariableSites.s:$(n)" rates="@BMT_ProportionInvariable.s:$(n)" weight="0.1"/>
+    <operator id="BMT_hasInvariableSitesFlipper.s:$(n)" spec="bmodeltest.evolution.operators.BMTBirthDeathOperator" count="@hasInvariableSites.s:$(n)" rates="@BMT_ProportionInvariable.s:$(n)" weight="0.1"/>
         <operator id="BMT_ProportionInvariableScaler.s:$(n)" spec="bmodeltest.evolution.operators.BMTScaleOperator" count="@hasInvariableSites.s:$(n)" parameter="@BMT_ProportionInvariable.s:$(n)" scaleFactor="0.5" weight="0.5"/>
 
         <operator id='BMT_mutationRateScaler.s:$(n)' spec='kernel.BactrianScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@BMT_mutationRate.s:$(n)"/>
@@ -84,12 +85,12 @@ bmodeltest.math.distributions.NucleotideRevJumpSubstModelRatePrior.distr"
         <operator id='BMT_FrequenciesExchanger.s:$(n)' spec='kernel.BactrianDeltaExchangeOperator' delta="0.01" weight="0.2" parameter="@BMT_frequencies.s:$(n)"/>
     
         <log id="ActivePropInvariable.s:$(n)" spec='bmodeltest.evolution.substitutionmodel.ActiveLogger'>
-	        <parameter idref="BMT_ProportionInvariable.s:$(n)"/>
-	        <mask idref="hasInvariableSites.s:$(n)"/>
+            <parameter idref="BMT_ProportionInvariable.s:$(n)"/>
+            <mask idref="hasInvariableSites.s:$(n)"/>
         </log>
         <log id="ActiveGammaShape.s:$(n)" spec='bmodeltest.evolution.substitutionmodel.ActiveLogger'>
-	        <parameter idref="BMT_gammaShape.s:$(n)"/>
-	        <mask idref="hasGammaRates.s:$(n)"/>
+            <parameter idref="BMT_gammaShape.s:$(n)"/>
+            <mask idref="hasGammaRates.s:$(n)"/>
         </log>
 
 
@@ -164,6 +165,7 @@ bmodeltest.math.distributions.NucleotideRevJumpSubstModelRatePrior.substModel,
 bmodeltest.math.distributions.NucleotideRevJumpSubstModelRatePrior.x,
 bmodeltest.math.distributions.NucleotideRevJumpSubstModelRatePrior.modelIndicator,
 bmodeltest.math.distributions.NucleotideRevJumpSubstModelRatePrior.distr"
+hmc="BEASTModelTest=/SiteModel/bModelTest/"
             >
             <![CDATA[
 

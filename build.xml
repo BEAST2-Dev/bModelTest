@@ -138,8 +138,7 @@
 				<attribute name="Built-By" value="${user.name}" />
 			</manifest>
 			<fileset dir="${buildbModelTest}">
-				<include name="**/*.class" />
-				<include name="**/*.class" />
+				<include name="bmodeltest/**/*.class" />
 				<include name="**/*.properties" />
 			</fileset>
 		</jar>
