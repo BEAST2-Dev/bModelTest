@@ -212,20 +212,20 @@ hmc="BEASTModelTest=/SiteModel/bModelTest/"
         </siteModel>
 
     <operator id="BMT_ModelTestOperator.s:$(n)" spec="bmodeltest.evolution.operators.BMTMergeSplitOperator" modelIndicator="@BMT_ModelIndicator.s:$(n)" rates="@BMT_Rates.s:$(n)" substModel="@RevJump.s:$(n)" weight="1.0"/>
-        <operator id="BMT_Ratescaler.s:$(n)" spec="bmodeltest.evolution.operators.BMTExchangeOperator" modelIndicator="@BMT_ModelIndicator.s:$(n)" rates="@BMT_Rates.s:$(n)" substModel="@RevJump.s:$(n)" delta="0.15" weight="1.0"/>
+        <operator id="BMT_Ratescaler.s:$(n)" spec="bmodeltest.evolution.operators.BMTExchangeOperator" modelIndicator="@BMT_ModelIndicator.s:$(n)" rates="@BMT_Rates.s:$(n)" substModel="@RevJump.s:$(n)" delta="0.15" weight="1.5"/>
     
 
     <operator id="BMT_hasGammaRatesFlipper.s:$(n)" spec="bmodeltest.evolution.operators.BMTBirthDeathOperator" count="@hasGammaRates.s:$(n)" rates="@BMT_gammaShape.s:$(n)" weight="0.1"/>
-        <operator id="BMT_gammaShapeScaler.s:$(n)" spec="bmodeltest.evolution.operators.BMTScaleOperator" count="@hasGammaRates.s:$(n)" parameter="@BMT_gammaShape.s:$(n)" scaleFactor="0.5" weight="0.05"/>
+        <operator id="BMT_gammaShapeScaler.s:$(n)" spec="bmodeltest.evolution.operators.BMTScaleOperator" count="@hasGammaRates.s:$(n)" parameter="@BMT_gammaShape.s:$(n)" scaleFactor="0.5" weight="0.1"/>
 
     <operator id="BMT_hasInvariableSitesFlipper.s:$(n)" spec="bmodeltest.evolution.operators.BMTBirthDeathOperator" count="@hasInvariableSites.s:$(n)" rates="@BMT_ProportionInvariable.s:$(n)" weight="0.1"/>
-        <operator id="BMT_ProportionInvariableScaler.s:$(n)" spec="bmodeltest.evolution.operators.BMTScaleOperator" count="@hasInvariableSites.s:$(n)" parameter="@BMT_ProportionInvariable.s:$(n)" scaleFactor="0.5" weight="0.05"/>
+        <operator id="BMT_ProportionInvariableScaler.s:$(n)" spec="bmodeltest.evolution.operators.BMTScaleOperator" count="@hasInvariableSites.s:$(n)" parameter="@BMT_ProportionInvariable.s:$(n)" scaleFactor="0.5" weight="0.1"/>
 
         <operator id='BMT_mutationRateScaler.s:$(n)' spec='kernel.BactrianScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@BMT_mutationRate.s:$(n)"/>
         
         <!-- frequencies estimation -->
-        <operator id="BMT_FreqsFlipOperator.s:$(n)" spec="BitFlipOperator" parameter="@hasEqualFreqs.s:$(n)" weight="0.1"/>
-        <operator id='frequencies_BMTExchanger.s:$(n)' spec='kernel.BactrianDeltaExchangeOperator' delta="0.01" weight="0.1" parameter="@frequencies_BMT.s:$(n)"/>
+        <operator id="BMT_FreqsFlipOperator.s:$(n)" spec="BitFlipOperator" parameter="@hasEqualFreqs.s:$(n)" weight="0.2"/>
+        <operator id='frequencies_BMTExchanger.s:$(n)' spec='kernel.BactrianDeltaExchangeOperator' delta="0.01" weight="0.5" parameter="@frequencies_BMT.s:$(n)"/>
     
         <log id="ActivePropInvariable.s:$(n)" spec='bmodeltest.evolution.substitutionmodel.ActiveLogger'>
             <parameter idref="BMT_ProportionInvariable.s:$(n)"/>
