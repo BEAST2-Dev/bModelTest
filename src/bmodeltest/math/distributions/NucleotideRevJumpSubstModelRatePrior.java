@@ -21,7 +21,7 @@ import bmodeltest.evolution.substitutionmodel.NucleotideRevJumpSubstModel;
 
 @Description("Prior on rates for reversible jump based substitution model, one of "
 		+ "1. Dirichlet prior on rates ensuring they sum to 6. "
-		+ "2. Parametric distbution on rates. "
+		+ "2. Parametric distribution on rates. "
 		+ "3. Parametric distributions on rates distinguishing between transitions and transversions.")
 public class NucleotideRevJumpSubstModelRatePrior extends Prior {
 	public enum BMTPriorType {asScaledDirichlet, onRates, onTransitionsAndTraversals};
