@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><beast beautitemplate='Standard' beautistatus='' namespace="beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.alignment:beast.base.evolution.tree.coalescent:beast.pkgmgmt:beast.base.core:beast.base.inference.util:beast.evolution.nuc:beast.base.evolution.operator:beast.base.inference.operator:beast.base.evolution.sitemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.likelihood" version="2.0">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><beast beautitemplate='Standard' beautistatus='' namespace="beast.base.spec.inference.parameter:beast.base.spec.domain:beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.alignment:beast.base.evolution.tree.coalescent:beast.pkgmgmt:beast.base.core:beast.base.inference.util:beast.evolution.nuc:beast.base.evolution.operator:beast.base.inference.operator:beast.base.evolution.sitemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.likelihood" version="2.0">
 
 
     <data
@@ -44,15 +44,15 @@ name="alignment">
             </taxonset>
         </tree>
         <parameter id="birthRate.t:dna" name="stateNode">1.0</parameter>
-        <stateNode id="BMTmodelIndicator.s:dna" spec="parameter.IntegerParameter" lower="0">0</stateNode>
+        <stateNode id="BMTmodelIndicator.s:dna" spec="IntScalarParam" domain="NonNegativeInt">0</stateNode>
         <parameter id="BMTrates.s:dna" dimension="6" lower="0.0" name="stateNode" upper="6.0">1.0</parameter>
         <parameter id="gammaShape.s:dna" name="stateNode">1.0</parameter>
         <parameter id="proportionInvariant.s:dna" lower="0.0" name="stateNode" upper="1.0">0.1</parameter>
-        
-        <stateNode id="hasInvariantSites.s:dna" spec="parameter.IntegerParameter">1</stateNode>        
-        <stateNode id="hasGammaRates.s:dna" spec="parameter.IntegerParameter">1</stateNode>     
+
+        <stateNode id="hasInvariantSites.s:dna" spec="IntScalarParam" domain="NonNegativeInt">1</stateNode>
+        <stateNode id="hasGammaRates.s:dna" spec="IntScalarParam" domain="NonNegativeInt">1</stateNode>
         <!-- frequencies estimation -->
-        <stateNode id="hasEqualFreqs.s:dna" spec="parameter.BooleanParameter">false</stateNode>
+        <stateNode id="hasEqualFreqs.s:dna" spec="BoolScalarParam">false</stateNode>
         <stateNode id="frequencies.s:dna" spec="parameter.RealParameter">0.25 0.25 0.25 0.25</stateNode>
     </state>
 
@@ -141,7 +141,7 @@ name="alignment">
     <operator id="BMTpInvscaler.s:dna" spec="bmodeltest.evolution.operators.BMTScaleOperator" count="@hasInvariantSites.s:dna" parameter="@proportionInvariant.s:dna" scaleFactor="0.5" weight="1.0"/>
    
     <!-- frequencies estimation -->
-    <operator id="BMTFreqsFlipOperator.s:dna" spec="BitFlipOperator" parameter="@hasEqualFreqs.s:dna" weight="0.1"/>
+    <operator id="BMTFreqsFlipOperator.s:dna" spec="beast.base.spec.inference.operator.BitFlipOperator" parameter="@hasEqualFreqs.s:dna" weight="0.1"/>
     <operator id='FrequenciesExchanger.s:dna' spec='DeltaExchangeOperator' delta="0.01" weight="0.1" parameter="@frequencies.s:dna"/>
     
     

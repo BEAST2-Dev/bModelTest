@@ -9,8 +9,9 @@ import beast.base.core.Loggable;
 import beast.base.inference.Logger;
 import beast.base.inference.MCMC;
 import beast.base.inference.State;
-import beast.base.inference.parameter.IntegerParameter;
 import beast.base.inference.parameter.RealParameter;
+import beast.base.spec.domain.NonNegativeInt;
+import beast.base.spec.inference.parameter.IntScalarParam;
 import beast.base.inference.CompoundDistribution;
 import bmodeltest.evolution.substitutionmodel.NucleotideRevJumpSubstModelTest;
 import beast.base.inference.distribution.Uniform;
@@ -27,26 +28,26 @@ public class MergeSplitOperatorTest extends TestCase {
 	@Test
 	public void testRatesMergeSplitOperatorOnJC69() throws Exception {
         Randomizer.setSeed(123);
-		IntegerParameter modelIndicator = new IntegerParameter("0");
+		IntScalarParam<NonNegativeInt> modelIndicator = new IntScalarParam<>(0, NonNegativeInt.INSTANCE);
         RealParameter rates = new RealParameter("1.0 0.0 0.0 0.0 0.0 0.0");
         testRatesMergeSplitOperator(modelIndicator, rates);
 	}
 	
 	@Test
 	public void testRatesMergeSplitOperatorOnHKY() throws Exception {
-		IntegerParameter modelIndicator = new IntegerParameter("55");
+		IntScalarParam<NonNegativeInt> modelIndicator = new IntScalarParam<>(55, NonNegativeInt.INSTANCE);
         RealParameter rates = new RealParameter("0.5 2.0 0.0 0.0 0.0 0.0");
         testRatesMergeSplitOperator(modelIndicator, rates);
 	}
 	
 	@Test
 	public void testRatesMergeSplitOperatorOnGTR() throws Exception {
-		IntegerParameter modelIndicator = new IntegerParameter("30");
+		IntScalarParam<NonNegativeInt> modelIndicator = new IntScalarParam<>(30, NonNegativeInt.INSTANCE);
         RealParameter rates = new RealParameter("1.0 1.0 1.0 1.0 1.0 1.0");
         testRatesMergeSplitOperator(modelIndicator, rates);
 	}
 
-	private void testRatesMergeSplitOperator(IntegerParameter modelIndicator, RealParameter rates) throws Exception {
+	private void testRatesMergeSplitOperator(IntScalarParam<NonNegativeInt> modelIndicator, RealParameter rates) throws Exception {
         NucleotideRevJumpSubstModel substModel = NucleotideRevJumpSubstModelTest.getSubstModel();
         substModel.initByName("modelSet", "allreversible");
         rates.setUpper(Double.POSITIVE_INFINITY);
@@ -63,7 +64,7 @@ public class MergeSplitOperatorTest extends TestCase {
         	operator.proposal();
         	
 			double sr = 0;
-			int modelID = modelIndicator.getValue();
+			int modelID = modelIndicator.get();
 			int dim = (int) substModel.getGroupCount(modelID);
 			for (int i = 0; i < dim; i++) {
 				sr += substModel.getSubGroupCount(modelID)[i] * rates.getArrayValue(i);
@@ -83,7 +84,7 @@ public class MergeSplitOperatorTest extends TestCase {
 	@Test
 	public void testModelSetMergeSplitOperatorOnAllReversible() throws Exception {
 		Randomizer.setSeed(127);
-		IntegerParameter modelIndicator = new IntegerParameter("30");
+		IntScalarParam<NonNegativeInt> modelIndicator = new IntScalarParam<>(30, NonNegativeInt.INSTANCE);
         RealParameter rates = new RealParameter("1.0 1.0 1.0 1.0 1.0 1.0");
         testModelSetMergeSplitOperator(modelIndicator, rates, "allreversible", LOGFILE + "1.log");
 	}
@@ -91,7 +92,7 @@ public class MergeSplitOperatorTest extends TestCase {
 	@Test
 	public void testModelSetMergeSplitOperatorOnTTSplit() throws Exception {
 		Randomizer.setSeed(127);
-		IntegerParameter modelIndicator = new IntegerParameter("0");
+		IntScalarParam<NonNegativeInt> modelIndicator = new IntScalarParam<>(0, NonNegativeInt.INSTANCE);
         RealParameter rates = new RealParameter("1.0 0.0 0.0 0.0 0.0 0.0");
         testModelSetMergeSplitOperator(modelIndicator, rates, "transitionTransversionSplit", LOGFILE + "2.log");
 	}
@@ -99,7 +100,7 @@ public class MergeSplitOperatorTest extends TestCase {
 	@Test
 	public void testModelSetMergeSplitOperatorOnNamedExtended() throws Exception {
 		Randomizer.setSeed(127);
-		IntegerParameter modelIndicator = new IntegerParameter("0");
+		IntScalarParam<NonNegativeInt> modelIndicator = new IntScalarParam<>(0, NonNegativeInt.INSTANCE);
         RealParameter rates = new RealParameter("1.0 0.0 0.0 0.0 0.0 0.0");
         testModelSetMergeSplitOperator(modelIndicator, rates, "namedExtended", LOGFILE + "3.log");
 	}
@@ -107,13 +108,13 @@ public class MergeSplitOperatorTest extends TestCase {
 //	@Test
 //	public void testModelSetMergeSplitOperatorOnNamedSimple() throws Exception {
 //		Randomizer.setSeed(127);
-//		IntegerParameter modelIndicator = new IntegerParameter("0");
+//		IntScalarParam<NonNegativeInt> modelIndicator = new IntScalarParam<>(0, NonNegativeInt.INSTANCE);
 //        RealParameter rates = new RealParameter("1.0 0.0 0.0 0.0 0.0 0.0");
 //        testModelSetMergeSplitOperator(modelIndicator, rates, "namedSimple", LOGFILE + "4.log");
 //	}
 	
 	
-	private void testModelSetMergeSplitOperator(IntegerParameter modelIndicator, RealParameter rates, String modelSet, String logFile) throws Exception {
+	private void testModelSetMergeSplitOperator(IntScalarParam<NonNegativeInt> modelIndicator, RealParameter rates, String modelSet, String logFile) throws Exception {
 		modelIndicator.setID(MODEL_ID);
         NucleotideRevJumpSubstModel substModel = new NucleotideRevJumpSubstModel();
     	substModel.initByName("rates", rates, "modelIndicator", modelIndicator, "frequencies",
@@ -187,7 +188,7 @@ public class MergeSplitOperatorTest extends TestCase {
 		boolean [] pass = new boolean[20];
 		for (int k = 0; k < 20; k++) {
 		Randomizer.setSeed(131+k);
-		IntegerParameter modelIndicator = new IntegerParameter("30");
+		IntScalarParam<NonNegativeInt> modelIndicator = new IntScalarParam<>(30, NonNegativeInt.INSTANCE);
         RealParameter rates = new RealParameter("1.0 1.0 1.0 1.0 1.0 1.0");
         String modelSet = "allreversible";
         String logFile = LOGFILE + "1alt.log";
@@ -264,7 +265,7 @@ public class MergeSplitOperatorTest extends TestCase {
 	@Test
 	public void testModelSetMergeSplitOperatorOnAllReversibleWithUniformOnParameterCount() throws Exception {
 		Randomizer.setSeed(127);
-		IntegerParameter modelIndicator = new IntegerParameter("30");
+		IntScalarParam<NonNegativeInt> modelIndicator = new IntScalarParam<>(30, NonNegativeInt.INSTANCE);
         RealParameter rates = new RealParameter("1.0 1.0 1.0 1.0 1.0 1.0");
         testModelSetMergeSplitOperatorWithUniformOnParameterCount(modelIndicator, rates, "allreversible", LOGFILE + "1b.log");
 	}
@@ -272,7 +273,7 @@ public class MergeSplitOperatorTest extends TestCase {
 	@Test
 	public void testModelSetMergeSplitOperatorOnTTSplitWithUniformOnParameterCount() throws Exception {
 		Randomizer.setSeed(127);
-		IntegerParameter modelIndicator = new IntegerParameter("0");
+		IntScalarParam<NonNegativeInt> modelIndicator = new IntScalarParam<>(0, NonNegativeInt.INSTANCE);
         RealParameter rates = new RealParameter("1.0 0.0 0.0 0.0 0.0 0.0");
         testModelSetMergeSplitOperatorWithUniformOnParameterCount(modelIndicator, rates, "transitionTransversionSplit", LOGFILE + "2b.log");
 	}
@@ -280,16 +281,16 @@ public class MergeSplitOperatorTest extends TestCase {
 	@Test
 	public void testModelSetMergeSplitOperatorOnNamedExtendedWithUniformOnParameterCount() throws Exception {
 		Randomizer.setSeed(127);
-		IntegerParameter modelIndicator = new IntegerParameter("0");
+		IntScalarParam<NonNegativeInt> modelIndicator = new IntScalarParam<>(0, NonNegativeInt.INSTANCE);
         RealParameter rates = new RealParameter("1.0 0.0 0.0 0.0 0.0 0.0");
         testModelSetMergeSplitOperatorWithUniformOnParameterCount(modelIndicator, rates, "namedExtended", LOGFILE + "3b.log");
 	}
 
 	class GroupCountLogger extends BEASTObject implements Loggable {
 		NucleotideRevJumpSubstModel substModel;
-		IntegerParameter modelIndicator;
+		IntScalarParam<NonNegativeInt> modelIndicator;
 		
-		GroupCountLogger(NucleotideRevJumpSubstModel substModel, IntegerParameter modelIndicator) {
+		GroupCountLogger(NucleotideRevJumpSubstModel substModel, IntScalarParam<NonNegativeInt> modelIndicator) {
 			this.substModel = substModel;
 			this.modelIndicator  = modelIndicator;
 		}
@@ -305,7 +306,7 @@ public class MergeSplitOperatorTest extends TestCase {
 
 		@Override
 		public void log(long nSample, PrintStream out) {
-			int groupCount = substModel.getGroupCount(modelIndicator.getValue());
+			int groupCount = substModel.getGroupCount(modelIndicator.get());
 			out.append(groupCount + "\t");
 		}
 
@@ -315,7 +316,7 @@ public class MergeSplitOperatorTest extends TestCase {
 		
 	}
 	
-	private void testModelSetMergeSplitOperatorWithUniformOnParameterCount(IntegerParameter modelIndicator, RealParameter rates, String modelSet, String logFile) throws Exception {
+	private void testModelSetMergeSplitOperatorWithUniformOnParameterCount(IntScalarParam<NonNegativeInt> modelIndicator, RealParameter rates, String modelSet, String logFile) throws Exception {
 		modelIndicator.setID(MODEL_ID);
         NucleotideRevJumpSubstModel substModel = new NucleotideRevJumpSubstModel();
     	substModel.initByName("rates", rates, "modelIndicator", modelIndicator, "frequencies",

@@ -14,7 +14,8 @@ import beast.base.inference.distribution.LogNormalDistributionModel;
 import beast.base.inference.distribution.ParametricDistribution;
 import beast.base.inference.distribution.Prior;
 import beast.base.core.Input.Validate;
-import beast.base.inference.parameter.IntegerParameter;
+import beast.base.spec.domain.NonNegativeInt;
+import beast.base.spec.inference.parameter.IntScalarParam;
 import beast.base.core.Log;
 import beast.base.util.GammaFunction;
 import bmodeltest.evolution.substitutionmodel.NucleotideRevJumpSubstModel;
@@ -28,7 +29,7 @@ public class NucleotideRevJumpSubstModelRatePrior extends Prior {
 
 	public Input<BMTPriorType> priorTypeInput = new Input<NucleotideRevJumpSubstModelRatePrior.BMTPriorType>("priorType", "rate prior, one of " + Arrays.toString(BMTPriorType.values()), 
 			BMTPriorType.onTransitionsAndTraversals, BMTPriorType.values());
-	public Input<IntegerParameter> modelIndicatorInput = new Input<IntegerParameter>("modelIndicator", "number of the model to be used", Validate.REQUIRED);
+	public Input<IntScalarParam<? extends NonNegativeInt>> modelIndicatorInput = new Input<>("modelIndicator", "number of the model to be used", Validate.REQUIRED);
 	public Input<NucleotideRevJumpSubstModel> substModelInput = new Input<NucleotideRevJumpSubstModel>("substModel", "model test substitution model representing the individual models", Validate.REQUIRED);
 
     public Input<ParametricDistribution> transDistInput = new Input<ParametricDistribution>("transDistr", "distribution used to calculate prior on transition rates.");
@@ -39,7 +40,7 @@ public class NucleotideRevJumpSubstModelRatePrior extends Prior {
 		distInput.setRule(Validate.OPTIONAL);
 	}
     
-	IntegerParameter modelIndicator;
+	IntScalarParam<? extends NonNegativeInt> modelIndicator;
 	NucleotideRevJumpSubstModel substModel;
 	Function rates;
 	BMTPriorType priorType;
@@ -86,7 +87,7 @@ public class NucleotideRevJumpSubstModelRatePrior extends Prior {
 		if (debug) {
 			Function x = m_x.get();
 			double sr = 0;
-			int modelID = modelIndicator.getValue();
+			int modelID = modelIndicator.get();
 			int dim = (int) substModel.getGroupCount(modelID);
 			for (int i = 0; i < dim; i++) {
 				sr += substModel.getSubGroupCount(modelID)[i] * x.getArrayValue(i);
@@ -101,7 +102,7 @@ public class NucleotideRevJumpSubstModelRatePrior extends Prior {
 		switch (priorType) {
 		case asScaledDirichlet: 
 			{
-				int modelID = modelIndicator.getValue();
+				int modelID = modelIndicator.get();
 				int K = substModel.getGroupCount(modelID);
 				logP += GammaFunction.lnGamma(K);
 				for (int i = 0; i < K; i++) {
@@ -113,7 +114,7 @@ public class NucleotideRevJumpSubstModelRatePrior extends Prior {
 		case onRates:
 			{
 				Function x = m_x.get();
-				int modelID = modelIndicator.getValue();
+				int modelID = modelIndicator.get();
 				int dim = (int) substModel.getGroupCount(modelID);
 				double fOffset = dist.offsetInput.get();
 				logP = 0;
@@ -126,7 +127,7 @@ public class NucleotideRevJumpSubstModelRatePrior extends Prior {
 		case onTransitionsAndTraversals:
 			{
 				Function x = m_x.get();
-				int modelID = modelIndicator.getValue();
+				int modelID = modelIndicator.get();
 				int [] model = substModel.getModel(modelID);
 				int dim = (int) substModel.getGroupCount(modelID);
 				logP = 0;

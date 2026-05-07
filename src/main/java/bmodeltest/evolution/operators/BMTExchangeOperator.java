@@ -7,22 +7,24 @@ import beast.base.core.Description;
 import beast.base.core.Input;
 import beast.base.inference.Operator;
 import beast.base.core.Input.Validate;
-import beast.base.inference.parameter.IntegerParameter;
 import beast.base.inference.parameter.RealParameter;
+import beast.base.spec.domain.NonNegativeInt;
+import beast.base.spec.inference.parameter.IntScalarParam;
 import beast.base.util.Randomizer;
 import bmodeltest.evolution.substitutionmodel.NucleotideRevJumpSubstModel;
 
 @Description("Exchange rate values such that sum remains the same")
 // adapted from DeltaExchangeOperator
 public class BMTExchangeOperator extends Operator {
-	public Input<IntegerParameter> modelIndicatorInput = new Input<IntegerParameter>("modelIndicator", "number of the model to be used", Validate.REQUIRED);
+	public Input<IntScalarParam<? extends NonNegativeInt>> modelIndicatorInput = new Input<>("modelIndicator", "number of the model to be used", Validate.REQUIRED);
 	public Input<NucleotideRevJumpSubstModel> substModelInput = new Input<NucleotideRevJumpSubstModel>("substModel", "model test substitution model representing the individual models", Validate.REQUIRED);
+    // rates is shared with legacy GeneralSubstitutionModel.ratesInput (Input<Function>); spec types don't implement Function
     public Input<RealParameter> ratesInput = new Input<RealParameter>("rates", "Rate parameter which defines the transition rate matrix. ", Validate.REQUIRED);
     public final Input<Double> deltaInput = new Input<Double>("delta", "Magnitude of change for two randomly picked values.", 1.0);
     public final Input<Boolean> autoOptimizeiInput =
             new Input<Boolean>("autoOptimize", "if true, window size will be adjusted during the MCMC run to improve mixing.", true);
 
-	IntegerParameter modelIndicator;
+	IntScalarParam<? extends NonNegativeInt> modelIndicator;
 	NucleotideRevJumpSubstModel substModel;
 	RealParameter rates;
 	double delta;
@@ -39,8 +41,8 @@ public class BMTExchangeOperator extends Operator {
 
 	@Override
 	public double proposal() {
-		int currentModel = modelIndicator.getValue();
-		
+		int currentModel = modelIndicator.get();
+
 		int dim = substModel.getGroupCount(currentModel);
 		if (dim == 1) {
 			// cannot exchange anything if there is only one candidate
@@ -53,11 +55,11 @@ public class BMTExchangeOperator extends Operator {
         }
         int n1 = substModel.getSubGroupCount(currentModel)[dim1];
         int n2 = substModel.getSubGroupCount(currentModel)[dim2];
-        
+
         double scalar1 = rates.getValue(dim1);
         double scalar2 = rates.getValue(dim2);
         final double d = Randomizer.nextDouble() * delta;
-        
+
         scalar1 -= d;
         scalar2 += d * (double) n1 / (double) n2;
         if (scalar1 < rates.getLower() || scalar1 > rates.getUpper() ||

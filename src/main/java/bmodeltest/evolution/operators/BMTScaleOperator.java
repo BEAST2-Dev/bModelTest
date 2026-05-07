@@ -4,18 +4,19 @@ import beast.base.core.Description;
 import beast.base.core.Input;
 import beast.base.core.Input.Validate;
 import beast.base.inference.parameter.BooleanParameter;
-import beast.base.inference.parameter.IntegerParameter;
 import beast.base.inference.parameter.RealParameter;
+import beast.base.spec.domain.NonNegativeInt;
+import beast.base.spec.inference.parameter.IntScalarParam;
 import beast.base.evolution.operator.ScaleOperator;
 import beast.base.util.Randomizer;
 
 
 @Description("Operator for bModelTest to scale shape/proportiona invariant if gamma rate heterogeneity and/or invariant sites are present")
 public class BMTScaleOperator extends ScaleOperator {
-	public Input<IntegerParameter> countInput = new Input<IntegerParameter>("count","count parameter indicating the nr of rates to use", Validate.REQUIRED);
+	public Input<IntScalarParam<? extends NonNegativeInt>> countInput = new Input<>("count","count parameter indicating the nr of rates to use", Validate.REQUIRED);
 
-	IntegerParameter count;
-	
+	IntScalarParam<? extends NonNegativeInt> count;
+
 	@Override
 	public void initAndValidate() {
 		count = countInput.get();
@@ -40,7 +41,7 @@ public class BMTScaleOperator extends ScaleOperator {
 
             assert param.getLower() != null  && param.getUpper() != null;
 
-            final int dim = (int) count.getArrayValue();//param.getDimension();
+            final int dim = count.get();//param.getDimension();
 
             if (bScaleAllIndependently) {
                 // update all dimensions independently.

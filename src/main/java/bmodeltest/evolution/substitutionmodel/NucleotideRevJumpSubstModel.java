@@ -15,7 +15,8 @@ import beast.base.core.Function;
 import beast.base.core.Input;
 import beast.base.core.Loggable;
 import beast.base.core.Input.Validate;
-import beast.base.inference.parameter.IntegerParameter;
+import beast.base.spec.domain.NonNegativeInt;
+import beast.base.spec.inference.parameter.IntScalarParam;
 import beast.base.evolution.datatype.DataType;
 import beast.base.evolution.datatype.Nucleotide;
 import beast.base.evolution.substitutionmodel.GeneralSubstitutionModel;
@@ -27,7 +28,7 @@ public class NucleotideRevJumpSubstModel extends GeneralSubstitutionModel implem
 	public enum ModelSet {allreversible, transitionTransversionSplit, namedSimple, namedExtended};
 	public Input<ModelSet> modelChoiseInput = new Input<ModelSet>("modelSet", "Which set of models to choose, one of " + Arrays.toString(ModelSet.values()), 
 			ModelSet.transitionTransversionSplit, ModelSet.values());
-	public Input<IntegerParameter> modelIndicatorInput = new Input<IntegerParameter>("modelIndicator", "number of the model to be used", Validate.REQUIRED);
+	public Input<IntScalarParam<? extends NonNegativeInt>> modelIndicatorInput = new Input<>("modelIndicator", "number of the model to be used", Validate.REQUIRED);
 	
 	
 //	public NucleotideRevJumpSubstModel() throws Exception {
@@ -269,7 +270,7 @@ public class NucleotideRevJumpSubstModel extends GeneralSubstitutionModel implem
 	
 	int [][] models;
 	
-	IntegerParameter modelIndicator;
+	IntScalarParam<? extends NonNegativeInt> modelIndicator;
 	
 	@Override
 	public void initAndValidate() {
@@ -541,7 +542,7 @@ public class NucleotideRevJumpSubstModel extends GeneralSubstitutionModel implem
 	@Override
 	public void setupRelativeRates() {
         Function rates = this.ratesInput.get();
-    	int [] model = getModel(modelIndicator.getValue());
+    	int [] model = getModel(modelIndicator.get());
         relativeRates[0] = rates.getArrayValue(model[0]); // A->C
         relativeRates[1] = rates.getArrayValue(model[1]); // A->G
         relativeRates[2] = rates.getArrayValue(model[2]); // A->T
@@ -579,7 +580,7 @@ public class NucleotideRevJumpSubstModel extends GeneralSubstitutionModel implem
 	@Override
 	public void log(long nSample, PrintStream out) {
         Function rates = this.ratesInput.get();
-    	int [] model = getModel(modelIndicator.getValue());
+    	int [] model = getModel(modelIndicator.get());
     	for (int i = 0; i < 6 ;i++) {
     		out.append(rates.getArrayValue(model[i]) + "\t");
     	}

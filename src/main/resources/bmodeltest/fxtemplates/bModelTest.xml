@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<beast beautitemplate='Standard' beautistatus='' namespace="beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.alignment:beast.base.evolution.tree.coalescent:beast.base.util:beast.base.math:beast.evolution.nuc:beast.base.evolution.operator:beast.base.inference.operator:beast.base.evolution.sitemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.likelihood" version="2.7">
+<beast beautitemplate='Standard' beautistatus='' namespace="beast.base.spec.inference.parameter:beast.base.spec.domain:beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.alignment:beast.base.evolution.tree.coalescent:beast.base.util:beast.base.math:beast.evolution.nuc:beast.base.evolution.operator:beast.base.inference.operator:beast.base.evolution.sitemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.likelihood" version="2.7">
     
 
     <mergewith point='aux-sitemodel-panels'>
@@ -26,15 +26,15 @@ hmc="BEASTModelTest=/SiteModel/bModelTest/"
             >
             <![CDATA[
 
-        <stateNode id="BMT_ModelIndicator.s:$(n)" spec="parameter.IntegerParameter" lower="0" upper="5">5</stateNode>
+        <stateNode id="BMT_ModelIndicator.s:$(n)" spec="IntScalarParam" domain="NonNegativeInt">5</stateNode>
         <parameter id="BMT_Rates.s:$(n)" dimension="6" lower="0.01" name="stateNode" upper="100.0">1.0</parameter>
         <parameter id="BMT_gammaShape.s:$(n)" name="stateNode">1.0</parameter>
         <parameter id="BMT_ProportionInvariable.s:$(n)" lower="0.0" name="stateNode" upper="1.0">0.1</parameter>
-        <stateNode id="hasInvariableSites.s:$(n)" spec="parameter.IntegerParameter">1</stateNode>        
-        <stateNode id="hasGammaRates.s:$(n)" spec="parameter.IntegerParameter">1</stateNode>        
+        <stateNode id="hasInvariableSites.s:$(n)" spec="IntScalarParam" domain="NonNegativeInt">1</stateNode>        
+        <stateNode id="hasGammaRates.s:$(n)" spec="IntScalarParam" domain="NonNegativeInt">1</stateNode>        
 
         <!-- frequencies estimation -->
-        <stateNode id="hasEqualFreqs.s:$(n)" spec="parameter.BooleanParameter">false</stateNode>
+        <stateNode id="hasEqualFreqs.s:$(n)" spec="BoolScalarParam">false</stateNode>
         <stateNode id="BMT_frequencies.s:$(n)" spec="parameter.RealParameter">0.25 0.25 0.25 0.25</stateNode>
 
         <distribution id="BMT_RatesPrior.s:$(n)" spec="bmodeltest.math.distributions.NucleotideRevJumpSubstModelRatePrior" modelIndicator="@BMT_ModelIndicator.s:$(n)" x="@BMT_Rates.s:$(n)"
@@ -81,7 +81,7 @@ hmc="BEASTModelTest=/SiteModel/bModelTest/"
         <operator id='BMT_mutationRateScaler.s:$(n)' spec='kernel.BactrianScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@BMT_mutationRate.s:$(n)"/>
         
         <!-- frequencies estimation -->
-        <operator id="BMT_FreqsFlipOperator.s:$(n)" spec="BitFlipOperator" parameter="@hasEqualFreqs.s:$(n)" weight="0.1"/>
+        <operator id="BMT_FreqsFlipOperator.s:$(n)" spec="beast.base.spec.inference.operator.BitFlipOperator" parameter="@hasEqualFreqs.s:$(n)" weight="0.1"/>
         <operator id='BMT_FrequenciesExchanger.s:$(n)' spec='kernel.BactrianDeltaExchangeOperator' delta="0.01" weight="0.2" parameter="@BMT_frequencies.s:$(n)"/>
     
         <log id="ActivePropInvariable.s:$(n)" spec='bmodeltest.evolution.substitutionmodel.ActiveLogger'>
@@ -169,15 +169,15 @@ hmc="BEASTModelTest=/SiteModel/bModelTest/"
             >
             <![CDATA[
 
-        <stateNode id="BMT_ModelIndicator.s:$(n)" spec="parameter.IntegerParameter" lower="0" upper="5">5</stateNode>
+        <stateNode id="BMT_ModelIndicator.s:$(n)" spec="IntScalarParam" domain="NonNegativeInt">5</stateNode>
         <parameter id="BMT_Rates.s:$(n)" dimension="6" lower="0.01" name="stateNode" upper="100.0">1.0</parameter>
         <parameter id="BMT_gammaShape.s:$(n)" name="stateNode">1.0</parameter>
         <parameter id="BMT_ProportionInvariable.s:$(n)" lower="0.0" name="stateNode" upper="1.0">0.1</parameter>
-        <stateNode id="hasInvariableSites.s:$(n)" spec="parameter.IntegerParameter">1</stateNode>        
-        <stateNode id="hasGammaRates.s:$(n)" spec="parameter.IntegerParameter">1</stateNode>        
+        <stateNode id="hasInvariableSites.s:$(n)" spec="IntScalarParam" domain="NonNegativeInt">1</stateNode>        
+        <stateNode id="hasGammaRates.s:$(n)" spec="IntScalarParam" domain="NonNegativeInt">1</stateNode>        
 
         <!-- frequencies estimation -->
-        <stateNode id="hasEqualFreqs.s:$(n)" spec="parameter.BooleanParameter">false</stateNode>
+        <stateNode id="hasEqualFreqs.s:$(n)" spec="BoolScalarParam">false</stateNode>
         <stateNode id="frequencies_BMT.s:$(n)" lower="0.0" upper="1.0" spec="parameter.RealParameter">0.25 0.25 0.25 0.25</stateNode>
 
         <distribution id="BMT_RatesPrior.s:$(n)" spec="bmodeltest.math.distributions.NucleotideRevJumpSubstModelRatePrior" modelIndicator="@BMT_ModelIndicator.s:$(n)" x="@BMT_Rates.s:$(n)"
@@ -224,7 +224,7 @@ hmc="BEASTModelTest=/SiteModel/bModelTest/"
         <operator id='BMT_mutationRateScaler.s:$(n)' spec='kernel.BactrianScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@BMT_mutationRate.s:$(n)"/>
         
         <!-- frequencies estimation -->
-        <operator id="BMT_FreqsFlipOperator.s:$(n)" spec="BitFlipOperator" parameter="@hasEqualFreqs.s:$(n)" weight="0.2"/>
+        <operator id="BMT_FreqsFlipOperator.s:$(n)" spec="beast.base.spec.inference.operator.BitFlipOperator" parameter="@hasEqualFreqs.s:$(n)" weight="0.2"/>
         <operator id='frequencies_BMTExchanger.s:$(n)' spec='kernel.BactrianDeltaExchangeOperator' delta="0.01" weight="0.5" parameter="@frequencies_BMT.s:$(n)"/>
     
         <log id="ActivePropInvariable.s:$(n)" spec='bmodeltest.evolution.substitutionmodel.ActiveLogger'>

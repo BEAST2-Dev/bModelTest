@@ -7,18 +7,20 @@ import beast.base.core.Description;
 import beast.base.core.Input;
 import beast.base.core.Input.Validate;
 import beast.base.inference.Operator;
-import beast.base.inference.parameter.IntegerParameter;
 import beast.base.inference.parameter.RealParameter;
+import beast.base.spec.domain.NonNegativeInt;
+import beast.base.spec.inference.parameter.IntScalarParam;
 import beast.base.util.Randomizer;
 import bmodeltest.evolution.substitutionmodel.NucleotideRevJumpSubstModel;
 
 @Description("Increases or decreases number of groups of subst models")
 public class BMTMergeSplitOperator extends Operator {
-	public Input<IntegerParameter> modelIndicatorInput = new Input<IntegerParameter>("modelIndicator", "number of the model to be used", Validate.REQUIRED);
+	public Input<IntScalarParam<? extends NonNegativeInt>> modelIndicatorInput = new Input<>("modelIndicator", "number of the model to be used", Validate.REQUIRED);
 	public Input<NucleotideRevJumpSubstModel> substModelInput = new Input<NucleotideRevJumpSubstModel>("substModel", "model test substitution model representing the individual models", Validate.REQUIRED);
+    // rates is shared with legacy GeneralSubstitutionModel.ratesInput (Input<Function>); spec types don't implement Function
     public Input<RealParameter> ratesInput = new Input<RealParameter>("rates", "Rate parameter which defines the transition rate matrix. ", Validate.REQUIRED);
 
-	IntegerParameter modelIndicator;
+	IntScalarParam<? extends NonNegativeInt> modelIndicator;
 	NucleotideRevJumpSubstModel substModel;
 	RealParameter rates;
 	public boolean useAlt = false;
@@ -38,7 +40,7 @@ public class BMTMergeSplitOperator extends Operator {
 			return proposalAlt();
 		}
 		double logHR = 0;
-		int currentModelID = modelIndicator.getValue();
+		int currentModelID = modelIndicator.get();
 		final int [] model = substModel.getModel(currentModelID);
 		
 		if (Randomizer.nextBoolean()) {
@@ -50,7 +52,7 @@ public class BMTMergeSplitOperator extends Operator {
 			}
 			int k = Randomizer.nextInt(candidates.size());
 			int newModelID = candidates.get(k);
-			modelIndicator.setValue(newModelID);
+			modelIndicator.set(newModelID);
 			
 			
 			// determine n1, n2, i1, i2
@@ -119,7 +121,7 @@ public class BMTMergeSplitOperator extends Operator {
 			}
 			int k = Randomizer.nextInt(candidates.size());
 			int newModelID = candidates.get(k);
-			modelIndicator.setValue(newModelID);
+			modelIndicator.set(newModelID);
 
 			
 			// determine n1, n2, i1, i2
@@ -187,7 +189,7 @@ public class BMTMergeSplitOperator extends Operator {
 	// Note: works only for allReverisble models
 	public double proposalAlt() {
 		double logHR = 0;
-		int currentModelID = modelIndicator.getValue();
+		int currentModelID = modelIndicator.get();
 		final int [] model = substModel.getModel(currentModelID);
 		
 		if (Randomizer.nextBoolean()) {
@@ -232,7 +234,7 @@ public class BMTMergeSplitOperator extends Operator {
 			i1 = newmodel[i21];
 			int i2 = newmodel[i22];
 			int newModelIndicator = substModel.getModelNumber(newmodel);
-			modelIndicator.setValue(newModelIndicator);
+			modelIndicator.set(newModelIndicator);
 
 			// generate new rates
 			double r = rates.getValue(Math.min(i1,  i2));
@@ -323,7 +325,7 @@ public class BMTMergeSplitOperator extends Operator {
 //			rates.setValue(i1, r);
 			
 			int newModelIndicator = substModel.getModelNumber(newmodel);
-			modelIndicator.setValue(newModelIndicator);
+			modelIndicator.set(newModelIndicator);
 			
 			// calc hastings ratio
 			// M is the number of rate classes in the proposed model that will have more than one element 

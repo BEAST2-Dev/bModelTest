@@ -8,7 +8,8 @@ import beast.base.core.Citation;
 import beast.base.core.Description;
 import beast.base.core.Input;
 import beast.base.core.Input.Validate;
-import beast.base.inference.parameter.IntegerParameter;
+import beast.base.spec.domain.NonNegativeInt;
+import beast.base.spec.inference.parameter.IntScalarParam;
 import beast.base.evolution.sitemodel.SiteModel;
 import beast.base.evolution.tree.Node;
 
@@ -16,11 +17,11 @@ import beast.base.evolution.tree.Node;
 @Citation(value="Bouckaert RR, Drummond AJ. bModelTest: Bayesian phylogenetic site model averaging and model comparison. BMC evolutionary biology. 2017 Dec;17(1):42.", DOI="https://doi.org/10.1186/s12862-017-0890-6")
 public class BEASTModelTestSiteModel extends SiteModel {
 
-	public Input<IntegerParameter> hasGammaRatesInput = new Input<IntegerParameter>("hasGammaRates", "flag indicating whether gamma rate heterogeneity should be used (if 1) or not (if 0)", Validate.REQUIRED);
-	public Input<IntegerParameter> hasInvariantSitesInput = new Input<IntegerParameter>("hasInvariantSites", "flag indicating whether invariant sites should be used (if 1) or not (if 0)", Validate.REQUIRED);
+	public Input<IntScalarParam<? extends NonNegativeInt>> hasGammaRatesInput = new Input<>("hasGammaRates", "flag indicating whether gamma rate heterogeneity should be used (if 1) or not (if 0)", Validate.REQUIRED);
+	public Input<IntScalarParam<? extends NonNegativeInt>> hasInvariantSitesInput = new Input<>("hasInvariantSites", "flag indicating whether invariant sites should be used (if 1) or not (if 0)", Validate.REQUIRED);
 
-	IntegerParameter hasInvariantSites;
-	IntegerParameter hasGammaRates;
+	IntScalarParam<? extends NonNegativeInt> hasInvariantSites;
+	IntScalarParam<? extends NonNegativeInt> hasGammaRates;
 	
 	@Override
 	public void initAndValidate() {
@@ -54,7 +55,7 @@ public class BEASTModelTestSiteModel extends SiteModel {
 		double propVariable = 1.0;
         int cat = 0;
 
-        if (/*invarParameter != null && */hasInvariantSites.getValue() > 0) {
+        if (/*invarParameter != null && */hasInvariantSites.get() > 0) {
             if (hasPropInvariantCategory) {
                 categoryRates[0] = 0.0;
                 categoryProportions[0] = invarParameter.getValue();
@@ -70,7 +71,7 @@ public class BEASTModelTestSiteModel extends SiteModel {
             }
         }
 
-        if (hasGammaRates.getValue() > 0) {
+        if (hasGammaRates.get() > 0) {
 
             final double a = shapeParameter.getValue();
             double mean = 0.0;
@@ -146,7 +147,7 @@ public class BEASTModelTestSiteModel extends SiteModel {
 	
 	@Override
     public double getProportionInvariant() {
-        if (hasInvariantSites.getValue() > 0) {
+        if (hasInvariantSites.get() > 0) {
         	return invarParameter.getValue();
         } else {
         	return 0.0;

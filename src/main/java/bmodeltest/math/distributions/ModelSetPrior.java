@@ -5,38 +5,47 @@ import java.util.*;
 import beast.base.core.Description;
 import beast.base.core.Input;
 import beast.base.core.Input.Validate;
-import beast.base.inference.distribution.Prior;
+import beast.base.inference.Distribution;
+import beast.base.inference.State;
+import beast.base.inference.distribution.ParametricDistribution;
+import beast.base.spec.domain.NonNegativeInt;
+import beast.base.spec.inference.parameter.IntScalarParam;
 import bmodeltest.evolution.substitutionmodel.NucleotideRevJumpSubstModel;
 
 @Description("Prior on models, uniform on model number, or uniform on parameter number")
-public class ModelSetPrior extends Prior {
+public class ModelSetPrior extends Distribution {
 	public enum PriorType {uniformOnModel, uniformOnParameterCount};
-	
+
+	public Input<IntScalarParam<? extends NonNegativeInt>> xInput = new Input<>("x",
+			"model indicator parameter to apply this prior to", Validate.REQUIRED);
 	public Input<PriorType> priorTypeInput = new Input<ModelSetPrior.PriorType>("priorType", "Prior on model set,"
 			+ " uniformOnModel in order not to prefer any model in the set, e.g. JC69 is as likely as model 121131, or"
-			+ " uniformOnParameterCount in order to not prefer a number of parameters, e.g., JC66 is as likely as having a 3-parameter model", 
+			+ " uniformOnParameterCount in order to not prefer a number of parameters, e.g., JC66 is as likely as having a 3-parameter model",
 			PriorType.uniformOnModel, PriorType.values());
 	public Input<NucleotideRevJumpSubstModel> substModelInput = new Input<NucleotideRevJumpSubstModel>("substModel", "model test substitution model representing the individual models", Validate.REQUIRED);
+	// kept for backwards compat with legacy Prior wrapper; not used.
+	public Input<ParametricDistribution> distInput = new Input<>("distr", "(unused) distribution kept for backwards compatibility");
 
-	
+
+	IntScalarParam<? extends NonNegativeInt> modelIndicator;
 	NucleotideRevJumpSubstModel substModel;
-	
+
 	// parameterCounts[x] = nr of models with x nr of parameters
 	Map<Integer, Integer> parameterCounts;
-	
+
 	// normalisation constant for uniformOnParameterCount
 	double logC;
-	
-	
+
+
 	@Override
 	public void initAndValidate() {
+		modelIndicator = xInput.get();
 		substModel = substModelInput.get();
-        dist = distInput.get();
 
-		if (m_x.get() != substModel.modelIndicatorInput.get()) {
+		if (modelIndicator != substModel.modelIndicatorInput.get()) {
 			throw new RuntimeException("ModelSetPrior x input should match substModel.modelIndicator input");
 		}
-		
+
 		if (priorTypeInput.get() == PriorType.uniformOnParameterCount) {
 			parameterCounts = new HashMap<>();
 			int max = 0;
@@ -54,7 +63,7 @@ public class ModelSetPrior extends Prior {
         calculateLogP();
 
 	}
-	
+
     @Override
     public double calculateLogP() {
     	logP = 0;
@@ -63,12 +72,28 @@ public class ModelSetPrior extends Prior {
     		logP = -Math.log(substModel.getModelCount());
     		break;
     	case uniformOnParameterCount:
-    		int modelID = (int)m_x.get().getArrayValue();
+    		int modelID = modelIndicator.get();
     		int groupCount = substModel.getGroupCount(modelID);
     		logP = logC - Math.log(parameterCounts.get(groupCount));
     		break;
     	}
     	return logP;
     }
-}
 
+	@Override
+	public List<String> getArguments() {
+		List<String> arguments = new ArrayList<>();
+		arguments.add(modelIndicator.getID());
+		return arguments;
+	}
+
+	@Override
+	public List<String> getConditions() {
+		return new ArrayList<>();
+	}
+
+	@Override
+	public void sample(State state, Random random) {
+		// not implemented
+	}
+}

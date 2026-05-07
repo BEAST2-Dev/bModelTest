@@ -3,33 +3,32 @@ package bmodeltest.evolution.substitutionmodel;
 import beast.base.core.Description;
 import beast.base.core.Function;
 import beast.base.core.Input;
-import beast.base.inference.parameter.BooleanParameter;
+import beast.base.spec.inference.parameter.BoolVectorParam;
 import beast.base.evolution.datatype.DataType;
 
 // Pagel & Meade 2005
 @Description("Substitution model for correlated evolution of discrete characters by reversible‐jump")
 public class CorrelatedEvolution extends NucleotideRevJumpSubstModel {
 	public Input<Boolean> isSymmetricInput = new Input<Boolean>("symmetric", "force rates to be symmetric", false);
-	public Input<BooleanParameter> rateMaskInput = new Input<BooleanParameter>("rateMask", "Allows switching rates off by setting the associated mask "
+	public Input<BoolVectorParam> rateMaskInput = new Input<>("rateMask", "Allows switching rates off by setting the associated mask "
 			+ "entry to false, if not specified, the mask is ignored");
-	
-	
+
+
 	boolean isSymmetric;
-	BooleanParameter rateMask;
-	
+	BoolVectorParam rateMask;
+
 	@Override
 	public void initAndValidate() {
 		isSymmetric = isSymmetricInput.get();
 		rateMask = rateMaskInput.get();
 		if (rateMask == null) {
-			rateMask = new BooleanParameter(new Boolean[]{true});
 			if (isSymmetric) {
-				rateMask.setDimension(4);
+				rateMask = new BoolVectorParam(4, new boolean[]{true});
 			} else {
-				rateMask.setDimension(8);
+				rateMask = new BoolVectorParam(8, new boolean[]{true});
 			}
 		}
-		
+
 		super.initAndValidate();
 	}
 	
@@ -44,8 +43,8 @@ public class CorrelatedEvolution extends NucleotideRevJumpSubstModel {
 	@Override
 	public void setupRelativeRates() {
         Function rates = this.ratesInput.get();
-    	int [] model = getModel(modelIndicator.getValue());
-    	Boolean [] mask = rateMask.getValues();
+    	int [] model = getModel(modelIndicator.get());
+    	boolean [] mask = rateMask.getValues();
     	if (isSymmetric) {
 	        relativeRates[0] = (mask[0] ? rates.getArrayValue(model[0]) : 0.0); // 00->01
 	        relativeRates[1] = (mask[1] ? rates.getArrayValue(model[1]) : 0.0); // 00->10

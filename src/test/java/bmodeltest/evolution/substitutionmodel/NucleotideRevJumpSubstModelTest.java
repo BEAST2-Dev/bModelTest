@@ -2,8 +2,9 @@ package bmodeltest.evolution.substitutionmodel;
 
 import org.junit.Test;
 
-import beast.base.inference.parameter.IntegerParameter;
 import beast.base.inference.parameter.RealParameter;
+import beast.base.spec.domain.NonNegativeInt;
+import beast.base.spec.inference.parameter.IntScalarParam;
 import bmodeltest.evolution.substitutionmodel.NucleotideRevJumpSubstModel;
 import beast.base.evolution.substitutionmodel.Frequencies;
 import junit.framework.TestCase;
@@ -23,7 +24,7 @@ public class NucleotideRevJumpSubstModelTest extends TestCase {
 	public static NucleotideRevJumpSubstModel getSubstModel() {
 		NucleotideRevJumpSubstModel sm = new NucleotideRevJumpSubstModel();
 		try {
-			sm.initByName("rates", new RealParameter("1.0 1.0 1.0 1.0 1.0 1.0"), "modelIndicator", new IntegerParameter("0"), "frequencies",
+			sm.initByName("rates", new RealParameter("1.0 1.0 1.0 1.0 1.0 1.0"), "modelIndicator", new IntScalarParam<>(0, NonNegativeInt.INSTANCE), "frequencies",
 					NucleotideRevJumpSubstModelTest.getFreqs(), "modelSet", "transitionTransversionSplit");
 			return sm;
 		} catch (Exception e) {
@@ -37,7 +38,7 @@ public class NucleotideRevJumpSubstModelTest extends TestCase {
 	public void testSubstModel() throws Exception {
 
 		NucleotideRevJumpSubstModel sm = new NucleotideRevJumpSubstModel();
-		sm.initByName("rates", new RealParameter("1.0 1.0 1.0 1.0 1.0 1.0"), "modelIndicator", new IntegerParameter("0"), "frequencies", getFreqs(),
+		sm.initByName("rates", new RealParameter("1.0 1.0 1.0 1.0 1.0 1.0"), "modelIndicator", new IntScalarParam<>(0, NonNegativeInt.INSTANCE), "frequencies", getFreqs(),
 				"modelSet", "transitionTransversionSplit");
 		assertEquals(false, sm.isSplit(25, 11));
 		assertEquals(true, sm.isSplit(11, 25));
@@ -58,7 +59,7 @@ public class NucleotideRevJumpSubstModelTest extends TestCase {
 	@Test
 	public void testAllReversibleModel() throws Exception {
 		NucleotideRevJumpSubstModel sm = new NucleotideRevJumpSubstModel();
-		sm.initByName("rates", new RealParameter("1.0 1.0 1.0 1.0 1.0 1.0"), "modelIndicator", new IntegerParameter("0"), "frequencies", getFreqs(),
+		sm.initByName("rates", new RealParameter("1.0 1.0 1.0 1.0 1.0 1.0"), "modelIndicator", new IntScalarParam<>(0, NonNegativeInt.INSTANCE), "frequencies", getFreqs(),
 				"modelSet", NucleotideRevJumpSubstModel.ModelSet.allreversible);
 		assertEquals(203, sm.getModelCount());
 
@@ -67,7 +68,7 @@ public class NucleotideRevJumpSubstModelTest extends TestCase {
 	@Test
 	public void testTransitionTransversionModel() throws Exception {
 		NucleotideRevJumpSubstModel sm = new NucleotideRevJumpSubstModel();
-		sm.initByName("rates", new RealParameter("1.0 1.0 1.0 1.0 1.0 1.0"), "modelIndicator", new IntegerParameter("0"), "frequencies", getFreqs(),
+		sm.initByName("rates", new RealParameter("1.0 1.0 1.0 1.0 1.0 1.0"), "modelIndicator", new IntScalarParam<>(0, NonNegativeInt.INSTANCE), "frequencies", getFreqs(),
 				"modelSet", NucleotideRevJumpSubstModel.ModelSet.transitionTransversionSplit);
 		assertEquals(31, sm.getModelCount());
 
@@ -76,7 +77,7 @@ public class NucleotideRevJumpSubstModelTest extends TestCase {
 //	@Test
 //	public void testNamedExtendedModel() throws Exception {
 //		NucleotideRevJumpSubstModel sm = new NucleotideRevJumpSubstModel();
-//		sm.initByName("rates", new RealParameter("1.0 1.0 1.0 1.0 1.0 1.0"), "modelIndicator", new IntegerParameter("0"), "frequencies", getFreqs(),
+//		sm.initByName("rates", new RealParameter("1.0 1.0 1.0 1.0 1.0 1.0"), "modelIndicator", new IntScalarParam<>(0, NonNegativeInt.INSTANCE), "frequencies", getFreqs(),
 //				"modelSet", NucleotideRevJumpSubstModel.ModelSet.namedExtended);
 //		assertEquals(7, sm.getModelCount());
 //
@@ -85,7 +86,7 @@ public class NucleotideRevJumpSubstModelTest extends TestCase {
 	@Test
 	public void testNamedExtendedModel2() throws Exception {
 		NucleotideRevJumpSubstModel sm = new NucleotideRevJumpSubstModel();
-		sm.initByName("rates", new RealParameter("1.0 1.0 1.0 1.0 1.0 1.0"), "modelIndicator", new IntegerParameter("0"), "frequencies", getFreqs(),
+		sm.initByName("rates", new RealParameter("1.0 1.0 1.0 1.0 1.0 1.0"), "modelIndicator", new IntScalarParam<>(0, NonNegativeInt.INSTANCE), "frequencies", getFreqs(),
 				"modelSet", NucleotideRevJumpSubstModel.ModelSet.namedExtended);
 		String dotty = sm.toDotty();
 		System.out.println(dotty);
@@ -95,7 +96,7 @@ public class NucleotideRevJumpSubstModelTest extends TestCase {
 	@Test
 	public void testNamedModel() throws Exception {
 		NucleotideRevJumpSubstModel sm = new NucleotideRevJumpSubstModel();
-		sm.initByName("rates", new RealParameter("1.0 1.0 1.0 1.0 1.0 1.0"), "modelIndicator", new IntegerParameter("0"), "frequencies", getFreqs(),
+		sm.initByName("rates", new RealParameter("1.0 1.0 1.0 1.0 1.0 1.0"), "modelIndicator", new IntScalarParam<>(0, NonNegativeInt.INSTANCE), "frequencies", getFreqs(),
 				"modelSet", NucleotideRevJumpSubstModel.ModelSet.namedSimple);
 		assertEquals(4, sm.getModelCount());
 
