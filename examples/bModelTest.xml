@@ -45,7 +45,7 @@ name="alignment">
         </tree>
         <parameter id="birthRate.t:dna" name="stateNode">1.0</parameter>
         <stateNode id="BMTmodelIndicator.s:dna" spec="IntScalarParam" domain="NonNegativeInt">0</stateNode>
-        <parameter id="BMTrates.s:dna" dimension="6" lower="0.0" name="stateNode" upper="6.0">1.0</parameter>
+        <stateNode id="BMTrates.s:dna" spec="RealVectorParam" domain="NonNegativeReal" dimension="6" name="stateNode">1.0</stateNode>
         <parameter id="gammaShape.s:dna" name="stateNode">1.0</parameter>
         <parameter id="proportionInvariant.s:dna" lower="0.0" name="stateNode" upper="1.0">0.1</parameter>
 
@@ -53,7 +53,7 @@ name="alignment">
         <stateNode id="hasGammaRates.s:dna" spec="IntScalarParam" domain="NonNegativeInt">1</stateNode>
         <!-- frequencies estimation -->
         <stateNode id="hasEqualFreqs.s:dna" spec="BoolScalarParam">false</stateNode>
-        <stateNode id="frequencies.s:dna" spec="parameter.RealParameter">0.25 0.25 0.25 0.25</stateNode>
+        <stateNode id="frequencies.s:dna" spec="SimplexParam">0.25 0.25 0.25 0.25</stateNode>
     </state>
 
     <init id="RandomTree.t:dna" spec="beast.base.evolution.tree.coalescent.RandomTree" estimate="false" initial="@Tree.t:dna" taxa="@dna">
@@ -84,9 +84,9 @@ name="alignment">
             </distribution>
             
             <!-- frequencies estimation -->
-            <prior  id="freqsPrior.s:dna"  name="distribution" x="@frequencies.s:dna">
-            	<distr spec="beast.base.inference.distribution.Dirichlet" alpha="1.0 1.0 1.0 1.0"/>
-            </prior>
+            <distribution id="freqsPrior.s:dna" spec="beast.base.spec.inference.distribution.Dirichlet" param="@frequencies.s:dna">
+                <alpha spec="RealVectorParam" domain="PositiveReal" dimension="4">1.0</alpha>
+            </distribution>
 
         </distribution>
         <distribution id="likelihood" spec="beast.base.inference.CompoundDistribution">
@@ -142,7 +142,7 @@ name="alignment">
    
     <!-- frequencies estimation -->
     <operator id="BMTFreqsFlipOperator.s:dna" spec="beast.base.spec.inference.operator.BitFlipOperator" parameter="@hasEqualFreqs.s:dna" weight="0.1"/>
-    <operator id='FrequenciesExchanger.s:dna' spec='DeltaExchangeOperator' delta="0.01" weight="0.1" parameter="@frequencies.s:dna"/>
+    <operator id='FrequenciesExchanger.s:dna' spec='beast.base.spec.inference.operator.DeltaExchangeOperator' delta="0.01" weight="0.1" rvparameter="@frequencies.s:dna"/>
     
     
     <logger id="tracelog" fileName="dna.log" logEvery="1000" model="@posterior" sanitiseHeaders="true" sort="smart">

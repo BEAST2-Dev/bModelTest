@@ -7,9 +7,10 @@ import beast.base.core.Description;
 import beast.base.core.Input;
 import beast.base.core.Input.Validate;
 import beast.base.inference.Operator;
-import beast.base.inference.parameter.RealParameter;
 import beast.base.spec.domain.NonNegativeInt;
+import beast.base.spec.domain.NonNegativeReal;
 import beast.base.spec.inference.parameter.IntScalarParam;
+import beast.base.spec.inference.parameter.RealVectorParam;
 import beast.base.util.Randomizer;
 import bmodeltest.evolution.substitutionmodel.NucleotideRevJumpSubstModel;
 
@@ -17,12 +18,11 @@ import bmodeltest.evolution.substitutionmodel.NucleotideRevJumpSubstModel;
 public class BMTMergeSplitOperator extends Operator {
 	public Input<IntScalarParam<? extends NonNegativeInt>> modelIndicatorInput = new Input<>("modelIndicator", "number of the model to be used", Validate.REQUIRED);
 	public Input<NucleotideRevJumpSubstModel> substModelInput = new Input<NucleotideRevJumpSubstModel>("substModel", "model test substitution model representing the individual models", Validate.REQUIRED);
-    // rates is shared with legacy GeneralSubstitutionModel.ratesInput (Input<Function>); spec types don't implement Function
-    public Input<RealParameter> ratesInput = new Input<RealParameter>("rates", "Rate parameter which defines the transition rate matrix. ", Validate.REQUIRED);
+    public Input<RealVectorParam<? extends NonNegativeReal>> ratesInput = new Input<>("rates", "Rate parameter which defines the transition rate matrix. ", Validate.REQUIRED);
 
 	IntScalarParam<? extends NonNegativeInt> modelIndicator;
 	NucleotideRevJumpSubstModel substModel;
-	RealParameter rates;
+	RealVectorParam<? extends NonNegativeReal> rates;
 	public boolean useAlt = false;
 
 	final static boolean debug = true;
@@ -84,23 +84,23 @@ public class BMTMergeSplitOperator extends Operator {
 			}
 			
 			// generate new rates
-			double r = rates.getValue(i1);
+			double r = rates.get(i1);
 			double u = -n1 * r + Randomizer.nextDouble() * (n2 + n1) * r;
 			double r1 = r + u / n1;
 			double r2 = r - u / n2;
 			double [] newrates = new double[model.length];
 			for (int i = 0; i < model.length; i++) {
-				newrates[newModel[i]] =  rates.getValue(model[i]);				
+				newrates[newModel[i]] =  rates.get(model[i]);				
 			}
 			newrates[i1] = r1;
 			newrates[i2] = r2;
 			for (int i = 0; i < substModel.getGroupCount(newModelID); i++) {
-				if (newrates[i] < rates.getLower() || newrates[i] > rates.getUpper()) {
+				if (!rates.isValid(newrates[i])) {
 					return Double.NEGATIVE_INFINITY;
 				}
 			}
 			for (int i = 0; i < substModel.getGroupCount(newModelID); i++) {
-				rates.setValue(i, newrates[i]);
+				rates.set(i, newrates[i]);
 			}
 			
 			// calc hastings ratio
@@ -150,23 +150,23 @@ public class BMTMergeSplitOperator extends Operator {
 			}
 			
 			// calc merged rate
-			double r1 = rates.getValue(i1);
-			double r2 = rates.getValue(i2);
+			double r1 = rates.get(i1);
+			double r2 = rates.get(i2);
 			double r = (n1 * r1 + n2 * r2) / (n1 + n2);
 			
 			double [] newrates = new double[model.length];
 			for (int i = 0; i < model.length; i++) {
-				newrates[newModel[i]] =  rates.getValue(model[i]);				
+				newrates[newModel[i]] =  rates.get(model[i]);				
 			}
 			newrates[Math.min(i1, i2)] = r;
 			
 			for (int i = 0; i < substModel.getGroupCount(newModelID); i++) {
-				if (newrates[i] < rates.getLower() || newrates[i] > rates.getUpper()) {
+				if (!rates.isValid(newrates[i])) {
 					return Double.NEGATIVE_INFINITY;
 				}
 			}
 			for (int i = 0; i < substModel.getGroupCount(newModelID); i++) {
-				rates.setValue(i, newrates[i]);
+				rates.set(i, newrates[i]);
 			}
 
 			
@@ -237,26 +237,26 @@ public class BMTMergeSplitOperator extends Operator {
 			modelIndicator.set(newModelIndicator);
 
 			// generate new rates
-			double r = rates.getValue(Math.min(i1,  i2));
+			double r = rates.get(Math.min(i1,  i2));
 			double u = -n1 * r + Randomizer.nextDouble() * (n2 + n1) * r;
 			double r1 = r + u / n1;
 			double r2 = r - u / n2;
 			double [] newrates = new double[model.length];
 			for (int i = 0; i < model.length; i++) {
-				newrates[newmodel[i]] =  rates.getValue(model[i]);				
+				newrates[newmodel[i]] =  rates.get(model[i]);				
 			}
 			newrates[i1] = r1;
 			newrates[i2] = r2;
 			for (int i = 0; i < model.length; i++) {
-				rates.setValue(i, newrates[i]);
+				rates.set(i, newrates[i]);
 			}
 			
-//			double r = rates.getValue(i1);
+//			double r = rates.get(i1);
 //			double u = -n1 * r + Randomizer.nextDouble() * (n2 + n1) * r;
 //			double r1 = r + u / n1;
 //			double r2 = r - u / n2;
-//			rates.setValue(i1, r1);
-//			rates.setValue(i2, r2);
+//			rates.set(i1, r1);
+//			rates.set(i2, r2);
 			
 			// calc hastings ratio
 			// M is the number of rate classes in the proposed model that will have more than one element 
@@ -302,27 +302,27 @@ public class BMTMergeSplitOperator extends Operator {
 			NucleotideRevJumpSubstModel.normaliseModel(newmodel);
 
 			// calc merged rate
-			double r1 = rates.getValue(i1);
-			double r2 = rates.getValue(i2);
+			double r1 = rates.get(i1);
+			double r2 = rates.get(i2);
 			int n1 = substModel.getSubGroupCount(currentModelID)[i1];
 			int n2 = substModel.getSubGroupCount(currentModelID)[i2];
 			double r = (n1 * r1 + n2 * r2) / (n1 + n2);
 			
 			double [] newrates = new double[model.length];
 			for (int i = 0; i < model.length; i++) {
-				newrates[newmodel[i]] =  rates.getValue(model[i]);				
+				newrates[newmodel[i]] =  rates.get(model[i]);				
 			}
 			newrates[Math.min(i1, i2)] = r;
 			for (int i = 0; i < model.length; i++) {
-				rates.setValue(i, newrates[i]);
+				rates.set(i, newrates[i]);
 			}
 			
-//			double r1 = rates.getValue(i1);
-//			double r2 = rates.getValue(i2);
+//			double r1 = rates.get(i1);
+//			double r2 = rates.get(i2);
 //			int n1 = substModel.getSubGroupCount(currentModelID)[i1];
 //			int n2 = substModel.getSubGroupCount(currentModelID)[i2];
 //			double r = (n1 * r1 + n2 * r2) / (n1 + n2);
-//			rates.setValue(i1, r);
+//			rates.set(i1, r);
 			
 			int newModelIndicator = substModel.getModelNumber(newmodel);
 			modelIndicator.set(newModelIndicator);

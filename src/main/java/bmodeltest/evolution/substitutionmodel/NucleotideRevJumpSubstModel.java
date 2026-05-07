@@ -11,15 +11,16 @@ import java.util.List;
 import java.util.Set;
 
 import beast.base.core.Description;
-import beast.base.core.Function;
 import beast.base.core.Input;
 import beast.base.core.Loggable;
 import beast.base.core.Input.Validate;
 import beast.base.spec.domain.NonNegativeInt;
+import beast.base.spec.domain.NonNegativeReal;
+import beast.base.spec.evolution.substitutionmodel.GeneralSubstitutionModel;
 import beast.base.spec.inference.parameter.IntScalarParam;
+import beast.base.spec.type.RealVector;
 import beast.base.evolution.datatype.DataType;
 import beast.base.evolution.datatype.Nucleotide;
-import beast.base.evolution.substitutionmodel.GeneralSubstitutionModel;
 
 @Description("Reversible jump based substitution model that can jump between all "
 		+ "reversible nucleotide substitution models")
@@ -541,19 +542,19 @@ public class NucleotideRevJumpSubstModel extends GeneralSubstitutionModel implem
 
 	@Override
 	public void setupRelativeRates() {
-        Function rates = this.ratesInput.get();
+        RealVector<? extends NonNegativeReal> rates = this.ratesInput.get();
     	int [] model = getModel(modelIndicator.get());
-        relativeRates[0] = rates.getArrayValue(model[0]); // A->C
-        relativeRates[1] = rates.getArrayValue(model[1]); // A->G
-        relativeRates[2] = rates.getArrayValue(model[2]); // A->T
+        relativeRates[0] = rates.get(model[0]); // A->C
+        relativeRates[1] = rates.get(model[1]); // A->G
+        relativeRates[2] = rates.get(model[2]); // A->T
 
         relativeRates[3] = relativeRates[0]; // C->A
-        relativeRates[4] = rates.getArrayValue(model[3]); // C->G
-        relativeRates[5] = rates.getArrayValue(model[4]); // C->T
+        relativeRates[4] = rates.get(model[3]); // C->G
+        relativeRates[5] = rates.get(model[4]); // C->T
 
         relativeRates[6] = relativeRates[1]; // G->A
         relativeRates[7] = relativeRates[4]; // G->C
-        relativeRates[8] = rates.getArrayValue(model[5]); // G->T
+        relativeRates[8] = rates.get(model[5]); // G->T
 
         relativeRates[9] = relativeRates[2]; // T->A
         relativeRates[10] = relativeRates[5]; //T->C
@@ -579,10 +580,10 @@ public class NucleotideRevJumpSubstModel extends GeneralSubstitutionModel implem
 
 	@Override
 	public void log(long nSample, PrintStream out) {
-        Function rates = this.ratesInput.get();
+        RealVector<? extends NonNegativeReal> rates = this.ratesInput.get();
     	int [] model = getModel(modelIndicator.get());
     	for (int i = 0; i < 6 ;i++) {
-    		out.append(rates.getArrayValue(model[i]) + "\t");
+    		out.append(rates.get(model[i]) + "\t");
     	}
     	for (int i = 0; i < 6 ;i++) {
     		out.append((char)(model[i] + '1'));

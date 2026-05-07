@@ -6,16 +6,17 @@ import java.util.List;
 import java.util.Random;
 
 import beast.base.core.Description;
-import beast.base.core.Function;
 import beast.base.core.Input;
+import beast.base.inference.Distribution;
 import beast.base.inference.State;
 import beast.base.inference.distribution.Exponential;
 import beast.base.inference.distribution.LogNormalDistributionModel;
 import beast.base.inference.distribution.ParametricDistribution;
-import beast.base.inference.distribution.Prior;
 import beast.base.core.Input.Validate;
 import beast.base.spec.domain.NonNegativeInt;
+import beast.base.spec.domain.NonNegativeReal;
 import beast.base.spec.inference.parameter.IntScalarParam;
+import beast.base.spec.type.RealVector;
 import beast.base.core.Log;
 import beast.base.util.GammaFunction;
 import bmodeltest.evolution.substitutionmodel.NucleotideRevJumpSubstModel;
@@ -24,34 +25,33 @@ import bmodeltest.evolution.substitutionmodel.NucleotideRevJumpSubstModel;
 		+ "1. Dirichlet prior on rates ensuring they sum to 6. "
 		+ "2. Parametric distribution on rates. "
 		+ "3. Parametric distributions on rates distinguishing between transitions and transversions.")
-public class NucleotideRevJumpSubstModelRatePrior extends Prior {
+public class NucleotideRevJumpSubstModelRatePrior extends Distribution {
 	public enum BMTPriorType {asScaledDirichlet, onRates, onTransitionsAndTraversals};
 
-	public Input<BMTPriorType> priorTypeInput = new Input<NucleotideRevJumpSubstModelRatePrior.BMTPriorType>("priorType", "rate prior, one of " + Arrays.toString(BMTPriorType.values()), 
+	public Input<BMTPriorType> priorTypeInput = new Input<NucleotideRevJumpSubstModelRatePrior.BMTPriorType>("priorType", "rate prior, one of " + Arrays.toString(BMTPriorType.values()),
 			BMTPriorType.onTransitionsAndTraversals, BMTPriorType.values());
+	public Input<RealVector<? extends NonNegativeReal>> xInput = new Input<>("x", "rate vector to apply this prior to", Validate.REQUIRED);
 	public Input<IntScalarParam<? extends NonNegativeInt>> modelIndicatorInput = new Input<>("modelIndicator", "number of the model to be used", Validate.REQUIRED);
 	public Input<NucleotideRevJumpSubstModel> substModelInput = new Input<NucleotideRevJumpSubstModel>("substModel", "model test substitution model representing the individual models", Validate.REQUIRED);
 
-    public Input<ParametricDistribution> transDistInput = new Input<ParametricDistribution>("transDistr", "distribution used to calculate prior on transition rates.");
-	
+	public Input<ParametricDistribution> distInput = new Input<>("distr", "distribution used to calculate prior on (transversion) rates");
+	public Input<ParametricDistribution> transDistInput = new Input<ParametricDistribution>("transDistr", "distribution used to calculate prior on transition rates.");
+
 	final static boolean debug = true;
-    
-    public NucleotideRevJumpSubstModelRatePrior() {
-		distInput.setRule(Validate.OPTIONAL);
-	}
-    
+
 	IntScalarParam<? extends NonNegativeInt> modelIndicator;
 	NucleotideRevJumpSubstModel substModel;
-	Function rates;
+	RealVector<? extends NonNegativeReal> rates;
 	BMTPriorType priorType;
+	ParametricDistribution dist;
 	ParametricDistribution transDist;
-	
+
 	@Override
 	public void initAndValidate() {
 		priorType = priorTypeInput.get();
 		dist = distInput.get();
 		transDist = transDistInput.get();
-		
+
 		switch (priorType) {
 		case onTransitionsAndTraversals:
 			if (transDist == null) {
@@ -75,32 +75,31 @@ public class NucleotideRevJumpSubstModelRatePrior extends Prior {
 			dist.setID(getID() + "x");
 			distInput.setValue(dist, this);
 		}
-		
+
 		modelIndicator = modelIndicatorInput.get();
 		substModel = substModelInput.get();
-		rates = m_x.get();
+		rates = xInput.get();
 	}
 
 	@Override
 	public double calculateLogP() {
 		logP = 0;
 		if (debug) {
-			Function x = m_x.get();
 			double sr = 0;
 			int modelID = modelIndicator.get();
 			int dim = (int) substModel.getGroupCount(modelID);
 			for (int i = 0; i < dim; i++) {
-				sr += substModel.getSubGroupCount(modelID)[i] * x.getArrayValue(i);
+				sr += substModel.getSubGroupCount(modelID)[i] * rates.get(i);
 			}
 			if (Math.abs(sr - 6.0) > 1e-6) {
 				throw new RuntimeException("Rates do not add to 6.00000 but " + sr);
 			}
 		}
 
-		
-		
+
+
 		switch (priorType) {
-		case asScaledDirichlet: 
+		case asScaledDirichlet:
 			{
 				int modelID = modelIndicator.get();
 				int K = substModel.getGroupCount(modelID);
@@ -113,20 +112,18 @@ public class NucleotideRevJumpSubstModelRatePrior extends Prior {
 			break;
 		case onRates:
 			{
-				Function x = m_x.get();
 				int modelID = modelIndicator.get();
 				int dim = (int) substModel.getGroupCount(modelID);
 				double fOffset = dist.offsetInput.get();
 				logP = 0;
 				for (int i = 0; i < dim; i++) {
-					double fX = x.getArrayValue(i) - fOffset;
+					double fX = rates.get(i) - fOffset;
 					logP += dist.logDensity(fX);
 				}
 			}
 			break;
 		case onTransitionsAndTraversals:
 			{
-				Function x = m_x.get();
 				int modelID = modelIndicator.get();
 				int [] model = substModel.getModel(modelID);
 				int dim = (int) substModel.getGroupCount(modelID);
@@ -134,11 +131,11 @@ public class NucleotideRevJumpSubstModelRatePrior extends Prior {
 				for (int i = 0; i < dim; i++) {
 					if (model[1] == i || model[4] == i) {
 						double fOffset = transDist.offsetInput.get();
-						double fX = x.getArrayValue(i) - fOffset;
+						double fX = rates.get(i) - fOffset;
 						logP += transDist.logDensity(fX);
 					} else {
 						double fOffset = dist.offsetInput.get();
-						double fX = x.getArrayValue(i) - fOffset;
+						double fX = rates.get(i) - fOffset;
 						logP += dist.logDensity(fX);
 					}
 				}
@@ -147,7 +144,7 @@ public class NucleotideRevJumpSubstModelRatePrior extends Prior {
 		}
 		return logP;
 	}
-	
+
 	@Override
 	public List<String> getArguments() {return null;}
 

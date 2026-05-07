@@ -4,7 +4,8 @@ package bmodeltest.evolution.operators;
 import org.junit.Test;
 
 import beast.base.inference.State;
-import beast.base.inference.parameter.RealParameter;
+import beast.base.spec.domain.NonNegativeReal;
+import beast.base.spec.inference.parameter.RealVectorParam;
 import beast.base.spec.domain.NonNegativeInt;
 import beast.base.spec.inference.parameter.IntScalarParam;
 import bmodeltest.evolution.substitutionmodel.NucleotideRevJumpSubstModelTest;
@@ -18,27 +19,30 @@ public class ExchangeOperatorTest extends TestCase {
 	@Test
 	public void testExchangeOperatorOnJC69() throws Exception {
 		IntScalarParam<NonNegativeInt> modelIndicator = new IntScalarParam<>(0, NonNegativeInt.INSTANCE);
-        RealParameter rates = new RealParameter("1.0 0.0 0.0 0.0 0.0 0.0");
+        double[] _r = java.util.Arrays.stream("1.0 0.0 0.0 0.0 0.0 0.0".split(" ")).mapToDouble(Double::parseDouble).toArray();
+        RealVectorParam<NonNegativeReal> rates = new RealVectorParam<>(_r, NonNegativeReal.INSTANCE);
         testExchangeOperator(modelIndicator, rates, 6.0);
 	}
 
 	@Test
 	public void testExchangeOperatorOnHKY() throws Exception {
 		IntScalarParam<NonNegativeInt> modelIndicator = new IntScalarParam<>(1, NonNegativeInt.INSTANCE);
-        RealParameter rates = new RealParameter("0.5 2.0 0.0 0.0 0.0 0.0");
+        double[] _r = java.util.Arrays.stream("0.5 2.0 0.0 0.0 0.0 0.0".split(" ")).mapToDouble(Double::parseDouble).toArray();
+        RealVectorParam<NonNegativeReal> rates = new RealVectorParam<>(_r, NonNegativeReal.INSTANCE);
         testExchangeOperator(modelIndicator, rates, 6.0);
 	}
 
 	@Test
 	public void testExchangeOperatorOnGTR() throws Exception {
 		IntScalarParam<NonNegativeInt> modelIndicator = new IntScalarParam<>(30, NonNegativeInt.INSTANCE);
-        RealParameter rates = new RealParameter("1.0 1.0 1.0 1.0 1.0 1.0");
+        double[] _r = java.util.Arrays.stream("1.0 1.0 1.0 1.0 1.0 1.0".split(" ")).mapToDouble(Double::parseDouble).toArray();
+        RealVectorParam<NonNegativeReal> rates = new RealVectorParam<>(_r, NonNegativeReal.INSTANCE);
         testExchangeOperator(modelIndicator, rates, 6.0);
 	}
 
-	private void testExchangeOperator(IntScalarParam<NonNegativeInt> modelIndicator, RealParameter rates, double sumOfRates) throws Exception {
+	private void testExchangeOperator(IntScalarParam<NonNegativeInt> modelIndicator, RealVectorParam<NonNegativeReal> rates, double sumOfRates) throws Exception {
         NucleotideRevJumpSubstModel substModel = NucleotideRevJumpSubstModelTest.getSubstModel();
-        rates.setUpper(Double.POSITIVE_INFINITY);
+
 
 		State state = new State();
 		state.initByName("stateNode", rates);
@@ -56,7 +60,7 @@ public class ExchangeOperatorTest extends TestCase {
 			int modelID = modelIndicator.get();
 			int dim = (int) substModel.getGroupCount(modelID);
 			for (int i = 0; i < dim; i++) {
-				sr += substModel.getSubGroupCount(modelID)[i] * rates.getArrayValue(i);
+				sr += substModel.getSubGroupCount(modelID)[i] * rates.get(i);
 			}
 			assertEquals(6.0, sr, 1e-10);
         }

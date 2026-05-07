@@ -3,7 +3,8 @@ package bmodeltest.evolution.substitutionmodel;
 import beast.base.core.Description;
 import beast.base.core.Input;
 import beast.base.core.Input.Validate;
-import beast.base.evolution.substitutionmodel.Frequencies;
+import beast.base.inference.StateNode;
+import beast.base.spec.evolution.substitutionmodel.Frequencies;
 import beast.base.spec.inference.parameter.BoolScalarParam;
 
 @Description("Frequencies for ModelTest model, can switch between equal and empricial/estimated frequencies")
@@ -48,8 +49,7 @@ public class ModelFrequencies extends Frequencies {
     @Override
     protected boolean requiresRecalculation() {
         boolean recalculates = false;
-        if (frequenciesInput.get() != null && frequenciesInput.get().somethingIsDirty()) {
-
+        if (frequenciesInput.get() instanceof StateNode stateNode && stateNode.somethingIsDirty()) {
             needsUpdate = true;
             recalculates = true;
         }
