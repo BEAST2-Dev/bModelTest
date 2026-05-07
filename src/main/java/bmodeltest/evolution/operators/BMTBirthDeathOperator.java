@@ -1,7 +1,6 @@
 package bmodeltest.evolution.operators;
 
 
-import org.apache.commons.math.MathException;
 
 import beast.base.core.Description;
 import beast.base.core.Input;
@@ -53,11 +52,7 @@ public class BMTBirthDeathOperator extends Operator {
 				return Double.NEGATIVE_INFINITY;
 			}
 			double p = Randomizer.nextDouble();
-			try {
-				scale = distr.inverseCumulativeProbability(p);
-			} catch (MathException e) {
-				e.printStackTrace();
-			}
+			scale = distr.inverseCumulativeProbability(p);
 			double newValue = scale;
 			if (newValue < rates.getLower() || newValue > rates.getUpper()) {
 				return Double.NEGATIVE_INFINITY;

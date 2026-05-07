@@ -1,4 +1,4 @@
-package test.beast.math.distributions;
+package bmodeltest.math.distributions;
 
 
 import org.junit.Test;
@@ -8,7 +8,7 @@ import bmodeltest.evolution.substitutionmodel.NucleotideRevJumpSubstModel;
 import bmodeltest.math.distributions.ModelSetPrior;
 import beast.base.inference.distribution.Uniform;
 import junit.framework.TestCase;
-import test.beast.evolution.substitutionmodel.NucleotideRevJumpSubstModelTest;
+import bmodeltest.evolution.substitutionmodel.NucleotideRevJumpSubstModelTest;
 
 public class ModelSetPriorTest extends TestCase {
 	

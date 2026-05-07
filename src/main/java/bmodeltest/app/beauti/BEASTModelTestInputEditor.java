@@ -28,6 +28,10 @@ public class BEASTModelTestInputEditor extends SiteModelInputEditor {
 		super(doc);
 	}
 
+	public BEASTModelTestInputEditor() {
+		super();
+	}
+
 	@Override
 	public void init(Input<?> input, BEASTInterface plugin, int itemNr, ExpandOption bExpandOption, boolean bAddButtons) {
 		super.init(input, plugin, itemNr, ExpandOption.TRUE, bAddButtons);

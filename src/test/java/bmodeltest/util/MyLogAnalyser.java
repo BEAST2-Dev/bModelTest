@@ -1,4 +1,4 @@
-package test.beast.util;
+package bmodeltest.util;
 
 import beastfx.app.tools.LogAnalyser;
 

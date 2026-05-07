@@ -1,4 +1,4 @@
-package test.beast.evolution.operators;
+package bmodeltest.evolution.operators;
 
 
 import org.junit.Test;
@@ -6,7 +6,7 @@ import org.junit.Test;
 import beast.base.inference.State;
 import beast.base.inference.parameter.IntegerParameter;
 import beast.base.inference.parameter.RealParameter;
-import test.beast.evolution.substitutionmodel.NucleotideRevJumpSubstModelTest;
+import bmodeltest.evolution.substitutionmodel.NucleotideRevJumpSubstModelTest;
 import beast.base.util.Randomizer;
 import bmodeltest.evolution.operators.BMTExchangeOperator;
 import bmodeltest.evolution.substitutionmodel.NucleotideRevJumpSubstModel;

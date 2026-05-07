@@ -1,4 +1,4 @@
-package test.beast.evolution.operators;
+package bmodeltest.evolution.operators;
 
 import java.io.PrintStream;
 
@@ -12,7 +12,7 @@ import beast.base.inference.State;
 import beast.base.inference.parameter.IntegerParameter;
 import beast.base.inference.parameter.RealParameter;
 import beast.base.inference.CompoundDistribution;
-import test.beast.evolution.substitutionmodel.NucleotideRevJumpSubstModelTest;
+import bmodeltest.evolution.substitutionmodel.NucleotideRevJumpSubstModelTest;
 import beast.base.inference.distribution.Uniform;
 import beastfx.app.tools.LogAnalyser;
 import bmodeltest.evolution.operators.BMTMergeSplitOperator;

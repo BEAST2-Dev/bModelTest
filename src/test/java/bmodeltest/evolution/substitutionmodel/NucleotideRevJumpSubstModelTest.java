@@ -1,4 +1,4 @@
-package test.beast.evolution.substitutionmodel;
+package bmodeltest.evolution.substitutionmodel;
 
 import org.junit.Test;
 

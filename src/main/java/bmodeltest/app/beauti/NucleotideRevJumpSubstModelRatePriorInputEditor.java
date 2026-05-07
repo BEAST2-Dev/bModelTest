@@ -23,6 +23,10 @@ public class NucleotideRevJumpSubstModelRatePriorInputEditor extends InputEditor
 	public NucleotideRevJumpSubstModelRatePriorInputEditor(BeautiDoc doc) {
 		super(doc);
 	}
+
+	public NucleotideRevJumpSubstModelRatePriorInputEditor() {
+		super();
+	}
 	
 	@Override
 	public void init(Input<?> input, BEASTInterface beastObject, int itemNr, ExpandOption isExpandOption,
