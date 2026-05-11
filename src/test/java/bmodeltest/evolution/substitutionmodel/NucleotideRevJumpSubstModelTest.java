@@ -29,9 +29,13 @@ public class NucleotideRevJumpSubstModelTest extends TestCase {
 	}
 
 	public static NucleotideRevJumpSubstModel getSubstModel() {
+		return getSubstModel(new IntScalarParam<>(0, NonNegativeInt.INSTANCE));
+	}
+
+	public static NucleotideRevJumpSubstModel getSubstModel(IntScalarParam<NonNegativeInt> modelIndicator) {
 		NucleotideRevJumpSubstModel sm = new NucleotideRevJumpSubstModel();
 		try {
-			sm.initByName("rates", rates6(), "modelIndicator", new IntScalarParam<>(0, NonNegativeInt.INSTANCE), "frequencies",
+			sm.initByName("rates", rates6(), "modelIndicator", modelIndicator, "frequencies",
 					NucleotideRevJumpSubstModelTest.getFreqs(), "modelSet", "transitionTransversionSplit");
 			return sm;
 		} catch (Exception e) {
