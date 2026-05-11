@@ -9,16 +9,16 @@ import beast.base.core.Input.Validate;
 import beast.base.core.Loggable;
 import beast.base.spec.domain.NonNegativeInt;
 import beast.base.spec.domain.Real;
-import beast.base.spec.inference.parameter.IntScalarParam;
-import beast.base.spec.inference.parameter.RealScalarParam;
+import beast.base.spec.type.IntScalar;
+import beast.base.spec.type.RealScalar;
 
 @Description("Logs parameter when indicated the parameter is in active use by the mask input")
 public class ActiveLogger extends BEASTObject implements Loggable {
-	final public Input<IntScalarParam<? extends NonNegativeInt>> maskInput = new Input<>("mask", "mask parameter assumed to take values 0 or 1", Validate.REQUIRED);
-	final public Input<RealScalarParam<? extends Real>> parameterInput = new Input<>("parameter", "parameter of interetest, only logged if mask = 1", Validate.REQUIRED);
+	final public Input<IntScalar<? extends NonNegativeInt>> maskInput = new Input<>("mask", "mask parameter assumed to take values 0 or 1", Validate.REQUIRED);
+	final public Input<RealScalar<? extends Real>> parameterInput = new Input<>("parameter", "parameter of interetest, only logged if mask = 1", Validate.REQUIRED);
 
-	private IntScalarParam<? extends NonNegativeInt> mask;
-	private RealScalarParam<? extends Real> parameter;
+	private IntScalar<? extends NonNegativeInt> mask;
+	private RealScalar<? extends Real> parameter;
 
 	@Override
 	public void initAndValidate() {

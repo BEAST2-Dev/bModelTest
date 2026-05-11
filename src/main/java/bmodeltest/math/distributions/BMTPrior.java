@@ -2,39 +2,67 @@ package bmodeltest.math.distributions;
 
 
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 import beast.base.core.Description;
-import beast.base.core.Function;
 import beast.base.core.Input;
 import beast.base.core.Input.Validate;
+import beast.base.inference.Distribution;
+import beast.base.inference.State;
+import beast.base.inference.distribution.ParametricDistribution;
 import beast.base.spec.domain.NonNegativeInt;
-import beast.base.spec.inference.parameter.IntScalarParam;
-import beast.base.inference.distribution.Prior;
+import beast.base.spec.domain.Real;
+import beast.base.spec.type.IntScalar;
+import beast.base.spec.type.RealScalar;
 
-@Description("Prior for reversible jump based parameters, applies prior only to the rates that are in use")
-public class BMTPrior extends Prior {
-	public Input<IntScalarParam<? extends NonNegativeInt>> countInput = new Input<>("count","count parameter indicating the nr of rates to use", Validate.REQUIRED);
+@Description("Prior for reversible jump based parameters, applies prior only when the count parameter is non-zero")
+public class BMTPrior extends Distribution {
+	public Input<RealScalar<? extends Real>> xInput = new Input<>("x",
+			"scalar real parameter this prior applies to", Validate.REQUIRED);
+	public Input<IntScalar<? extends NonNegativeInt>> countInput = new Input<>("count",
+			"count parameter; the prior contributes only when count > 0", Validate.REQUIRED);
+	public Input<ParametricDistribution> distInput = new Input<>("distr",
+			"parametric distribution evaluated when the prior is active", Validate.REQUIRED);
 
-	private IntScalarParam<? extends NonNegativeInt> counts;
+	private RealScalar<? extends Real> x;
+	private IntScalar<? extends NonNegativeInt> counts;
+	private ParametricDistribution dist;
 
 	@Override
 	public void initAndValidate() {
+		x = xInput.get();
 		counts = countInput.get();
-		super.initAndValidate();
+		dist = distInput.get();
 	}
 
 	@Override
 	public double calculateLogP() {
-		Function x = m_x.get();
-		int dim = counts.get();
-		double fOffset = dist.offsetInput.get();
 		logP = 0;
-		for (int i = 0; i < dim; i++) {
-			double fX = x.getArrayValue(i) - fOffset;
-			//fLogP += Math.log(density(fX));
-			logP += dist.logDensity(fX);
+		if (counts.get() > 0) {
+			double offset = dist.offsetInput.get();
+			logP = dist.logDensity(x.get() - offset);
 		}
 		return logP;
 	}
 
+	@Override
+	public List<String> getArguments() {
+		List<String> arguments = new ArrayList<>();
+		if (x instanceof beast.base.core.BEASTInterface b && b.getID() != null) {
+			arguments.add(b.getID());
+		}
+		return arguments;
+	}
 
+	@Override
+	public List<String> getConditions() {
+		return new ArrayList<>();
+	}
+
+	@Override
+	public void sample(State state, Random random) {
+		// not implemented
+	}
 }

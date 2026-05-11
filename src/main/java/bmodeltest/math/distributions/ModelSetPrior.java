@@ -9,14 +9,15 @@ import beast.base.inference.Distribution;
 import beast.base.inference.State;
 import beast.base.inference.distribution.ParametricDistribution;
 import beast.base.spec.domain.NonNegativeInt;
-import beast.base.spec.inference.parameter.IntScalarParam;
+import beast.base.spec.type.IntScalar;
 import bmodeltest.evolution.substitutionmodel.NucleotideRevJumpSubstModel;
+import beast.base.core.BEASTInterface;
 
 @Description("Prior on models, uniform on model number, or uniform on parameter number")
 public class ModelSetPrior extends Distribution {
 	public enum PriorType {uniformOnModel, uniformOnParameterCount};
 
-	public Input<IntScalarParam<? extends NonNegativeInt>> xInput = new Input<>("x",
+	public Input<IntScalar<? extends NonNegativeInt>> xInput = new Input<>("x",
 			"model indicator parameter to apply this prior to", Validate.REQUIRED);
 	public Input<PriorType> priorTypeInput = new Input<ModelSetPrior.PriorType>("priorType", "Prior on model set,"
 			+ " uniformOnModel in order not to prefer any model in the set, e.g. JC69 is as likely as model 121131, or"
@@ -27,7 +28,7 @@ public class ModelSetPrior extends Distribution {
 	public Input<ParametricDistribution> distInput = new Input<>("distr", "(unused) distribution kept for backwards compatibility");
 
 
-	IntScalarParam<? extends NonNegativeInt> modelIndicator;
+	IntScalar<? extends NonNegativeInt> modelIndicator;
 	NucleotideRevJumpSubstModel substModel;
 
 	// parameterCounts[x] = nr of models with x nr of parameters
@@ -83,7 +84,9 @@ public class ModelSetPrior extends Distribution {
 	@Override
 	public List<String> getArguments() {
 		List<String> arguments = new ArrayList<>();
-		arguments.add(modelIndicator.getID());
+		if (modelIndicator instanceof BEASTInterface b && b.getID() != null) {
+			arguments.add(b.getID());
+		}
 		return arguments;
 	}
 

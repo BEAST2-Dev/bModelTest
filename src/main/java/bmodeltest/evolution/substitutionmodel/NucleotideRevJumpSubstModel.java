@@ -17,7 +17,7 @@ import beast.base.core.Input.Validate;
 import beast.base.spec.domain.NonNegativeInt;
 import beast.base.spec.domain.NonNegativeReal;
 import beast.base.spec.evolution.substitutionmodel.GeneralSubstitutionModel;
-import beast.base.spec.inference.parameter.IntScalarParam;
+import beast.base.spec.type.IntScalar;
 import beast.base.spec.type.RealVector;
 import beast.base.evolution.datatype.DataType;
 import beast.base.evolution.datatype.Nucleotide;
@@ -29,7 +29,7 @@ public class NucleotideRevJumpSubstModel extends GeneralSubstitutionModel implem
 	public enum ModelSet {allreversible, transitionTransversionSplit, namedSimple, namedExtended};
 	public Input<ModelSet> modelChoiseInput = new Input<ModelSet>("modelSet", "Which set of models to choose, one of " + Arrays.toString(ModelSet.values()), 
 			ModelSet.transitionTransversionSplit, ModelSet.values());
-	public Input<IntScalarParam<? extends NonNegativeInt>> modelIndicatorInput = new Input<>("modelIndicator", "number of the model to be used", Validate.REQUIRED);
+	public Input<IntScalar<? extends NonNegativeInt>> modelIndicatorInput = new Input<>("modelIndicator", "number of the model to be used", Validate.REQUIRED);
 	
 	
 //	public NucleotideRevJumpSubstModel() throws Exception {
@@ -271,7 +271,7 @@ public class NucleotideRevJumpSubstModel extends GeneralSubstitutionModel implem
 	
 	int [][] models;
 	
-	IntScalarParam<? extends NonNegativeInt> modelIndicator;
+	IntScalar<? extends NonNegativeInt> modelIndicator;
 	
 	@Override
 	public void initAndValidate() {

@@ -4,6 +4,7 @@ import beast.base.core.Description;
 import beast.base.core.Input;
 import beast.base.spec.domain.NonNegativeReal;
 import beast.base.spec.inference.parameter.BoolVectorParam;
+import beast.base.spec.type.BoolVector;
 import beast.base.spec.type.RealVector;
 import beast.base.evolution.datatype.DataType;
 
@@ -11,12 +12,12 @@ import beast.base.evolution.datatype.DataType;
 @Description("Substitution model for correlated evolution of discrete characters by reversible‐jump")
 public class CorrelatedEvolution extends NucleotideRevJumpSubstModel {
 	public Input<Boolean> isSymmetricInput = new Input<Boolean>("symmetric", "force rates to be symmetric", false);
-	public Input<BoolVectorParam> rateMaskInput = new Input<>("rateMask", "Allows switching rates off by setting the associated mask "
+	public Input<BoolVector> rateMaskInput = new Input<>("rateMask", "Allows switching rates off by setting the associated mask "
 			+ "entry to false, if not specified, the mask is ignored");
 
 
 	boolean isSymmetric;
-	BoolVectorParam rateMask;
+	BoolVector rateMask;
 
 	@Override
 	public void initAndValidate() {
@@ -45,39 +46,39 @@ public class CorrelatedEvolution extends NucleotideRevJumpSubstModel {
 	public void setupRelativeRates() {
         RealVector<? extends NonNegativeReal> rates = this.ratesInput.get();
     	int [] model = getModel(modelIndicator.get());
-    	boolean [] mask = rateMask.getValues();
+    	BoolVector mask = rateMask;
     	if (isSymmetric) {
-	        relativeRates[0] = (mask[0] ? rates.get(model[0]) : 0.0); // 00->01
-	        relativeRates[1] = (mask[1] ? rates.get(model[1]) : 0.0); // 00->10
+	        relativeRates[0] = (mask.get(0) ? rates.get(model[0]) : 0.0); // 00->01
+	        relativeRates[1] = (mask.get(1) ? rates.get(model[1]) : 0.0); // 00->10
 	        relativeRates[2] = 0.0; // 00->11
 
 	        relativeRates[3] = relativeRates[0]; // 01->00
 	        relativeRates[4] = 0.0; // 01->10
-	        relativeRates[5] = (mask[2] ? rates.get(model[2]): 0.0); // 01->11
+	        relativeRates[5] = (mask.get(2) ? rates.get(model[2]): 0.0); // 01->11
 
 	        relativeRates[6] = relativeRates[1]; // 10->00
 	        relativeRates[7] = 0.0; // 10->01
-	        relativeRates[8] = (mask[3] ? rates.get(model[3]): 0.0); // 10->11
+	        relativeRates[8] = (mask.get(3) ? rates.get(model[3]): 0.0); // 10->11
 
 	        relativeRates[9] = 0.0; // 11->00
 	        relativeRates[10] = relativeRates[5]; //11->01
 	        relativeRates[11] = relativeRates[8]; //11->10
 		} else {
-	        relativeRates[0] = (mask[0] ? rates.get(model[0]) : 0.0); // 00->01
-	        relativeRates[1] = (mask[1] ? rates.get(model[1]) : 0.0); // 00->10
+	        relativeRates[0] = (mask.get(0) ? rates.get(model[0]) : 0.0); // 00->01
+	        relativeRates[1] = (mask.get(1) ? rates.get(model[1]) : 0.0); // 00->10
 	        relativeRates[2] = 0.0; // 00->11
 
-	        relativeRates[3] = (mask[2] ? rates.get(model[2]) : 0.0); // 01->00
+	        relativeRates[3] = (mask.get(2) ? rates.get(model[2]) : 0.0); // 01->00
 	        relativeRates[4] = 0.0; // 01->10
-	        relativeRates[5] = (mask[3] ? rates.get(model[3]) : 0.0); // 01->11
+	        relativeRates[5] = (mask.get(3) ? rates.get(model[3]) : 0.0); // 01->11
 
-	        relativeRates[6] = (mask[4] ? rates.get(model[4]) : 0.0); // 10->00
+	        relativeRates[6] = (mask.get(4) ? rates.get(model[4]) : 0.0); // 10->00
 	        relativeRates[7] = 0.0; // 10->01
-	        relativeRates[8] = (mask[5] ? rates.get(model[5]) : 0.0); // 10->11
+	        relativeRates[8] = (mask.get(5) ? rates.get(model[5]) : 0.0); // 10->11
 
 	        relativeRates[9] = 0.0; // 11->00
-	        relativeRates[10] = (mask[6] ? rates.get(model[6]) : 0.0); //11->01
-	        relativeRates[11] = (mask[7] ? rates.get(model[7]) : 0.0); //11->10
+	        relativeRates[10] = (mask.get(6) ? rates.get(model[6]) : 0.0); //11->01
+	        relativeRates[11] = (mask.get(7) ? rates.get(model[7]) : 0.0); //11->10
 		}
     }
 

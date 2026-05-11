@@ -8,20 +8,24 @@ import beast.base.core.Citation;
 import beast.base.core.Description;
 import beast.base.core.Input;
 import beast.base.core.Input.Validate;
+import beast.base.inference.util.InputUtil;
 import beast.base.spec.domain.NonNegativeInt;
-import beast.base.spec.inference.parameter.IntScalarParam;
-import beast.base.evolution.sitemodel.SiteModel;
+import beast.base.spec.domain.PositiveReal;
+import beast.base.spec.domain.UnitInterval;
+import beast.base.spec.evolution.sitemodel.SiteModel;
+import beast.base.spec.inference.parameter.RealScalarParam;
+import beast.base.spec.type.IntScalar;
 import beast.base.evolution.tree.Node;
 
 @Description("Site model that jumps between with and without gamma sites, as well as with and without invariant sites")
 @Citation(value="Bouckaert RR, Drummond AJ. bModelTest: Bayesian phylogenetic site model averaging and model comparison. BMC evolutionary biology. 2017 Dec;17(1):42.", DOI="https://doi.org/10.1186/s12862-017-0890-6")
 public class BEASTModelTestSiteModel extends SiteModel {
 
-	public Input<IntScalarParam<? extends NonNegativeInt>> hasGammaRatesInput = new Input<>("hasGammaRates", "flag indicating whether gamma rate heterogeneity should be used (if 1) or not (if 0)", Validate.REQUIRED);
-	public Input<IntScalarParam<? extends NonNegativeInt>> hasInvariantSitesInput = new Input<>("hasInvariantSites", "flag indicating whether invariant sites should be used (if 1) or not (if 0)", Validate.REQUIRED);
+	public Input<IntScalar<? extends NonNegativeInt>> hasGammaRatesInput = new Input<>("hasGammaRates", "flag indicating whether gamma rate heterogeneity should be used (if 1) or not (if 0)", Validate.REQUIRED);
+	public Input<IntScalar<? extends NonNegativeInt>> hasInvariantSitesInput = new Input<>("hasInvariantSites", "flag indicating whether invariant sites should be used (if 1) or not (if 0)", Validate.REQUIRED);
 
-	IntScalarParam<? extends NonNegativeInt> hasInvariantSites;
-	IntScalarParam<? extends NonNegativeInt> hasGammaRates;
+	IntScalar<? extends NonNegativeInt> hasInvariantSites;
+	IntScalar<? extends NonNegativeInt> hasGammaRates;
 	
 	@Override
 	public void initAndValidate() {
@@ -31,19 +35,21 @@ public class BEASTModelTestSiteModel extends SiteModel {
 		hasGammaRates = hasGammaRatesInput.get();
 		//hasGammaRates.assignFromWithoutID(dummy);
 		super.initAndValidate();
-		
-		// ensure categoryCount = gammaCategories + 1 by checking shape and invar parameters are present
+
+		// ensure categoryCount = gammaCategories + 1 by checking shape and invar parameters are present.
+		// Spec parents expose RealScalar interfaces; estimation status lives on the concrete
+		// RealScalarParam, so pattern-match to read it.
 		if (shapeParameterInput.get() == null) {
 			throw new IllegalArgumentException("shape parameter must be specified");
 		}
-		if (shapeParameterInput.get().isEstimatedInput.get() == false) {
-			throw new IllegalArgumentException("shape parameter must be estimated");
+		if (!(shapeParameterInput.get() instanceof RealScalarParam<PositiveReal> shape) || !shape.isEstimatedInput.get()) {
+			throw new IllegalArgumentException("shape parameter must be an estimated RealScalarParam");
 		}
 		if (invarParameterInput.get() == null) {
 			throw new IllegalArgumentException("proportionInvariant parameter must be specified");
 		}
-		if (invarParameterInput.get().isEstimatedInput.get() == false) {
-			throw new IllegalArgumentException("proportionInvariant parameter must be estimated");
+		if (!(invarParameterInput.get() instanceof RealScalarParam<UnitInterval> invar) || !invar.isEstimatedInput.get()) {
+			throw new IllegalArgumentException("proportionInvariant parameter must be an estimated RealScalarParam");
 		}
 	}
 
@@ -58,9 +64,9 @@ public class BEASTModelTestSiteModel extends SiteModel {
         if (/*invarParameter != null && */hasInvariantSites.get() > 0) {
             if (hasPropInvariantCategory) {
                 categoryRates[0] = 0.0;
-                categoryProportions[0] = invarParameter.getValue();
+                categoryProportions[0] = invarParameter.get();
             }
-            propVariable = 1.0 - invarParameter.getValue();
+            propVariable = 1.0 - invarParameter.get();
             if (hasPropInvariantCategory) {
                 cat = 1;
             }
@@ -73,7 +79,7 @@ public class BEASTModelTestSiteModel extends SiteModel {
 
         if (hasGammaRates.get() > 0) {
 
-            final double a = shapeParameter.getValue();
+            final double a = shapeParameter.get();
             double mean = 0.0;
             final int gammaCatCount = categoryCount - cat;
 
@@ -135,7 +141,7 @@ public class BEASTModelTestSiteModel extends SiteModel {
 	@Override
 	protected boolean requiresRecalculation() {
 		boolean isDirty = false;
-		if (hasInvariantSites.somethingIsDirty() || hasGammaRates.somethingIsDirty()) {
+		if (InputUtil.isDirty(hasInvariantSitesInput) || InputUtil.isDirty(hasGammaRatesInput)) {
 			isDirty = true;
             ratesKnown = false;
 		}
@@ -148,7 +154,7 @@ public class BEASTModelTestSiteModel extends SiteModel {
 	@Override
     public double getProportionInvariant() {
         if (hasInvariantSites.get() > 0) {
-        	return invarParameter.getValue();
+        	return invarParameter.get();
         } else {
         	return 0.0;
         }

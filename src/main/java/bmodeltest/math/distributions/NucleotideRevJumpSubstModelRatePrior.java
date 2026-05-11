@@ -15,7 +15,7 @@ import beast.base.inference.distribution.ParametricDistribution;
 import beast.base.core.Input.Validate;
 import beast.base.spec.domain.NonNegativeInt;
 import beast.base.spec.domain.NonNegativeReal;
-import beast.base.spec.inference.parameter.IntScalarParam;
+import beast.base.spec.type.IntScalar;
 import beast.base.spec.type.RealVector;
 import beast.base.core.Log;
 import beast.base.util.GammaFunction;
@@ -31,7 +31,7 @@ public class NucleotideRevJumpSubstModelRatePrior extends Distribution {
 	public Input<BMTPriorType> priorTypeInput = new Input<NucleotideRevJumpSubstModelRatePrior.BMTPriorType>("priorType", "rate prior, one of " + Arrays.toString(BMTPriorType.values()),
 			BMTPriorType.onTransitionsAndTraversals, BMTPriorType.values());
 	public Input<RealVector<? extends NonNegativeReal>> xInput = new Input<>("x", "rate vector to apply this prior to", Validate.REQUIRED);
-	public Input<IntScalarParam<? extends NonNegativeInt>> modelIndicatorInput = new Input<>("modelIndicator", "number of the model to be used", Validate.REQUIRED);
+	public Input<IntScalar<? extends NonNegativeInt>> modelIndicatorInput = new Input<>("modelIndicator", "number of the model to be used", Validate.REQUIRED);
 	public Input<NucleotideRevJumpSubstModel> substModelInput = new Input<NucleotideRevJumpSubstModel>("substModel", "model test substitution model representing the individual models", Validate.REQUIRED);
 
 	public Input<ParametricDistribution> distInput = new Input<>("distr", "distribution used to calculate prior on (transversion) rates");
@@ -39,7 +39,7 @@ public class NucleotideRevJumpSubstModelRatePrior extends Distribution {
 
 	final static boolean debug = true;
 
-	IntScalarParam<? extends NonNegativeInt> modelIndicator;
+	IntScalar<? extends NonNegativeInt> modelIndicator;
 	NucleotideRevJumpSubstModel substModel;
 	RealVector<? extends NonNegativeReal> rates;
 	BMTPriorType priorType;

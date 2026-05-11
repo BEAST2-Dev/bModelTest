@@ -3,141 +3,133 @@ package bmodeltest.evolution.operators;
 import beast.base.core.Description;
 import beast.base.core.Input;
 import beast.base.core.Input.Validate;
-import beast.base.inference.parameter.BooleanParameter;
-import beast.base.inference.parameter.RealParameter;
+import beast.base.inference.Scalable;
 import beast.base.spec.domain.NonNegativeInt;
+import beast.base.spec.inference.operator.ScaleOperator;
+import beast.base.spec.inference.parameter.BoolVectorParam;
 import beast.base.spec.inference.parameter.IntScalarParam;
-import beast.base.evolution.operator.ScaleOperator;
+import beast.base.spec.inference.parameter.RealScalarParam;
+import beast.base.spec.inference.parameter.RealVectorParam;
 import beast.base.util.Randomizer;
 
 
-@Description("Operator for bModelTest to scale shape/proportiona invariant if gamma rate heterogeneity and/or invariant sites are present")
+@Description("Scale operator that only considers the first 'count' elements of the parameter, "
+		+ "for use with bModelTest where 'count' tracks how many gamma rate / invariant-site sub-models are active.")
 public class BMTScaleOperator extends ScaleOperator {
-	public Input<IntScalarParam<? extends NonNegativeInt>> countInput = new Input<>("count","count parameter indicating the nr of rates to use", Validate.REQUIRED);
+	public Input<IntScalarParam<? extends NonNegativeInt>> countInput = new Input<>("count",
+			"count parameter indicating the nr of elements to consider for scaling", Validate.REQUIRED);
 
 	IntScalarParam<? extends NonNegativeInt> count;
 
 	@Override
 	public void initAndValidate() {
 		count = countInput.get();
-		if (treeInput.get() != null) {
-			throw new IllegalArgumentException("A parameter (not a tree) should not be specified");
-		}
 		super.initAndValidate();
 	}
-	
+
 	@Override
 	public double proposal() {
-    	try {
+		try {
+			final boolean scaleAll = scaleAllInput.get();
+			final int specifiedDoF = degreesOfFreedomInput.get();
+			final boolean scaleAllIndependently = scaleAllIndependentlyInput.get();
 
-            double hastingsRatio;
-            final double scale = getScaler();
+			final int dim = count.get();
+			if (dim == 0) {
+				// nothing active — reject so the move is a no-op
+				return Double.NEGATIVE_INFINITY;
+			}
 
-            final boolean bScaleAll = scaleAllInput.get();
-            final int nDegreesOfFreedom = degreesOfFreedomInput.get();
-            final boolean bScaleAllIndependently = scaleAllIndependentlyInput.get();
+			final Scalable param = parameterInput.get();
 
-            final RealParameter param = parameterInput.get();
-
-            assert param.getLower() != null  && param.getUpper() != null;
-
-            final int dim = count.get();//param.getDimension();
-
-            if (bScaleAllIndependently) {
-                // update all dimensions independently.
-                hastingsRatio = 0;
-                for (int i = 0; i < dim; i++) {
-
-                    final double scaleOne = getScaler();
-                    final double newValue = scaleOne * param.getValue(i);
-
-                    hastingsRatio -= Math.log(scaleOne);
-
-                    if ( outsideBounds(newValue, param) ) {
-                        return Double.NEGATIVE_INFINITY;
-                    }
-
-                    param.setValue(i, newValue);
-                }
-            } else if (bScaleAll) {
-                // update all dimensions
-                // hasting ratio is dim-2 times of 1dim case. would be nice to have a reference here
-                // for the proof. It is supposed to be somewhere in an Alexei/Nicholes article.
-                final int df = (nDegreesOfFreedom > 0) ? -nDegreesOfFreedom  : dim - 2;
-                hastingsRatio = df * Math.log(scale);
-
-                // all Values assumed independent!
-                for (int i = 0; i < dim; i++) {
-                    final double newValue = param.getValue(i) * scale;
-
-                    if ( outsideBounds(newValue, param) ) {
-                        return Double.NEGATIVE_INFINITY;
-                    }
-                    param.setValue(i, newValue);
-                }
-            } else {
-                hastingsRatio = -Math.log(scale);
-
-                // which position to scale
-                int index;
-                final BooleanParameter indicators = indicatorInput.get();
-                if ( indicators != null ) {
-                    final int nDim = indicators.getDimension();
-                    Boolean [] indicator = indicators.getValues();
-                    final boolean impliedOne = nDim == (dim - 1);
-
-                    // available bit locations. there can be hundreds of them. scan list only once.
-                    int[] loc = new int[nDim + 1];
-                    int nLoc = 0;
-
-                    if (impliedOne) {
-                        loc[nLoc] = 0;
-                        ++nLoc;
-                    }
-                    for (int i = 0; i < nDim && i < dim; i++) {
-                        if ( indicator[i] ) {
-                            loc[nLoc] = i + (impliedOne ? 1 : 0);
-                            ++nLoc;
-                        }
-                    }
-
-                    if (nLoc > 0) {
-                        final int rand = Randomizer.nextInt(nLoc);
-                        index = loc[rand];
-                    } else {
-                        return Double.NEGATIVE_INFINITY; // no active indicators
-                    }
-
-                } else {
-                    // any is good
-                    index = Randomizer.nextInt(dim);
-                }
-
-                final double oldValue = param.getValue(index);
-
-                if (oldValue == 0) {
-                    // Error: parameter has value 0 and cannot be scaled
-                    return Double.NEGATIVE_INFINITY;
-                }
-
-                final double newValue = scale * oldValue;
-
-                if ( outsideBounds(newValue, param) ) {
-                    // reject out of bounds scales
-                    return Double.NEGATIVE_INFINITY;
-                }
-
-                param.setValue(index, newValue);
-                // provides a hook for subclasses
-                //cleanupOperation(newValue, oldValue);
-            }
-                       
-            return hastingsRatio;
-
-        } catch (Exception e) {
-            // whatever went wrong, we want to abort this operation...
-            return Double.NEGATIVE_INFINITY;
-        }
+			if (param instanceof RealVectorParam<?> vec) {
+				return proposeOnVector(vec, dim, scaleAll, scaleAllIndependently, specifiedDoF);
+			}
+			if (param instanceof RealScalarParam<?> scalar) {
+				// scalar parameter: dim is by construction either 0 (handled above) or >0, so scale once
+				final double scale = getScaler(0, scalar.get());
+				scalar.scale(scale);
+				if (!scalar.withinBounds(scalar.get())) {
+					return Double.NEGATIVE_INFINITY;
+				}
+				return Math.log(scale);
+			}
+			throw new IllegalArgumentException("BMTScaleOperator only supports RealScalarParam or RealVectorParam, got "
+					+ (param == null ? "null" : param.getClass()));
+		} catch (Exception e) {
+			return Double.NEGATIVE_INFINITY;
+		}
 	}
 
+	private double proposeOnVector(RealVectorParam<?> param, int dim,
+								   boolean scaleAll, boolean scaleAllIndependently, int specifiedDoF) {
+		if (scaleAllIndependently) {
+			double logHR = 0;
+			for (int i = 0; i < dim; i++) {
+				final double scaleOne = getScaler(i, param.get(i));
+				final double newValue = scaleOne * param.get(i);
+
+				logHR += Math.log(scaleOne);
+
+				if (!param.isValid(newValue)) {
+					return Double.NEGATIVE_INFINITY;
+				}
+				param.set(i, newValue);
+			}
+			return logHR;
+		}
+		if (scaleAll) {
+			// all 'dim' values assumed independent — HR is df*log(scale), with df = dim-2 unless overridden
+			final double scale = getScaler(0, param.get(0));
+			final int df = (specifiedDoF > 0) ? specifiedDoF : dim - 2;
+			final double logHR = df * Math.log(scale);
+			for (int i = 0; i < dim; i++) {
+				final double newValue = param.get(i) * scale;
+				if (!param.isValid(newValue)) {
+					return Double.NEGATIVE_INFINITY;
+				}
+				param.set(i, newValue);
+			}
+			return logHR;
+		}
+
+		// pick one position to scale, optionally constrained by an indicator vector
+		final int index;
+		final BoolVectorParam indicators = indicatorInput.get();
+		if (indicators != null) {
+			final int nDim = indicators.size();
+			final boolean[] indicator = indicators.getValues();
+			final boolean impliedOne = nDim == (dim - 1);
+
+			final int[] loc = new int[nDim + 1];
+			int nLoc = 0;
+			if (impliedOne) {
+				loc[nLoc++] = 0;
+			}
+			for (int i = 0; i < nDim && i < dim; i++) {
+				if (indicator[i]) {
+					loc[nLoc++] = i + (impliedOne ? 1 : 0);
+				}
+			}
+			if (nLoc == 0) {
+				return Double.NEGATIVE_INFINITY; // no active indicators
+			}
+			index = loc[Randomizer.nextInt(nLoc)];
+		} else {
+			index = Randomizer.nextInt(dim);
+		}
+
+		final double oldValue = param.get(index);
+		if (oldValue == 0) {
+			return Double.NEGATIVE_INFINITY;
+		}
+
+		final double scale = getScaler(index, oldValue);
+		final double newValue = scale * oldValue;
+		if (!param.isValid(newValue)) {
+			return Double.NEGATIVE_INFINITY;
+		}
+		param.set(index, newValue);
+		return Math.log(scale);
+	}
 }

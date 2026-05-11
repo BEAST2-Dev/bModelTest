@@ -5,17 +5,17 @@ import beast.base.core.Input;
 import beast.base.core.Input.Validate;
 import beast.base.inference.StateNode;
 import beast.base.spec.evolution.substitutionmodel.Frequencies;
-import beast.base.spec.inference.parameter.BoolScalarParam;
+import beast.base.spec.type.BoolScalar;
 
 @Description("Frequencies for ModelTest model, can switch between equal and empricial/estimated frequencies")
 public class ModelFrequencies extends Frequencies {
-	public Input<BoolScalarParam> hasEqualFreqslInput = new Input<>("hasEqualFreqs", "flag to indicate equal frequencies shouldbe used", Validate.REQUIRED);
+	public Input<BoolScalar> hasEqualFreqslInput = new Input<>("hasEqualFreqs", "flag to indicate equal frequencies shouldbe used", Validate.REQUIRED);
 
 	// need the following flag for BEAUti
 	public Input<Boolean> empiricalInput = new Input<>("empirical", "flag for using empirical frequencies (if true), instead of estimated frequencies", true);
 
 
-	BoolScalarParam hasEqualFreqs;
+	BoolScalar hasEqualFreqs;
 
 	@Override
 	public void initAndValidate() {
