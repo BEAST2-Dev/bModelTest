@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><beast beautitemplate='Standard' beautistatus='' namespace="beast.base.spec.inference.parameter:beast.base.spec.domain:beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.alignment:beast.base.evolution.tree.coalescent:beast.pkgmgmt:beast.base.core:beast.base.inference.util:beast.evolution.nuc:beast.base.evolution.operator:beast.base.inference.operator:beast.base.evolution.sitemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.likelihood" version="2.0">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><beast beautitemplate='Standard' beautistatus='' namespace="beast.base.spec.inference.parameter:beast.base.spec.domain:beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.alignment:beast.base.evolution.tree.coalescent:beast.pkgmgmt:beast.base.core:beast.base.inference.util:beast.evolution.nuc:beast.base.evolution.operator:beast.base.inference.operator:beast.base.evolution.sitemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.likelihood" version="2.8">
 
 
     <data
@@ -46,8 +46,8 @@ name="alignment">
         <parameter id="birthRate.t:dna" name="stateNode">1.0</parameter>
         <stateNode id="BMTmodelIndicator.s:dna" spec="IntScalarParam" domain="NonNegativeInt">0</stateNode>
         <stateNode id="BMTrates.s:dna" spec="RealVectorParam" domain="NonNegativeReal" dimension="6" name="stateNode">1.0</stateNode>
-        <parameter id="gammaShape.s:dna" name="stateNode">1.0</parameter>
-        <parameter id="proportionInvariant.s:dna" lower="0.0" name="stateNode" upper="1.0">0.1</parameter>
+        <stateNode id="gammaShape.s:dna" spec="RealScalarParam" domain="PositiveReal" name="stateNode">1.0</stateNode>
+        <stateNode id="proportionInvariant.s:dna" spec="RealScalarParam" domain="UnitInterval" name="stateNode">0.1</stateNode>
 
         <stateNode id="hasInvariantSites.s:dna" spec="IntScalarParam" domain="NonNegativeInt">1</stateNode>
         <stateNode id="hasGammaRates.s:dna" spec="IntScalarParam" domain="NonNegativeInt">1</stateNode>
@@ -94,7 +94,7 @@ name="alignment">
                 <siteModel id="SiteModel.s:dna" spec="bmodeltest.evolution.sitemodel.BEASTModelTest" 
                 	gammaCategoryCount="4" proportionInvariant="@proportionInvariant.s:dna" shape="@gammaShape.s:dna"
                 	hasGammaRates="@hasGammaRates.s:dna" hasInvariantSites="@hasInvariantSites.s:dna">
-                    <parameter id="mutationRate.s:dna" estimate="false" name="mutationRate">1.0</parameter>
+                    <parameter id="mutationRate.s:dna" spec="RealScalarParam" domain="PositiveReal" estimate="false" name="mutationRate">1.0</parameter>
                     <substModel id="RevJump.s:dna" spec="bmodeltest.evolution.substitutionmodel.NucleotideRevJumpSubstModel" 
                         modelIndicator="@BMTmodelIndicator.s:dna" rates="@BMTrates.s:dna"
                         modelSet="transitionTransversionSplit">
