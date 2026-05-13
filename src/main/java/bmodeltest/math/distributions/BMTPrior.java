@@ -11,9 +11,9 @@ import beast.base.core.Input;
 import beast.base.core.Input.Validate;
 import beast.base.inference.Distribution;
 import beast.base.inference.State;
-import beast.base.inference.distribution.ParametricDistribution;
 import beast.base.spec.domain.NonNegativeInt;
 import beast.base.spec.domain.Real;
+import beast.base.spec.inference.distribution.ScalarDistribution;
 import beast.base.spec.type.IntScalar;
 import beast.base.spec.type.RealScalar;
 
@@ -23,12 +23,14 @@ public class BMTPrior extends Distribution {
 			"scalar real parameter this prior applies to", Validate.REQUIRED);
 	public Input<IntScalar<? extends NonNegativeInt>> countInput = new Input<>("count",
 			"count parameter; the prior contributes only when count > 0", Validate.REQUIRED);
-	public Input<ParametricDistribution> distInput = new Input<>("distr",
-			"parametric distribution evaluated when the prior is active", Validate.REQUIRED);
+	public Input<ScalarDistribution<RealScalar<? extends Real>, Double>> distInput = new Input<>("distr",
+			"scalar distribution evaluated when the prior is active. " +
+			"Wrap in OffsetReal if you need a non-zero shift; the legacy " +
+			"ParametricDistribution.offset input no longer applies.", Validate.REQUIRED);
 
 	private RealScalar<? extends Real> x;
 	private IntScalar<? extends NonNegativeInt> counts;
-	private ParametricDistribution dist;
+	private ScalarDistribution<RealScalar<? extends Real>, Double> dist;
 
 	@Override
 	public void initAndValidate() {
@@ -41,8 +43,7 @@ public class BMTPrior extends Distribution {
 	public double calculateLogP() {
 		logP = 0;
 		if (counts.get() > 0) {
-			double offset = dist.offsetInput.get();
-			logP = dist.logDensity(x.get() - offset);
+			logP = dist.logDensity(x.get());
 		}
 		return logP;
 	}

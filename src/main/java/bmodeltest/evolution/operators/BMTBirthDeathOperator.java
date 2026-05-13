@@ -8,10 +8,11 @@ import beast.base.inference.Operator;
 import beast.base.core.Input.Validate;
 import beast.base.spec.domain.NonNegativeInt;
 import beast.base.spec.domain.NonNegativeReal;
+import beast.base.spec.domain.PositiveReal;
+import beast.base.spec.inference.distribution.Exponential;
+import beast.base.spec.inference.distribution.ScalarDistribution;
 import beast.base.spec.inference.parameter.IntScalarParam;
 import beast.base.spec.inference.parameter.RealScalarParam;
-import beast.base.inference.distribution.Exponential;
-import beast.base.inference.distribution.ParametricDistribution;
 import beast.base.util.Randomizer;
 import bmodeltest.math.distributions.BMTPrior;
 
@@ -22,12 +23,17 @@ public class BMTBirthDeathOperator extends Operator {
 
 	private RealScalarParam<? extends NonNegativeReal> rate;
 	private IntScalarParam<? extends NonNegativeInt> counts;
-	ParametricDistribution distr;
+	// Methods called on this field (logDensity, inverseCumulativeProbability)
+	// take/return primitives, so the type parameters are irrelevant here.
+	ScalarDistribution<?, Double> distr;
 
 	@Override
 	public void initAndValidate() {
 		rate = rateInput.get();
-		distr = new Exponential();
+		// Fallback default when no BMTPrior is wired up: Exp(1) on positive reals.
+		Exponential defaultDistr = new Exponential();
+		defaultDistr.initByName("mean", new RealScalarParam<>(1.0, PositiveReal.INSTANCE));
+		distr = defaultDistr;
 		for (Object plugin : rate.getOutputs()) {
 			if (plugin instanceof BMTPrior) {
 				BMTPrior prior = (BMTPrior) plugin;

@@ -50,14 +50,17 @@ hmc="BEASTModelTest=/SiteModel/bModelTest/"
             <Beta name="distr" alpha="1.0" beta="4.0"/>
         </distribution>
 
-        <prior id='BMT_MutationRatePrior.s:$(n)' x='@BMT_mutationRate.s:$(n)'><distr spec="OneOnX"/></prior>
+        <distribution id="BMT_MutationRatePrior.s:$(n)" spec="beast.base.spec.inference.distribution.LogUniform" param="@BMT_mutationRate.s:$(n)">
+            <lower spec="RealScalarParam" domain="PositiveReal">1.0E-6</lower>
+            <upper spec="RealScalarParam" domain="PositiveReal">1.0</upper>
+        </distribution>
 
-            <!-- frequencies estimation -->
-            <prior  id="BMT_freqsPrior.s:$(n)"  name="distribution" x="@BMT_frequencies.s:$(n)">
-                <distr spec="beast.base.inference.distribution.Dirichlet" alpha="1.0 1.0 1.0 1.0"/>
-            </prior>
-            
-        <siteModel id="BEASTModelTest.s:$(n)" spec="bmodeltest.evolution.sitemodel.BEASTModelTestSiteModel" 
+        <!-- frequencies estimation -->
+        <distribution id="BMT_freqsPrior.s:$(n)" spec="beast.base.spec.inference.distribution.Dirichlet" param="@BMT_frequencies.s:$(n)">
+            <alpha spec="RealVectorParam" domain="PositiveReal" dimension="4">1.0</alpha>
+        </distribution>
+
+        <siteModel id="BEASTModelTest.s:$(n)" spec="bmodeltest.evolution.sitemodel.BEASTModelTestSiteModel"
             gammaCategoryCount="4" proportionInvariant="@BMT_ProportionInvariable.s:$(n)" shape="@BMT_gammaShape.s:$(n)"
             hasGammaRates="@hasGammaRates.s:$(n)" hasInvariantSites="@hasInvariableSites.s:$(n)">
             <parameter id="BMT_mutationRate.s:$(n)" spec="RealScalarParam" domain="PositiveReal" estimate="false" name="mutationRate">1.0</parameter>
@@ -193,13 +196,16 @@ hmc="BEASTModelTest=/SiteModel/bModelTest/"
             <Beta name="distr" alpha="1.0" beta="4.0"/>
         </distribution>
 
-        <prior id='BMT_MutationRatePrior.s:$(n)' x='@BMT_mutationRate.s:$(n)'><distr spec="OneOnX"/></prior>
+        <distribution id="BMT_MutationRatePrior.s:$(n)" spec="beast.base.spec.inference.distribution.LogUniform" param="@BMT_mutationRate.s:$(n)">
+            <lower spec="RealScalarParam" domain="PositiveReal">1.0E-6</lower>
+            <upper spec="RealScalarParam" domain="PositiveReal">1.0</upper>
+        </distribution>
 
-            <!-- frequencies estimation -->
-            <prior  id="BMT_freqsPrior.s:$(n)"  name="distribution" x="@frequencies_BMT.s:$(n)">
-                <distr spec="beast.base.inference.distribution.Dirichlet" alpha="1.0 1.0 1.0 1.0"/>
-            </prior>
-            
+        <!-- frequencies estimation -->
+        <distribution id="BMT_freqsPrior.s:$(n)" spec="beast.base.spec.inference.distribution.Dirichlet" param="@frequencies_BMT.s:$(n)">
+            <alpha spec="RealVectorParam" domain="PositiveReal" dimension="4">1.0</alpha>
+        </distribution>
+
         <siteModel id="BEASTModelTest.s:$(n)" spec="bmodeltest.evolution.sitemodel.BEASTModelTestSiteModel" 
             gammaCategoryCount="4" proportionInvariant="@BMT_ProportionInvariable.s:$(n)" shape="@BMT_gammaShape.s:$(n)"
             hasGammaRates="@hasGammaRates.s:$(n)" hasInvariantSites="@hasInvariableSites.s:$(n)">
