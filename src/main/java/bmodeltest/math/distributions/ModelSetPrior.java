@@ -7,7 +7,6 @@ import beast.base.core.Input;
 import beast.base.core.Input.Validate;
 import beast.base.inference.Distribution;
 import beast.base.inference.State;
-import beast.base.inference.distribution.ParametricDistribution;
 import beast.base.spec.domain.NonNegativeInt;
 import beast.base.spec.type.IntScalar;
 import bmodeltest.evolution.substitutionmodel.NucleotideRevJumpSubstModel;
@@ -24,8 +23,6 @@ public class ModelSetPrior extends Distribution {
 			+ " uniformOnParameterCount in order to not prefer a number of parameters, e.g., JC66 is as likely as having a 3-parameter model",
 			PriorType.uniformOnModel, PriorType.values());
 	public Input<NucleotideRevJumpSubstModel> substModelInput = new Input<NucleotideRevJumpSubstModel>("substModel", "model test substitution model representing the individual models", Validate.REQUIRED);
-	// kept for backwards compat with legacy Prior wrapper; not used.
-	public Input<ParametricDistribution> distInput = new Input<>("distr", "(unused) distribution kept for backwards compatibility");
 
 
 	IntScalar<? extends NonNegativeInt> modelIndicator;

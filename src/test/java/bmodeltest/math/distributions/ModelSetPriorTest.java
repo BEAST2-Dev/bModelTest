@@ -5,7 +5,6 @@ import org.junit.Test;
 
 import bmodeltest.evolution.substitutionmodel.NucleotideRevJumpSubstModel;
 import bmodeltest.math.distributions.ModelSetPrior;
-import beast.base.inference.distribution.Uniform;
 import beast.base.spec.domain.NonNegativeInt;
 import beast.base.spec.inference.parameter.IntScalarParam;
 import junit.framework.TestCase;
@@ -18,8 +17,7 @@ public class ModelSetPriorTest extends TestCase {
 		IntScalarParam<NonNegativeInt> modelIndicator = new IntScalarParam<>(0, NonNegativeInt.INSTANCE);
 		NucleotideRevJumpSubstModel sm = NucleotideRevJumpSubstModelTest.getSubstModel(modelIndicator);
 		ModelSetPrior prior = new ModelSetPrior();
-		prior.initByName("x", modelIndicator,
-				"substModel", sm, "distr", new Uniform());
+		prior.initByName("x", modelIndicator, "substModel", sm);
 
 		for (int i = 0; i < sm.getModelCount(); i++) {
 			modelIndicator.set(i);
@@ -34,8 +32,7 @@ public class ModelSetPriorTest extends TestCase {
 		ModelSetPrior prior = new ModelSetPrior();
 		prior.initByName("x", modelIndicator,
 				"substModel", sm,
-				"priorType", "uniformOnParameterCount",
-				"distr", new Uniform());
+				"priorType", "uniformOnParameterCount");
 
 		// JC69
 		modelIndicator.set(0);

@@ -15,7 +15,6 @@ import beast.base.spec.domain.NonNegativeInt;
 import beast.base.spec.inference.parameter.IntScalarParam;
 import beast.base.inference.CompoundDistribution;
 import bmodeltest.evolution.substitutionmodel.NucleotideRevJumpSubstModelTest;
-import beast.base.inference.distribution.Uniform;
 import beastfx.app.tools.LogAnalyser;
 import bmodeltest.evolution.operators.BMTMergeSplitOperator;
 import bmodeltest.evolution.substitutionmodel.NucleotideRevJumpSubstModel;
@@ -164,8 +163,8 @@ public class MergeSplitOperatorTest extends TestCase {
         		"priorType", NucleotideRevJumpSubstModelRatePrior.BMTPriorType.asScaledDirichlet);
 
 		ModelSetPrior prior2 = new ModelSetPrior();        
-		prior2.initByName("x", modelIndicator, "substModel", substModel, "priorType", ModelSetPrior.PriorType.uniformOnModel, 
-				"distr", new Uniform());
+		prior2.initByName("x", modelIndicator, "substModel", substModel,
+				"priorType", ModelSetPrior.PriorType.uniformOnModel);
 		CompoundDistribution prior = new CompoundDistribution();
 		
 		prior.initByName("distribution", prior1, "distribution", prior2);
@@ -245,8 +244,8 @@ public class MergeSplitOperatorTest extends TestCase {
         		"priorType", NucleotideRevJumpSubstModelRatePrior.BMTPriorType.asScaledDirichlet);
 
 		ModelSetPrior prior2 = new ModelSetPrior();        
-		prior2.initByName("x", modelIndicator, "substModel", substModel, "priorType", ModelSetPrior.PriorType.uniformOnModel, 
-				"distr", new Uniform());
+		prior2.initByName("x", modelIndicator, "substModel", substModel,
+				"priorType", ModelSetPrior.PriorType.uniformOnModel);
 		CompoundDistribution prior = new CompoundDistribution();
 		
 		prior.initByName("distribution", prior1, "distribution", prior2);
@@ -371,8 +370,8 @@ public class MergeSplitOperatorTest extends TestCase {
         		"priorType", NucleotideRevJumpSubstModelRatePrior.BMTPriorType.asScaledDirichlet);
 
 		ModelSetPrior prior2 = new ModelSetPrior();        
-		prior2.initByName("x", modelIndicator, "substModel", substModel, "priorType", ModelSetPrior.PriorType.uniformOnParameterCount,
-				"distr", new Uniform());
+		prior2.initByName("x", modelIndicator, "substModel", substModel,
+				"priorType", ModelSetPrior.PriorType.uniformOnParameterCount);
 		CompoundDistribution prior = new CompoundDistribution();
 		
 		prior.initByName("distribution", prior1, "distribution", prior2);
