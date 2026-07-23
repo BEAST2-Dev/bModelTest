@@ -33,11 +33,14 @@ import bmodeltest.evolution.substitutionmodel.NucleotideRevJumpSubstModel.ModelS
 import beast.base.core.Description;
 import beast.base.core.Input;
 import beast.base.core.Input.Validate;
-import beast.base.inference.parameter.IntegerParameter;
-import beast.base.inference.parameter.RealParameter;
 import beast.base.core.Log;
-import beast.base.evolution.substitutionmodel.Frequencies;
 import beast.base.inference.Runnable;
+import beast.base.spec.domain.NonNegativeInt;
+import beast.base.spec.domain.NonNegativeReal;
+import beast.base.spec.evolution.substitutionmodel.Frequencies;
+import beast.base.spec.inference.parameter.IntScalarParam;
+import beast.base.spec.inference.parameter.RealVectorParam;
+import beast.base.spec.inference.parameter.SimplexParam;
 import beast.pkgmgmt.BEASTClassLoader;
 
 @Description("Analyses bModelTest log and list useful stats such as 95% HPDs of model indicators")
@@ -315,15 +318,17 @@ public class BModelAnalyser extends Runnable {
 		return jsPath;
 	}
 
-	private String toSVG(List<Integer> models, Map<Integer, Integer> countMap, Set<Integer> isIn95HPD, int n) {
+	// package private so it can be exercised directly by BModelAnalyserTest without launching the viewer
+	String toSVG(List<Integer> models, Map<Integer, Integer> countMap, Set<Integer> isIn95HPD, int n) {
 		double scale = 100;
 		int maxWidth = 1200;
 		double VGAP = 0.3;
 		double HGAP = 0.05;
 		Frequencies frequencies = new Frequencies();
-		frequencies.initByName("frequencies", "0.25 0.25 0.25 0.25");
+		frequencies.initByName("frequencies", new SimplexParam(new double[]{0.25, 0.25, 0.25, 0.25}));
 		NucleotideRevJumpSubstModel sm = new NucleotideRevJumpSubstModel();
-		sm.initByName("rates", new RealParameter("1.0 1.0 1.0 1.0 1.0 1.0"), "modelIndicator", new IntegerParameter("0"), "frequencies", frequencies,
+		sm.initByName("rates", new RealVectorParam<>(new double[]{1.0, 1.0, 1.0, 1.0, 1.0, 1.0}, NonNegativeReal.INSTANCE),
+				"modelIndicator", new IntScalarParam<>(0, NonNegativeInt.INSTANCE), "frequencies", frequencies,
 				"modelSet", modelSetInput.get());
 
 		double sum = 0;
@@ -524,12 +529,14 @@ public class BModelAnalyser extends Runnable {
 		b.append(" class=\"line\" marker-end=\"url(#arrow)\"/>\n");
 	}
 
-	private String toDotty(List<Integer> models, Map<Integer, Integer> countMap, Set<Integer> isIn95HPD, int n) {
+	// package private so it can be exercised directly by BModelAnalyserTest without launching the viewer
+	String toDotty(List<Integer> models, Map<Integer, Integer> countMap, Set<Integer> isIn95HPD, int n) {
 		
 		Frequencies frequencies = new Frequencies();
-		frequencies.initByName("frequencies", "0.25 0.25 0.25 0.25");
+		frequencies.initByName("frequencies", new SimplexParam(new double[]{0.25, 0.25, 0.25, 0.25}));
 		NucleotideRevJumpSubstModel sm = new NucleotideRevJumpSubstModel();
-		sm.initByName("rates", new RealParameter("1.0 1.0 1.0 1.0 1.0 1.0"), "modelIndicator", new IntegerParameter("0"), "frequencies", frequencies,
+		sm.initByName("rates", new RealVectorParam<>(new double[]{1.0, 1.0, 1.0, 1.0, 1.0, 1.0}, NonNegativeReal.INSTANCE),
+				"modelIndicator", new IntScalarParam<>(0, NonNegativeInt.INSTANCE), "frequencies", frequencies,
 				"modelSet", modelSetInput.get());
 
 	

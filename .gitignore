@@ -5,6 +5,10 @@ target/
 module-info.class
 META-INF/
 
+# BModelAnalyser writes its rendered output alongside the bundled js/ assets
+js/bModelTest*.dot
+js/bModelTest*.html
+
 # BEAST run artefacts produced by exec:exec smoke tests
 *.log
 *.trees
