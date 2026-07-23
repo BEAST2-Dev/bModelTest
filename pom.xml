@@ -33,13 +33,6 @@
         <url>https://github.com/BEAST2-Dev/bModelTest</url>
     </scm>
 
-    <distributionManagement>
-        <repository>
-            <id>github</id>
-            <url>https://maven.pkg.github.com/BEAST2-Dev/bModelTest</url>
-        </repository>
-    </distributionManagement>
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
