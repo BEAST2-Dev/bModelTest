@@ -1,0 +1,30 @@
+# Maven build output
+target/
+
+# Compiled module-info / class files left at repo root by some IDE runs
+module-info.class
+META-INF/
+
+# BModelAnalyser writes its rendered output alongside the bundled js/ assets
+js/bModelTest*.dot
+js/bModelTest*.html
+
+# BEAST run artefacts produced by exec:exec smoke tests
+*.log
+*.trees
+*.state
+*.0state
+*.1state
+*.2state
+*.3state
+
+# IDE / editor
+.idea/
+*.iml
+.vscode/
+.classpath
+.project
+.settings/
+
+# OS
+.DS_Store
