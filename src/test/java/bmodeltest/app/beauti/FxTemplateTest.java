@@ -85,12 +85,37 @@ public class FxTemplateTest extends TestCase {
 	/** Everything the template instantiates should come from the spec hierarchy. */
 	@Test
 	public void testNoLegacyBeastBaseSpecs() throws Exception {
-		Matcher m = Pattern.compile("spec=\"(beast\\.base\\.(?!spec\\.)[^\"]*)\"").matcher(readTemplate());
+		// match spec= in either quote style
+		Matcher m = Pattern.compile("spec=[\"'](beast\\.base\\.(?!spec\\.)[^\"']*)[\"']").matcher(readTemplate());
 		List<String> legacy = new ArrayList<>();
 		while (m.find()) {
 			legacy.add(m.group(1));
 		}
 		assertTrue("template references legacy beast.base classes: " + legacy, legacy.isEmpty());
+	}
+
+	/**
+	 * The template must not use legacy operators. A legacy operator's inputs expect legacy
+	 * parameter classes, so feeding it a spec parameter throws "type mismatch for input
+	 * parameter" while parsing the BEAUti subtemplate -- which silently aborts the rest of
+	 * the subtemplate setup (BEAST2-Dev/bModelTest#9). `kernel.BactrianScaleOperator` and
+	 * `kernel.BactrianDeltaExchangeOperator` resolve, via the namespace, to
+	 * beast.base.inference.operator.kernel.*; use beast.base.spec.inference.operator.* instead.
+	 */
+	@Test
+	public void testNoLegacyOperators() throws Exception {
+		Matcher m = Pattern.compile("spec=[\"']([^\"']*)[\"']").matcher(readTemplate());
+		List<String> legacy = new ArrayList<>();
+		while (m.find()) {
+			String spec = m.group(1);
+			if (spec.contains("kernel.Bactrian")
+					|| spec.startsWith("beast.base.inference.operator")
+					|| spec.startsWith("beast.base.evolution.operator")) {
+				legacy.add(spec);
+			}
+		}
+		assertTrue("template uses legacy operators (use beast.base.spec.inference.operator.*): " + legacy,
+				legacy.isEmpty());
 	}
 
 }
