@@ -41,13 +41,16 @@ hmc="BEASTModelTest=/SiteModel/bModelTest/"
             priorType="onTransitionsAndTraversals" substModel="@RevJump.s:$(n)"/>
 
         <distribution id="BMT_GammaShapePrior.s:$(n)" spec="bmodeltest.math.distributions.BMTPrior" count="@hasGammaRates.s:$(n)" x="@BMT_gammaShape.s:$(n)">
-                <Exponential name="distr">
-                    <parameter lower="0.0" name="mean" upper="0.0" estimate='false'>1.0</parameter>
-                </Exponential>
+                <distr spec="beast.base.spec.inference.distribution.Exponential">
+                    <mean spec="RealScalarParam" domain="PositiveReal" estimate="false">1.0</mean>
+                </distr>
         </distribution>
         
         <distribution id="BMT_PropInvariablePrior.s:$(n)" spec="bmodeltest.math.distributions.BMTPrior" count="@hasInvariableSites.s:$(n)" x="@BMT_ProportionInvariable.s:$(n)">
-            <Beta name="distr" alpha="1.0" beta="4.0"/>
+            <distr spec="beast.base.spec.inference.distribution.Beta">
+                <alpha spec="RealScalarParam" domain="PositiveReal">1.0</alpha>
+                <beta spec="RealScalarParam" domain="PositiveReal">4.0</beta>
+            </distr>
         </distribution>
 
         <distribution id="BMT_MutationRatePrior.s:$(n)" spec="beast.base.spec.inference.distribution.LogUniform" param="@BMT_mutationRate.s:$(n)">
@@ -187,13 +190,16 @@ hmc="BEASTModelTest=/SiteModel/bModelTest/"
             priorType="onTransitionsAndTraversals" substModel="@RevJump.s:$(n)"/>
 
         <distribution id="BMT_GammaShapePrior.s:$(n)" spec="bmodeltest.math.distributions.BMTPrior" count="@hasGammaRates.s:$(n)" x="@BMT_gammaShape.s:$(n)">
-                <Exponential name="distr">
-                    <parameter lower="0.0" name="mean" upper="0.0" estimate='false'>1.0</parameter>
-                </Exponential>
+                <distr spec="beast.base.spec.inference.distribution.Exponential">
+                    <mean spec="RealScalarParam" domain="PositiveReal" estimate="false">1.0</mean>
+                </distr>
         </distribution>
         
         <distribution id="BMT_PropInvariablePrior.s:$(n)" spec="bmodeltest.math.distributions.BMTPrior" count="@hasInvariableSites.s:$(n)" x="@BMT_ProportionInvariable.s:$(n)">
-            <Beta name="distr" alpha="1.0" beta="4.0"/>
+            <distr spec="beast.base.spec.inference.distribution.Beta">
+                <alpha spec="RealScalarParam" domain="PositiveReal">1.0</alpha>
+                <beta spec="RealScalarParam" domain="PositiveReal">4.0</beta>
+            </distr>
         </distribution>
 
         <distribution id="BMT_MutationRatePrior.s:$(n)" spec="beast.base.spec.inference.distribution.LogUniform" param="@BMT_mutationRate.s:$(n)">
