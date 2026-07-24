@@ -5,7 +5,11 @@ import beastfx.app.inputeditor.BeautiDoc;
 import beastfx.app.inputeditor.BeautiPanel;
 import beastfx.app.inputeditor.BooleanInputEditor;
 import beastfx.app.inputeditor.EnumInputEditor;
-import beastfx.app.inputeditor.SiteModelInputEditor;
+// the bModelTest site model is a BEAST 3 spec SiteModel, so it must use the spec
+// site-model editor: the legacy editor casts FixMeanMutationRatesOperator to the
+// legacy BactrianDeltaExchangeOperator, but in a spec analysis that plugin is a
+// spec DeltaExchangeOperator (see BEAST2-Dev/bModelTest#8).
+import beastfx.app.inputeditor.spec.SiteModelInputEditor;
 import bmodeltest.evolution.sitemodel.BEASTModelTestSiteModel;
 import bmodeltest.evolution.substitutionmodel.ModelFrequencies;
 import bmodeltest.evolution.substitutionmodel.NucleotideRevJumpSubstModel;
