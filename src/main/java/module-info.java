@@ -7,6 +7,7 @@ open module bmodeltest {
     requires static javafx.swing;
     requires static java.desktop;
     requires org.apache.commons.statistics.distribution;
+	requires junit;
 
     exports bmodeltest.app.beauti;
     exports bmodeltest.app.tools;

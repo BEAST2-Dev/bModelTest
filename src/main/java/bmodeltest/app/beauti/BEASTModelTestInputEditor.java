@@ -5,7 +5,7 @@ import beastfx.app.inputeditor.BeautiDoc;
 import beastfx.app.inputeditor.BeautiPanel;
 import beastfx.app.inputeditor.BooleanInputEditor;
 import beastfx.app.inputeditor.EnumInputEditor;
-import beastfx.app.inputeditor.SiteModelInputEditor;
+import beastfx.app.inputeditor.spec.SiteModelInputEditor;
 import bmodeltest.evolution.sitemodel.BEASTModelTestSiteModel;
 import bmodeltest.evolution.substitutionmodel.ModelFrequencies;
 import bmodeltest.evolution.substitutionmodel.NucleotideRevJumpSubstModel;
