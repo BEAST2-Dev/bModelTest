@@ -1,5 +1,6 @@
 <package name='bModelTest' version='1.4.0'>
     <depends on='BEAST.base' atleast='2.8.0'/>
+    <depends on="BEAST.app" atleast="2.8.0"/>
 
     <packageapp description="BModelAnalyser"
                   class="bmodeltest.app.tools.BModelAnalyser"
